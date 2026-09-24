@@ -1,8 +1,10 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { Feather } from '@expo/vector-icons';
 import { COLORS } from '../constants/Colors';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { IconButton } from './IconButton';
+import { SPACING, TYPOGRAPHY } from '../constants/Theme';
 
 type NavBarProps = {
   title: string;
@@ -16,11 +18,9 @@ export const NavBar = ({ title, leftIcon, rightIcon, onLeftPress, onRightPress }
   const insets = useSafeAreaInsets();
 
   return (
-    <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
+    <View style={[styles.container, { paddingTop: insets.top + SPACING.md }]}>
       {leftIcon ? (
-        <TouchableOpacity onPress={onLeftPress} style={styles.iconButton}>
-          <Feather name={leftIcon} size={20} color={COLORS.textMuted} />
-        </TouchableOpacity>
+        <IconButton icon={leftIcon} onPress={onLeftPress} isActive={false} />
       ) : (
         <View style={styles.iconPlaceholder} />
       )}
@@ -28,9 +28,7 @@ export const NavBar = ({ title, leftIcon, rightIcon, onLeftPress, onRightPress }
       <Text style={styles.title}>{title}</Text>
 
       {rightIcon ? (
-        <TouchableOpacity onPress={onRightPress} style={styles.iconButton}>
-          <Feather name={rightIcon} size={20} color={COLORS.textMuted} />
-        </TouchableOpacity>
+        <IconButton icon={rightIcon} onPress={onRightPress} isActive={false} />
       ) : (
         <View style={styles.iconPlaceholder} />
       )}
@@ -50,19 +48,9 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    color: COLORS.text,
+    ...TYPOGRAPHY.title,
     fontSize: 18,
-    fontWeight: 'bold',
-    letterSpacing: 0,
-    fontStyle: 'normal',
-  },
-  iconButton: {
-    width: 36,
-    height: 36,
-    borderRadius: 8,
-    backgroundColor: 'transparent',
-    alignItems: 'center',
-    justifyContent: 'center',
+    color: COLORS.text,
   },
   iconPlaceholder: {
     width: 36,

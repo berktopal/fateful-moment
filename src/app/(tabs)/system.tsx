@@ -3,41 +3,57 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { NavBar } from '../../components/NavBar';
 import { COLORS } from '../../constants/Colors';
 import { Feather } from '@expo/vector-icons';
+import { SquareCard } from '../../components/SquareCard';
+import { SPACING, TYPOGRAPHY } from '../../constants/Theme';
+import { SYSTEM_MODULES } from '../../data/mockData';
 
 export default function SystemScreen() {
-  const modules = [
-    { name: 'Mainframe Uplink', status: 'Online', icon: 'server' },
-    { name: 'Firewall Protocol', status: 'Active', icon: 'shield' },
-    { name: 'Communication Relay', status: 'Interrupted', icon: 'radio' },
-    { name: 'Power Grid', status: 'Stable', icon: 'zap' },
+  const cards = [
+    { id: '1', title: 'Alpha Node', subtitle: '12 Scenarios', image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000' },
+    { id: '2', title: 'Beta Node', subtitle: '8 Scenarios', image: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=1000' },
+    { id: '3', title: 'Delta Node', subtitle: '4 Scenarios', image: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=1000' },
+    { id: '4', title: 'Omega Node', subtitle: '1 Scenario', image: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?q=80&w=1000' },
   ];
 
   return (
     <View style={styles.container}>
-      <NavBar title="System" />
+      <NavBar title="System" leftIcon="grid" />
       <ScrollView contentContainerStyle={styles.content}>
-        <Text style={styles.sectionTitle}>MODULE DIAGNOSTICS</Text>
+        <Text style={styles.sectionTitle}>ARCHIVES GRID</Text>
+        <View style={styles.grid}>
+          {cards.map((card) => (
+            <View key={card.id} style={styles.gridItem}>
+              <SquareCard 
+                title={card.title} 
+                subtitle={card.subtitle} 
+                imageUrl={card.image}
+              />
+            </View>
+          ))}
+        </View>
+
+        <Text style={[styles.sectionTitle, { marginTop: SPACING.xl }]}>MODULE DIAGNOSTICS</Text>
         
-        {modules.map((mod, index) => (
-          <View key={index} style={styles.moduleCard}>
+        {SYSTEM_MODULES.map((mod) => (
+          <View key={mod.id} style={styles.moduleCard}>
             <View style={styles.iconContainer}>
-              <Feather name={mod.icon as any} size={24} color={COLORS.primary} />
+              <Feather name={mod.icon} size={24} color={COLORS.primary} />
             </View>
             <View style={styles.moduleInfo}>
               <Text style={styles.moduleName}>{mod.name}</Text>
               <Text 
                 style={[
                   styles.moduleStatus, 
-                  mod.status === 'Interrupted' && { color: COLORS.accent }
+                  mod.isWarning && { color: COLORS.accent }
                 ]}
               >
                 {mod.status}
               </Text>
             </View>
             <Feather 
-              name={mod.status === 'Interrupted' ? 'alert-triangle' : 'check-circle'} 
+              name={mod.isWarning ? 'alert-triangle' : 'check-circle'} 
               size={20} 
-              color={mod.status === 'Interrupted' ? COLORS.accent : COLORS.primary} 
+              color={mod.isWarning ? COLORS.accent : COLORS.primary} 
             />
           </View>
         ))}
@@ -52,15 +68,23 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   content: {
-    padding: 16,
+    padding: SPACING.md,
+    paddingBottom: SPACING.xxl,
   },
   sectionTitle: {
+    ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
-    fontSize: 12,
-    fontWeight: 'bold',
-    letterSpacing: 2,
-    marginBottom: 16,
-    marginTop: 8,
+    marginBottom: SPACING.md,
+  },
+  grid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    gap: SPACING.sm, // Gap isn't fully supported in all RN versions for wrap, we use space-between + width
+  },
+  gridItem: {
+    width: '48%', // Leaves 4% for spacing between columns
+    marginBottom: SPACING.md,
   },
   moduleCard: {
     flexDirection: 'row',
