@@ -12,14 +12,14 @@ type OptionCardProps = {
 };
 
 export const OptionCard = ({ text, state = 'default', onPress, style }: OptionCardProps) => {
-  const getGradientColors = () => {
+  const getGradientColors = (): [string, string, ...string[]] => {
     switch (state) {
       case 'active':
         return ['#4B8B9B', '#1FB2C4', '#4B8B9B']; // Cyan gradient
       case 'passive':
         return ['#A1B5B8', '#D1E5E8', '#A1B5B8']; // Light grey/cyan gradient
       default:
-        return ['#475161', '#475161']; // Solid dark grey (fallback to gradient syntax)
+        return ['#475161', '#475161']; // Solid dark grey
     }
   };
 
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     color: COLORS.text,
   },
   textPassive: {
-    color: COLORS.text, // Assuming white text remains, or slightly faded
+    color: COLORS.text,
   },
   textActive: {
     color: COLORS.text,

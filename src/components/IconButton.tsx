@@ -45,3 +45,4 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0, 211, 243, 0.15)', // Light cyan background for active state
   },
 });
+

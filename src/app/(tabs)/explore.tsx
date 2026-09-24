@@ -1,40 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { NavBar } from '../../components/NavBar';
 import { COLORS } from '../../constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import { SPACING, RADIUS, TYPOGRAPHY } from '../../constants/Theme';
-import { INTEL_DATA } from '../../data/mockData';
+import { INTEL_DATA, DECISION_OPTIONS } from '../../data/mockData';
 import { OptionCard } from '../../components/OptionCard';
 
 export default function ExploreScreen() {
+  const [activeDecisionId, setActiveDecisionId] = useState<string>('2');
+
   return (
     <View style={styles.container}>
-      <NavBar title="Intel" />
+      <NavBar title="Intel" rightIcon="refresh-cw" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        <Text style={styles.sectionTitle}>DECISION MATRIX</Text>
-        <OptionCard text="Hold position and observe" state="default" />
-        <OptionCard text="Initiate scanning protocol" state="active" />
-        <OptionCard text="Engage hostile targets" state="passive" />
-        <View style={{ height: SPACING.lg }} />
+        {/* Tactical Decision Matrix */}
+        <Text style={styles.sectionTitle}>DECISION MATRIX (SELECT PROTOCOL)</Text>
+        {DECISION_OPTIONS.map((option) => (
+          <OptionCard
+            key={option.id}
+            text={option.text}
+            state={activeDecisionId === option.id ? 'active' : 'default'}
+            onPress={() => setActiveDecisionId(option.id)}
+          />
+        ))}
 
+        <View style={{ height: SPACING.md }} />
+
+        {/* Tactical Map */}
         <Text style={styles.sectionTitle}>TERRAIN TOPOLOGY</Text>
         <View style={styles.mapContainer}>
           <ImageBackground 
             source={{ uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000' }} 
             style={styles.mapImage}
-            imageStyle={{ borderRadius: 12, opacity: 0.5 }}
+            imageStyle={{ borderRadius: RADIUS.lg, opacity: 0.5 }}
           >
             <View style={styles.mapOverlay}>
               <Feather name="crosshair" size={48} color={COLORS.primary} />
-              <Text style={styles.mapText}>SCANNING SECTORS...</Text>
+              <Text style={styles.mapText}>SCANNING ACTIVE SECTORS...</Text>
             </View>
           </ImageBackground>
         </View>
 
+        {/* Intelligence Feeds */}
         <Text style={styles.sectionTitle}>LATEST INTELLIGENCE</Text>
-        
         {INTEL_DATA.map((intel) => (
           <View key={intel.id} style={styles.intelCard}>
             <View style={styles.intelHeader}>
