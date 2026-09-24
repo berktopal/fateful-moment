@@ -1,100 +1,56 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, ScrollView, Text } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, ImageBackground } from 'react-native';
 import { NavBar } from '../../components/NavBar';
 import { COLORS } from '../../constants/Colors';
-import { Button } from '../../components/Button';
-import { InteractiveSelection } from '../../components/InteractiveSelection';
+import { Feather } from '@expo/vector-icons';
+import { LinearGradient } from 'expo-linear-gradient';
 
 export default function ExploreScreen() {
-  const [selectedIndex, setSelectedIndex] = useState(0);
+  const intelData = [
+    { id: '1', title: 'Rogue Drone Activity', location: 'Sector 7G', threat: 'High' },
+    { id: '2', title: 'Encrypted Transmission', location: 'Unknown', threat: 'Medium' },
+    { id: '3', title: 'Supply Drop Inbound', location: 'Alpha Base', threat: 'Low' },
+  ];
 
   return (
     <View style={styles.container}>
-      <NavBar title="STYLE GUIDE" />
+      <NavBar title="Intel" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
-        {/* Color Palette */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>01. COLOR PALETTE</Text>
-          <View style={styles.colorRow}>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.primary }]} />
-              <Text style={styles.colorName}>PRIMARY</Text>
-              <Text style={styles.colorHex}>{COLORS.primary}</Text>
+        <View style={styles.mapContainer}>
+          <ImageBackground 
+            source={{ uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000' }} 
+            style={styles.mapImage}
+            imageStyle={{ borderRadius: 12, opacity: 0.5 }}
+          >
+            <View style={styles.mapOverlay}>
+              <Feather name="crosshair" size={48} color={COLORS.primary} />
+              <Text style={styles.mapText}>SCANNING SECTORS...</Text>
             </View>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.secondary }]} />
-              <Text style={styles.colorName}>SECONDARY</Text>
-              <Text style={styles.colorHex}>{COLORS.secondary}</Text>
-            </View>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.accent }]} />
-              <Text style={styles.colorName}>ACCENT</Text>
-              <Text style={styles.colorHex}>{COLORS.accent}</Text>
-            </View>
-          </View>
-          <View style={[styles.colorRow, { marginTop: 16 }]}>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.background }]} />
-              <Text style={styles.colorName}>BACKGROUND</Text>
-              <Text style={styles.colorHex}>{COLORS.background}</Text>
-            </View>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.border }]} />
-              <Text style={styles.colorName}>BORDER</Text>
-              <Text style={styles.colorHex}>{COLORS.border}</Text>
-            </View>
-            <View style={styles.colorBlock}>
-              <View style={[styles.colorBox, { backgroundColor: COLORS.text }]} />
-              <Text style={styles.colorName}>TEXT</Text>
-              <Text style={styles.colorHex}>{COLORS.text}</Text>
-            </View>
-          </View>
+          </ImageBackground>
         </View>
 
-        {/* Typography */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>02. TYPOGRAPHY</Text>
-          <View style={styles.typeRow}>
-            <Text style={styles.typeLabel}>DISPLAY</Text>
-            <Text style={[styles.typeSample, { fontSize: 24, fontStyle: 'italic', fontWeight: '900' }]}>STRATEGIC DECISION</Text>
-          </View>
-          <View style={styles.typeRow}>
-            <Text style={styles.typeLabel}>HEADING</Text>
-            <Text style={[styles.typeSample, { fontSize: 20, fontStyle: 'italic', fontWeight: 'bold' }]}>WAR ROOM ALPHA</Text>
-          </View>
-        </View>
-
-        {/* Buttons */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>03. INTERACTIVE COMPONENTS</Text>
-          <View style={styles.buttonGrid}>
-            <View style={styles.buttonCol}>
-              <Button title="PRIMARY ACTIVE" onPress={() => {}} />
+        <Text style={styles.sectionTitle}>LATEST INTELLIGENCE</Text>
+        
+        {intelData.map((intel) => (
+          <View key={intel.id} style={styles.intelCard}>
+            <View style={styles.intelHeader}>
+              <Text style={styles.intelTitle}>{intel.title}</Text>
+              <View style={[
+                styles.threatBadge,
+                intel.threat === 'High' ? { backgroundColor: COLORS.accent } :
+                intel.threat === 'Medium' ? { backgroundColor: '#F59E0B' } :
+                { backgroundColor: COLORS.primary }
+              ]}>
+                <Text style={styles.threatText}>{intel.threat}</Text>
+              </View>
             </View>
-            <View style={styles.buttonCol}>
-              <Button title="PRIMARY DISABLED" disabled onPress={() => {}} />
+            <View style={styles.intelFooter}>
+              <Feather name="map-pin" size={14} color={COLORS.textMuted} />
+              <Text style={styles.intelLocation}>{intel.location}</Text>
             </View>
           </View>
-          <View style={[styles.buttonGrid, { marginTop: 12 }]}>
-            <View style={styles.buttonCol}>
-              <Button title="SECONDARY" variant="secondary" onPress={() => {}} />
-            </View>
-            <View style={styles.buttonCol}>
-              <Button title="DANGER ACTION" variant="danger" onPress={() => {}} />
-            </View>
-          </View>
-        </View>
-
-        {/* Interactive Selection */}
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}>04. CARDS & SURFACES</Text>
-          <InteractiveSelection 
-            options={['OPTION 1 STATE', 'OPTION 2 STATE']}
-            selectedIndex={selectedIndex}
-            onSelect={setSelectedIndex}
-          />
-        </View>
+        ))}
 
       </ScrollView>
     </View>
@@ -110,61 +66,75 @@ const styles = StyleSheet.create({
     padding: 16,
     paddingBottom: 40,
   },
-  section: {
-    marginBottom: 40,
-    borderTopWidth: 1,
-    borderTopColor: COLORS.border,
-    paddingTop: 24,
+  mapContainer: {
+    height: 200,
+    marginBottom: 24,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: COLORS.border,
+    backgroundColor: COLORS.secondary,
+  },
+  mapImage: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  mapOverlay: {
+    alignItems: 'center',
+    gap: 8,
+  },
+  mapText: {
+    color: COLORS.primary,
+    fontWeight: 'bold',
+    letterSpacing: 2,
+    fontSize: 12,
   },
   sectionTitle: {
-    color: COLORS.primary,
-    fontSize: 14,
+    color: COLORS.textMuted,
+    fontSize: 12,
     fontWeight: 'bold',
-    fontStyle: 'italic',
-    marginBottom: 24,
+    letterSpacing: 2,
+    marginBottom: 16,
   },
-  colorRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  colorBlock: {
-    width: '30%',
-  },
-  colorBox: {
-    height: 80,
-    borderRadius: 8,
-    marginBottom: 8,
+  intelCard: {
+    backgroundColor: COLORS.secondary,
+    padding: 16,
+    borderRadius: 12,
+    marginBottom: 12,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
-  colorName: {
-    color: COLORS.text,
-    fontSize: 10,
-    fontWeight: 'bold',
-  },
-  colorHex: {
-    color: COLORS.textMuted,
-    fontSize: 10,
-  },
-  typeRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 16,
-  },
-  typeLabel: {
-    width: 80,
-    color: COLORS.textMuted,
-    fontSize: 10,
-  },
-  typeSample: {
-    color: COLORS.text,
-  },
-  buttonGrid: {
+  intelHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    gap: 12,
+    alignItems: 'flex-start',
+    marginBottom: 12,
   },
-  buttonCol: {
+  intelTitle: {
+    color: COLORS.text,
+    fontSize: 16,
+    fontWeight: 'bold',
     flex: 1,
+    marginRight: 12,
+  },
+  threatBadge: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+  },
+  threatText: {
+    color: COLORS.background,
+    fontSize: 10,
+    fontWeight: 'bold',
+    textTransform: 'uppercase',
+  },
+  intelFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+  },
+  intelLocation: {
+    color: COLORS.textMuted,
+    fontSize: 14,
   },
 });
