@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Pressable } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Switch, Pressable, Alert } from 'react-native';
 import { NavBar } from '../../components/NavBar';
 import { Feather } from '@expo/vector-icons';
 import { useTheme } from '../../theme';
-import { useRouter } from 'expo-router';
 
 export default function SettingsScreen() {
   const { theme, preference, setPreference, isDark } = useTheme();
-  const router = useRouter();
 
   const [haptic, setHaptic] = useState(true);
   const [notifications, setNotifications] = useState(false);
@@ -130,34 +128,68 @@ export default function SettingsScreen() {
           </View>
         </View>
 
-        {/* Developer & Design System Tools */}
+        {/* Account & Security */}
         <View style={styles.section}>
           <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>
-            DESIGN SYSTEM VERIFICATION
+            ACCOUNT & SECURITY
           </Text>
 
           <Pressable
-            onPress={() => router.push('/gallery')}
+            onPress={() =>
+              Alert.alert(
+                'SECURITY & PRIVACY PROTOCOLS',
+                'All telemetry data and tactical operations are end-to-end encrypted with zero local retention. Clearance Level: ALPHA-OPERATIVE.'
+              )
+            }
             style={[
               styles.settingRow,
               {
                 backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.primary,
+                borderColor: theme.colors.border,
                 borderRadius: theme.radius.lg,
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name="layers" size={20} color={theme.colors.primary} />
+              <Feather name="shield" size={20} color={theme.colors.primary} />
               <View>
                 <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                  Component Gallery
+                  Security & Privacy
                 </Text>
                 <Text style={[styles.settingSubtext, { color: theme.colors.textMuted }]}>
-                  View all Figma states in Light & Dark
+                  E2E Encrypted • Zero Data Retention
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={20} color={theme.colors.primary} />
+            <Feather name="chevron-right" size={20} color={theme.colors.textMuted} />
+          </Pressable>
+
+          <Pressable
+            onPress={() =>
+              Alert.alert(
+                'CLEARANCE LEVEL',
+                'Operative credentials verified. Active encryption standard: AES-256 Military Grade.'
+              )
+            }
+            style={[
+              styles.settingRow,
+              {
+                backgroundColor: theme.colors.surface,
+                borderColor: theme.colors.border,
+                borderRadius: theme.radius.lg,
+              },
+            ]}>
+            <View style={styles.settingLeft}>
+              <Feather name="lock" size={20} color={theme.colors.primary} />
+              <View>
+                <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
+                  Clearance Credentials
+                </Text>
+                <Text style={[styles.settingSubtext, { color: theme.colors.textMuted }]}>
+                  Level 4 Tactical Clearance
+                </Text>
+              </View>
+            </View>
+            <Feather name="chevron-right" size={20} color={theme.colors.textMuted} />
           </Pressable>
         </View>
 

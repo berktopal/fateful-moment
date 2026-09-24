@@ -10,3 +10,4 @@ export const getDecisionOptions = async (): Promise<DecisionOption[]> => {
   await new Promise((resolve) => setTimeout(resolve, 50));
   return DECISION_OPTIONS;
 };
+

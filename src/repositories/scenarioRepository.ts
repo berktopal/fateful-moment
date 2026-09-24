@@ -11,3 +11,4 @@ export const getScenarios = async (): Promise<Scenario[]> => {
   await new Promise((resolve) => setTimeout(resolve, 50));
   return SCENARIOS;
 };
+

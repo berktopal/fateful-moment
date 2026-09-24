@@ -22,3 +22,4 @@ This log documents the iterative engineering decisions, design-fidelity correcti
 * **Objective:** Establish `ThemeContext`, dual semantic palettes (Dark & Light), and upgrade design tokens.
 * **Dark Palette:** Grounded strictly in Style Guide tokens (`#00D3F3`, `#0F172A`, `#FB2C36`, `#020617`, `#1D293D`, `#F1F5F9`).
 * **Light Palette:** Carefully derived with WCAG AA compliance (using dark cyan `#0891B2` for readable text/icons on light surfaces, `#F8FAFC` background, and clean slate borders). Cinematic hero cards retain tactical dark contrast.
+
