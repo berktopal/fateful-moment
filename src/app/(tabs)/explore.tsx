@@ -3,15 +3,10 @@ import { View, Text, StyleSheet, ScrollView, ImageBackground } from 'react-nativ
 import { NavBar } from '../../components/NavBar';
 import { COLORS } from '../../constants/Colors';
 import { Feather } from '@expo/vector-icons';
-import { LinearGradient } from 'expo-linear-gradient';
+import { SPACING, RADIUS, TYPOGRAPHY } from '../../constants/Theme';
+import { INTEL_DATA } from '../../data/mockData';
 
 export default function ExploreScreen() {
-  const intelData = [
-    { id: '1', title: 'Rogue Drone Activity', location: 'Sector 7G', threat: 'High' },
-    { id: '2', title: 'Encrypted Transmission', location: 'Unknown', threat: 'Medium' },
-    { id: '3', title: 'Supply Drop Inbound', location: 'Alpha Base', threat: 'Low' },
-  ];
-
   return (
     <View style={styles.container}>
       <NavBar title="Intel" />
@@ -32,7 +27,7 @@ export default function ExploreScreen() {
 
         <Text style={styles.sectionTitle}>LATEST INTELLIGENCE</Text>
         
-        {intelData.map((intel) => (
+        {INTEL_DATA.map((intel) => (
           <View key={intel.id} style={styles.intelCard}>
             <View style={styles.intelHeader}>
               <Text style={styles.intelTitle}>{intel.title}</Text>
@@ -63,13 +58,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.background,
   },
   scrollContent: {
-    padding: 16,
-    paddingBottom: 40,
+    padding: SPACING.md,
+    paddingBottom: SPACING.xxl,
   },
   mapContainer: {
     height: 200,
-    marginBottom: 24,
-    borderRadius: 12,
+    marginBottom: SPACING.lg,
+    borderRadius: RADIUS.lg,
     borderWidth: 1,
     borderColor: COLORS.border,
     backgroundColor: COLORS.secondary,
@@ -81,26 +76,21 @@ const styles = StyleSheet.create({
   },
   mapOverlay: {
     alignItems: 'center',
-    gap: 8,
+    gap: SPACING.sm,
   },
   mapText: {
-    color: COLORS.primary,
-    fontWeight: 'bold',
-    letterSpacing: 2,
-    fontSize: 12,
+    ...TYPOGRAPHY.caption,
   },
   sectionTitle: {
+    ...TYPOGRAPHY.caption,
     color: COLORS.textMuted,
-    fontSize: 12,
-    fontWeight: 'bold',
-    letterSpacing: 2,
-    marginBottom: 16,
+    marginBottom: SPACING.md,
   },
   intelCard: {
     backgroundColor: COLORS.secondary,
-    padding: 16,
-    borderRadius: 12,
-    marginBottom: 12,
+    padding: SPACING.md,
+    borderRadius: RADIUS.lg,
+    marginBottom: SPACING.md,
     borderWidth: 1,
     borderColor: COLORS.border,
   },
