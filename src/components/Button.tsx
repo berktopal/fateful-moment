@@ -2,7 +2,7 @@ import React from 'react';
 import { TouchableOpacity, Text, StyleSheet, ViewStyle, TextStyle, ActivityIndicator } from 'react-native';
 import { COLORS } from '../constants/Colors';
 
-type ButtonVariant = 'primary' | 'secondary' | 'danger';
+type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'dark';
 
 type ButtonProps = {
   title: string;
@@ -25,12 +25,14 @@ export const Button = ({
     switch (variant) {
       case 'primary':
         return disabled
-          ? { backgroundColor: COLORS.border }
+          ? { backgroundColor: 'rgba(0, 211, 243, 0.15)' }
           : { backgroundColor: COLORS.primary };
       case 'secondary':
         return { backgroundColor: COLORS.secondary, borderColor: COLORS.border, borderWidth: 1 };
       case 'danger':
         return { backgroundColor: COLORS.accent };
+      case 'dark':
+        return { backgroundColor: 'rgba(15, 23, 42, 0.8)', borderColor: 'rgba(0, 211, 243, 0.3)', borderWidth: 1 };
       default:
         return { backgroundColor: COLORS.primary };
     }
@@ -39,11 +41,13 @@ export const Button = ({
   const getTextStyle = (): TextStyle => {
     switch (variant) {
       case 'primary':
-        return disabled ? { color: COLORS.textMuted } : { color: COLORS.background };
+        return disabled ? { color: COLORS.primary } : { color: COLORS.background };
       case 'secondary':
         return { color: COLORS.text };
       case 'danger':
         return { color: COLORS.text };
+      case 'dark':
+        return { color: COLORS.primary };
       default:
         return { color: COLORS.background };
     }

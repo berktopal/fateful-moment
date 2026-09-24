@@ -19,7 +19,7 @@ export const NavBar = ({ title, leftIcon, rightIcon, onLeftPress, onRightPress }
     <View style={[styles.container, { paddingTop: insets.top + 10 }]}>
       {leftIcon ? (
         <TouchableOpacity onPress={onLeftPress} style={styles.iconButton}>
-          <Feather name={leftIcon} size={20} color={COLORS.text} />
+          <Feather name={leftIcon} size={20} color={COLORS.textMuted} />
         </TouchableOpacity>
       ) : (
         <View style={styles.iconPlaceholder} />
@@ -29,7 +29,7 @@ export const NavBar = ({ title, leftIcon, rightIcon, onLeftPress, onRightPress }
 
       {rightIcon ? (
         <TouchableOpacity onPress={onRightPress} style={styles.iconButton}>
-          <Feather name={rightIcon} size={20} color={COLORS.text} />
+          <Feather name={rightIcon} size={20} color={COLORS.textMuted} />
         </TouchableOpacity>
       ) : (
         <View style={styles.iconPlaceholder} />
@@ -50,15 +50,19 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
   title: {
-    color: COLORS.primary,
-    fontSize: 20,
+    color: COLORS.text,
+    fontSize: 18,
     fontWeight: 'bold',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
-    fontStyle: 'italic',
+    letterSpacing: 0,
+    fontStyle: 'normal',
   },
   iconButton: {
-    padding: 8,
+    width: 36,
+    height: 36,
+    borderRadius: 8,
+    backgroundColor: 'transparent',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconPlaceholder: {
     width: 36,

@@ -44,7 +44,11 @@ export const ScenarioCard = ({
           </Text>
 
           <View style={[styles.footer, isLarge && styles.footerLarge]}>
-            <Button title={isLarge ? 'START SIMULATION' : 'START'} onPress={onStart} />
+            <Button 
+              title={isLarge ? 'START SIMULATION' : 'START'} 
+              onPress={onStart} 
+              variant={isLarge ? 'primary' : 'dark'}
+            />
           </View>
           
         </LinearGradient>
