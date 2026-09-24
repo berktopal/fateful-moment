@@ -5,6 +5,7 @@ import { COLORS } from '../../constants/Colors';
 import { Feather } from '@expo/vector-icons';
 import { SPACING, RADIUS, TYPOGRAPHY } from '../../constants/Theme';
 import { INTEL_DATA } from '../../data/mockData';
+import { OptionCard } from '../../components/OptionCard';
 
 export default function ExploreScreen() {
   return (
@@ -12,6 +13,13 @@ export default function ExploreScreen() {
       <NavBar title="Intel" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         
+        <Text style={styles.sectionTitle}>DECISION MATRIX</Text>
+        <OptionCard text="Hold position and observe" state="default" />
+        <OptionCard text="Initiate scanning protocol" state="active" />
+        <OptionCard text="Engage hostile targets" state="passive" />
+        <View style={{ height: SPACING.lg }} />
+
+        <Text style={styles.sectionTitle}>TERRAIN TOPOLOGY</Text>
         <View style={styles.mapContainer}>
           <ImageBackground 
             source={{ uri: 'https://images.unsplash.com/photo-1524661135-423995f22d0b?q=80&w=1000' }} 

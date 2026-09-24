@@ -17,3 +17,4 @@ export const COMMANDER_VITALS = [
   { label: 'Radiation Level', value: '0.02 Sv', danger: true },
   { label: 'System Integrity', value: '98.4%', highlight: true },
 ];
+

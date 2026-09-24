@@ -12,6 +12,9 @@ type ScenarioCardProps = {
   onStart: () => void;
   style?: ViewStyle;
   isLarge?: boolean;
+  isActive?: boolean;
+  iconName?: keyof typeof Feather.glyphMap;
+  headerText?: string;
 };
 
 export const ScenarioCard = ({
@@ -21,25 +24,28 @@ export const ScenarioCard = ({
   onStart,
   style,
   isLarge = false,
+  isActive = true,
+  iconName = 'activity',
+  headerText = 'SCENARIO TIME',
 }: ScenarioCardProps) => {
   return (
     <View style={[styles.container, style, isLarge && styles.containerLarge]}>
       <ImageBackground
         source={{ uri: imageUrl }}
         style={styles.imageBackground}
-        imageStyle={styles.imageRadius}>
+        imageStyle={[styles.imageRadius, !isActive && styles.imagePassive]}>
         <LinearGradient
           colors={['rgba(2,6,23,0.3)', 'rgba(2,6,23,0.9)']}
           style={styles.gradient}>
           
           <View style={[styles.header, isLarge && styles.headerLarge]}>
-            <Feather name="activity" size={16} color={COLORS.primary} style={styles.icon} />
-            <Text style={styles.subtitle}>SCENARIO TIME</Text>
+            <Feather name={iconName} size={16} color={!isActive ? COLORS.textMuted : COLORS.primary} style={styles.icon} />
+            <Text style={[styles.subtitle, !isActive && styles.subtitlePassive]}>{headerText}</Text>
           </View>
           
-          <Text style={[styles.title, isLarge && styles.titleLarge]}>{title}</Text>
+          <Text style={[styles.title, isLarge && styles.titleLarge, !isActive && styles.textPassive]}>{title}</Text>
           
-          <Text style={[styles.description, isLarge && styles.descriptionLarge]} numberOfLines={3}>
+          <Text style={[styles.description, isLarge && styles.descriptionLarge, !isActive && styles.textPassive]} numberOfLines={3}>
             {description}
           </Text>
 
@@ -48,6 +54,7 @@ export const ScenarioCard = ({
               title={isLarge ? 'START SIMULATION' : 'START'} 
               onPress={onStart} 
               variant={isLarge ? 'primary' : 'dark'}
+              disabled={!isActive}
             />
           </View>
           
@@ -127,4 +134,13 @@ const styles = StyleSheet.create({
   footerLarge: {
     alignItems: 'center',
   },
+  imagePassive: {
+    opacity: 0.4,
+  },
+  textPassive: {
+    color: 'rgba(255, 255, 255, 0.7)',
+  },
+  subtitlePassive: {
+    color: 'rgba(255, 255, 255, 0.5)',
+  }
 });

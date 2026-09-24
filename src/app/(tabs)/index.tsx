@@ -38,13 +38,16 @@ export default function HomeScreen() {
           isLarge
         />
         
-        {DUMMY_SCENARIOS.map((scenario) => (
+        {DUMMY_SCENARIOS.map((scenario, index) => (
           <ScenarioCard
             key={scenario.id}
             title={scenario.title}
             description={scenario.description}
             imageUrl={scenario.imageUrl}
             onStart={() => {}}
+            isActive={index === 0} // Only first one is active
+            iconName="clock"
+            headerText="0:00 min"
           />
         ))}
       </ScrollView>
