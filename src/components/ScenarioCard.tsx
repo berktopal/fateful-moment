@@ -32,7 +32,7 @@ export const ScenarioCard = ({
           colors={['rgba(2,6,23,0.3)', 'rgba(2,6,23,0.9)']}
           style={styles.gradient}>
           
-          <View style={styles.header}>
+          <View style={[styles.header, isLarge && styles.headerLarge]}>
             <Feather name="activity" size={16} color={COLORS.primary} style={styles.icon} />
             <Text style={styles.subtitle}>SCENARIO TIME</Text>
           </View>
@@ -86,6 +86,9 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 8,
+  },
+  headerLarge: {
+    justifyContent: 'center',
   },
   icon: {
     marginRight: 6,
