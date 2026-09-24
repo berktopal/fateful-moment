@@ -1,39 +1,89 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { COLORS } from '../constants/Colors';
+import { useTheme } from '../theme';
 
-type InteractiveSelectionProps = {
+export interface InteractiveSelectionProps {
   options: string[];
   selectedIndex: number;
   onSelect: (index: number) => void;
-};
+  title?: string;
+}
 
-export const InteractiveSelection = ({ options, selectedIndex, onSelect }: InteractiveSelectionProps) => {
+export const InteractiveSelection = ({
+  options,
+  selectedIndex,
+  onSelect,
+  title = 'INTERACTIVE PROTOCOL',
+}: InteractiveSelectionProps) => {
+  const { theme, isDark } = useTheme();
+
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          backgroundColor: theme.colors.surface,
+          borderRadius: theme.radius.lg,
+          borderColor: isDark ? 'rgba(0, 211, 243, 0.25)' : theme.colors.border,
+        },
+      ]}>
       <View style={styles.header}>
-        <Text style={styles.title}>INTERACTIVE SELECTION</Text>
-        <Feather name="check-circle" size={16} color={COLORS.primary} />
+        <Text style={[styles.title, { color: theme.colors.primary }]}>{title}</Text>
+        <Feather name="check-circle" size={15} color={theme.colors.primary} />
       </View>
-      
+
       <View style={styles.optionsContainer}>
         {options.map((option, index) => {
           const isSelected = index === selectedIndex;
-          
+
           return (
-            <TouchableOpacity 
-              key={index} 
-              style={[styles.option, isSelected && styles.optionSelected]}
+            <Pressable
+              key={index}
               onPress={() => onSelect(index)}
-            >
-              <Text style={[styles.optionText, isSelected && styles.optionTextSelected]}>
+              accessibilityRole="radio"
+              accessibilityState={{ selected: isSelected }}
+              style={[
+                styles.option,
+                {
+                  borderRadius: theme.radius.md,
+                  backgroundColor: isSelected
+                    ? isDark
+                      ? 'rgba(0, 211, 243, 0.14)'
+                      : 'rgba(8, 145, 178, 0.12)'
+                    : theme.colors.surfaceElevated,
+                  borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                },
+              ]}>
+              <Text
+                style={[
+                  styles.optionText,
+                  {
+                    color: isSelected ? theme.colors.primary : theme.colors.textPrimary,
+                    fontWeight: isSelected ? '700' : '500',
+                  },
+                ]}>
                 {option}
               </Text>
-              <View style={[styles.radio, isSelected && styles.radioSelected]}>
-                {isSelected && <View style={styles.radioInner} />}
+              <View
+                style={[
+                  styles.radio,
+                  {
+                    borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                  },
+                ]}>
+                {isSelected && (
+                  <View
+                    style={[
+                      styles.radioInner,
+                      {
+                        backgroundColor: theme.colors.primary,
+                      },
+                    ]}
+                  />
+                )}
               </View>
-            </TouchableOpacity>
+            </Pressable>
           );
         })}
       </View>
@@ -43,67 +93,49 @@ export const InteractiveSelection = ({ options, selectedIndex, onSelect }: Inter
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: 16,
-    padding: 20,
+    padding: 18,
     borderWidth: 1,
-    borderColor: 'rgba(0, 211, 243, 0.2)', // Slight cyan glow
+    marginVertical: 12,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 16,
+    marginBottom: 14,
   },
   title: {
-    color: COLORS.primary,
-    fontSize: 14,
-    fontWeight: 'bold',
-    fontStyle: 'italic',
+    fontSize: 12,
+    fontWeight: '800',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
   },
   optionsContainer: {
-    gap: 12,
+    gap: 10,
   },
   option: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: COLORS.background,
-    borderRadius: 8,
-    paddingVertical: 12,
+    paddingVertical: 13,
     paddingHorizontal: 16,
     borderWidth: 1,
-    borderColor: COLORS.border,
-  },
-  optionSelected: {
-    backgroundColor: COLORS.primary,
-    borderColor: COLORS.primary,
   },
   optionText: {
-    color: COLORS.textMuted,
     fontSize: 14,
-    fontWeight: '600',
-  },
-  optionTextSelected: {
-    color: COLORS.background,
+    flex: 1,
+    marginRight: 10,
   },
   radio: {
-    width: 16,
-    height: 16,
-    borderRadius: 8,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     borderWidth: 1.5,
-    borderColor: COLORS.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  radioSelected: {
-    borderColor: COLORS.background,
-  },
   radioInner: {
-    width: 6,
-    height: 6,
-    borderRadius: 3,
-    backgroundColor: COLORS.background,
+    width: 8,
+    height: 8,
+    borderRadius: 4,
   },
 });
-

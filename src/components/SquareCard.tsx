@@ -1,85 +1,124 @@
-import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, ViewStyle } from 'react-native';
+import React, { useRef } from 'react';
+import { View, Text, StyleSheet, ImageBackground, ViewStyle, Animated, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Feather } from '@expo/vector-icons';
-import { COLORS } from '../constants/Colors';
-import { RADIUS, SPACING, TYPOGRAPHY } from '../constants/Theme';
+import { useTheme } from '../theme';
 
-type SquareCardProps = {
+export interface SquareCardProps {
   title: string;
   subtitle: string;
   imageUrl?: string;
   iconName?: keyof typeof Feather.glyphMap;
   onPress?: () => void;
   style?: ViewStyle;
-};
+}
 
-export const SquareCard = ({ 
-  title, 
-  subtitle, 
-  imageUrl = 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000', 
+export const SquareCard = ({
+  title,
+  subtitle,
+  imageUrl = 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000',
   iconName = 'activity',
   onPress,
-  style 
+  style,
 }: SquareCardProps) => {
+  const { theme } = useTheme();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.96,
+      useNativeDriver: true,
+      speed: 26,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 26,
+    }).start();
+  };
+
   return (
-    <TouchableOpacity activeOpacity={0.9} onPress={onPress} style={[styles.container, style]}>
-      <ImageBackground 
-        source={{ uri: imageUrl }} 
-        style={styles.imageBackground}
-        imageStyle={styles.imageRadius}
-      >
-        <LinearGradient
-          colors={['transparent', 'rgba(2,6,23,0.9)']}
-          style={styles.gradient}
-        >
-          <View style={styles.content}>
-            <View style={styles.subtitleRow}>
-              <Feather name={iconName} size={14} color={COLORS.primary} />
-              <Text style={styles.subtitle}>{subtitle}</Text>
+    <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        style={[
+          styles.container,
+          {
+            borderRadius: theme.radius.lg,
+            borderColor: theme.colors.border,
+            backgroundColor: theme.colors.surface,
+          },
+        ]}>
+        <ImageBackground
+          source={{ uri: imageUrl }}
+          resizeMode="cover"
+          style={styles.imageBackground}
+          imageStyle={{ borderRadius: theme.radius.lg }}>
+          <LinearGradient
+            colors={['transparent', 'rgba(2,6,23,0.92)']}
+            style={styles.gradient}>
+            <View style={styles.content}>
+              <View style={styles.subtitleRow}>
+                <Feather name={iconName} size={13} color={theme.colors.primary} />
+                <Text style={[styles.subtitle, { color: theme.colors.primary }]}>{subtitle}</Text>
+              </View>
+              <Text style={styles.title} numberOfLines={1}>
+                {title}
+              </Text>
             </View>
-            <Text style={styles.title} numberOfLines={1}>{title}</Text>
-          </View>
-        </LinearGradient>
-      </ImageBackground>
-    </TouchableOpacity>
+          </LinearGradient>
+        </ImageBackground>
+      </Pressable>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    aspectRatio: 1, // To make it a perfect square
-    borderRadius: RADIUS.lg,
+    aspectRatio: 1,
     overflow: 'hidden',
-    backgroundColor: COLORS.secondary,
+    borderWidth: 1,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
   },
   imageBackground: {
     flex: 1,
-  },
-  imageRadius: {
-    borderRadius: RADIUS.lg,
+    width: '100%',
+    height: '100%',
   },
   gradient: {
     flex: 1,
     justifyContent: 'flex-end',
-    padding: SPACING.md,
+    padding: 14,
   },
   content: {
-    gap: SPACING.xs,
+    gap: 4,
   },
   subtitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: 5,
   },
   subtitle: {
-    ...TYPOGRAPHY.caption,
-    color: COLORS.primary,
+    fontSize: 11,
+    fontWeight: '800',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
   },
   title: {
-    ...TYPOGRAPHY.title,
-    fontSize: 16,
-    color: COLORS.text,
+    color: '#FFFFFF',
+    fontSize: 15,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
 });
-

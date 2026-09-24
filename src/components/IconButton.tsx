@@ -1,48 +1,77 @@
-import React from 'react';
-import { TouchableOpacity, StyleSheet, ViewStyle } from 'react-native';
+import React, { useRef } from 'react';
+import { StyleSheet, ViewStyle, Animated, Pressable } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { COLORS } from '../constants/Colors';
-import { RADIUS } from '../constants/Theme';
+import { useTheme } from '../theme';
 
-type IconButtonProps = {
+interface IconButtonProps {
   icon: keyof typeof Feather.glyphMap;
   onPress?: () => void;
   isActive?: boolean;
   style?: ViewStyle;
   size?: number;
-};
+  accessibilityLabel?: string;
+}
 
-export const IconButton = ({ icon, onPress, isActive = false, style, size = 20 }: IconButtonProps) => {
+export const IconButton = ({
+  icon,
+  onPress,
+  isActive = false,
+  style,
+  size = 20,
+  accessibilityLabel,
+}: IconButtonProps) => {
+  const { theme, isDark } = useTheme();
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.92,
+      useNativeDriver: true,
+      speed: 28,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      speed: 28,
+    }).start();
+  };
+
+  const activeBg = isDark ? 'rgba(0, 211, 243, 0.16)' : 'rgba(8, 145, 178, 0.16)';
+
   return (
-    <TouchableOpacity
-      onPress={onPress}
-      activeOpacity={0.8}
-      style={[
-        styles.container,
-        isActive && styles.activeContainer,
-        style
-      ]}
-    >
-      <Feather 
-        name={icon} 
-        size={size} 
-        color={isActive ? COLORS.primary : COLORS.textMuted} 
-      />
-    </TouchableOpacity>
+    <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
+      <Pressable
+        onPress={onPress}
+        onPressIn={handlePressIn}
+        onPressOut={handlePressOut}
+        accessibilityRole="button"
+        accessibilityLabel={accessibilityLabel || icon}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        style={[
+          styles.container,
+          {
+            borderRadius: theme.radius.md,
+            backgroundColor: isActive ? activeBg : 'transparent',
+          },
+        ]}>
+        <Feather
+          name={icon}
+          size={size}
+          color={isActive ? theme.colors.primary : theme.colors.textMuted}
+        />
+      </Pressable>
+    </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    width: 36,
-    height: 36,
-    borderRadius: RADIUS.md,
-    backgroundColor: 'transparent',
+    width: 40,
+    height: 40,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  activeContainer: {
-    backgroundColor: 'rgba(0, 211, 243, 0.15)', // Light cyan background for active state
-  },
 });
-

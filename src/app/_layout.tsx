@@ -1,24 +1,35 @@
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
-import { COLORS } from '../constants/Colors';
+import { ThemeProvider, useTheme } from '../theme';
 
-export default function RootLayout() {
+function RootLayoutNav() {
+  const { theme, isDark } = useTheme();
+
   return (
     <>
-      <StatusBar style="light" />
+      <StatusBar style={isDark ? 'light' : 'dark'} />
       <Stack
         screenOptions={{
           headerStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: theme.colors.background,
           },
-          headerTintColor: COLORS.text,
+          headerTintColor: theme.colors.textPrimary,
           headerShadowVisible: false,
           contentStyle: {
-            backgroundColor: COLORS.background,
+            backgroundColor: theme.colors.background,
           },
         }}>
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="gallery" options={{ headerShown: true, title: 'Design System Gallery' }} />
       </Stack>
     </>
+  );
+}
+
+export default function RootLayout() {
+  return (
+    <ThemeProvider>
+      <RootLayoutNav />
+    </ThemeProvider>
   );
 }

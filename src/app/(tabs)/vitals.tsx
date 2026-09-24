@@ -1,38 +1,68 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { COLORS } from '../../constants/Colors';
 import { Feather } from '@expo/vector-icons';
-import { SPACING, RADIUS, TYPOGRAPHY } from '../../constants/Theme';
+import { StatusBeacon } from '../../components/StatusBeacon';
+import { useTheme } from '../../theme';
 import { COMMANDER_VITALS } from '../../data/mockData';
 
 export default function VitalsScreen() {
+  const { theme } = useTheme();
   const [pulse, setPulse] = useState(84);
 
   const handleRefreshTelemetry = () => {
-    // Simulate real-time biometric jitter
-    const randomJitter = Math.floor(Math.random() * 5) - 2;
-    setPulse((prev) => Math.max(78, Math.min(96, prev + randomJitter)));
+    const jitter = Math.floor(Math.random() * 5) - 2;
+    setPulse((prev) => Math.max(78, Math.min(96, prev + jitter)));
   };
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <NavBar title="Vitals" rightIcon="activity" onRightPress={handleRefreshTelemetry} />
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
+        
+        {/* Heart Telemetry Header */}
         <View style={styles.header}>
-          <Feather name="heart" size={48} color={COLORS.primary} />
-          <Text style={styles.mainTitle}>Commander Health</Text>
+          <View style={styles.iconWrapper}>
+            <Feather name="heart" size={46} color={theme.colors.primary} />
+            <View style={styles.beaconOffset}>
+              <StatusBeacon status="online" size={10} />
+            </View>
+          </View>
+          <Text style={[styles.mainTitle, { color: theme.colors.textPrimary }]}>
+            Commander Health
+          </Text>
+          <Text style={[styles.subTitle, { color: theme.colors.textMuted }]}>
+            BIOMETRIC TELEMETRY FEED
+          </Text>
         </View>
 
-        <View style={styles.card}>
+        {/* Telemetry Card */}
+        <View
+          style={[
+            styles.card,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              borderRadius: theme.radius.lg,
+            },
+          ]}>
           {COMMANDER_VITALS.map((vital, index) => (
-            <View key={index} style={styles.statRow}>
-              <Text style={styles.statLabel}>{vital.label}</Text>
-              <Text style={[
-                styles.statValue, 
-                vital.danger && { color: COLORS.accent },
-                vital.label === 'Heart Rate' && { color: COLORS.primary }
+            <View
+              key={index}
+              style={[
+                styles.statRow,
+                { borderBottomColor: theme.colors.border },
+                index === COMMANDER_VITALS.length - 1 && { borderBottomWidth: 0 },
               ]}>
+              <Text style={[styles.statLabel, { color: theme.colors.textMuted }]}>
+                {vital.label}
+              </Text>
+              <Text
+                style={[
+                  styles.statValue,
+                  { color: theme.colors.primary },
+                  vital.danger && { color: theme.colors.accent },
+                ]}>
                 {vital.label === 'Heart Rate' ? `${pulse} BPM` : vital.value}
               </Text>
             </View>
@@ -46,43 +76,54 @@ export default function VitalsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   content: {
-    padding: SPACING.md,
+    padding: 16,
+    paddingBottom: 48,
   },
   header: {
     alignItems: 'center',
-    marginBottom: SPACING.xl,
-    marginTop: SPACING.lg,
+    marginBottom: 28,
+    marginTop: 16,
+  },
+  iconWrapper: {
+    position: 'relative',
+  },
+  beaconOffset: {
+    position: 'absolute',
+    top: -2,
+    right: -6,
   },
   mainTitle: {
-    ...TYPOGRAPHY.title,
-    fontSize: 24,
-    color: COLORS.text,
-    marginTop: SPACING.md,
+    fontSize: 22,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    marginTop: 14,
+    letterSpacing: 0.5,
+  },
+  subTitle: {
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+    marginTop: 4,
   },
   card: {
-    backgroundColor: COLORS.secondary,
-    borderRadius: RADIUS.lg,
-    padding: SPACING.lg,
+    padding: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
   },
   statRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: SPACING.md,
+    paddingVertical: 14,
     borderBottomWidth: 1,
-    borderBottomColor: COLORS.border,
   },
   statLabel: {
-    color: COLORS.textMuted,
-    fontSize: 16,
+    fontSize: 15,
   },
   statValue: {
-    color: COLORS.primary,
-    fontSize: 16,
-    fontWeight: 'bold',
+    fontSize: 15,
+    fontWeight: '800',
+    letterSpacing: 0.5,
   },
 });

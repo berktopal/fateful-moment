@@ -1,24 +1,41 @@
 import { Tabs } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { COLORS } from '../../constants/Colors';
 import { View, StyleSheet } from 'react-native';
+import { useTheme } from '../../theme';
 
 export default function TabLayout() {
+  const { theme, isDark } = useTheme();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarStyle: styles.tabBar,
-        tabBarActiveTintColor: COLORS.primary,
-        tabBarInactiveTintColor: COLORS.textMuted,
+        tabBarStyle: [
+          styles.tabBar,
+          {
+            backgroundColor: theme.colors.background,
+            borderTopColor: theme.colors.border,
+          },
+        ],
+        tabBarActiveTintColor: theme.colors.primary,
+        tabBarInactiveTintColor: theme.colors.textMuted,
         tabBarShowLabel: false,
       }}>
       <Tabs.Screen
         name="index"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="activity" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="activity" size={22} color={color} />
             </View>
           ),
         }}
@@ -26,9 +43,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="explore"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="compass" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="compass" size={22} color={color} />
             </View>
           ),
         }}
@@ -36,9 +62,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="vitals"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="heart" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="heart" size={22} color={color} />
             </View>
           ),
         }}
@@ -46,9 +81,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="profile"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="user" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="user" size={22} color={color} />
             </View>
           ),
         }}
@@ -56,9 +100,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="system"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="cpu" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="cpu" size={22} color={color} />
             </View>
           ),
         }}
@@ -66,9 +119,18 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          tabBarIcon: ({ color }) => (
-            <View style={styles.iconContainer}>
-              <Feather name="settings" size={24} color={color} />
+          tabBarIcon: ({ color, focused }) => (
+            <View
+              style={[
+                styles.iconContainer,
+                focused && {
+                  backgroundColor: isDark
+                    ? 'rgba(0, 211, 243, 0.12)'
+                    : 'rgba(8, 145, 178, 0.12)',
+                  borderRadius: 8,
+                },
+              ]}>
+              <Feather name="settings" size={22} color={color} />
             </View>
           ),
         }}
@@ -79,14 +141,14 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   tabBar: {
-    backgroundColor: COLORS.background,
-    borderTopColor: COLORS.border,
     borderTopWidth: 1,
-    height: 70,
-    paddingBottom: 10,
-    paddingTop: 10,
+    height: 68,
+    paddingBottom: 8,
+    paddingTop: 8,
   },
   iconContainer: {
+    width: 38,
+    height: 38,
     alignItems: 'center',
     justifyContent: 'center',
   },

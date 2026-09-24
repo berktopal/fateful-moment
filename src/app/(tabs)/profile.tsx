@@ -1,39 +1,97 @@
 import React from 'react';
-import { View, Text, StyleSheet, Image } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, Alert } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { COLORS } from '../../constants/Colors';
 import { Button } from '../../components/Button';
+import { StatusBeacon } from '../../components/StatusBeacon';
+import { useTheme } from '../../theme';
 
 export default function ProfileScreen() {
+  const { theme } = useTheme();
+
+  const handleEditProfile = () => {
+    Alert.alert('OPERATIVE PROFILE', 'Editing clearance credentials is restricted in trial mode.');
+  };
+
+  const handleLogout = () => {
+    Alert.alert('TERMINATE SESSION', 'Disconnecting operative link from command mainframe.', [
+      { text: 'ABORT', style: 'cancel' },
+      { text: 'DISCONNECT', style: 'destructive' },
+    ]);
+  };
+
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <NavBar title="Profile" />
-      <View style={styles.content}>
-        <View style={styles.avatarContainer}>
-          <Image 
-            source={{ uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200' }} 
-            style={styles.avatar} 
-          />
-        </View>
-        <Text style={styles.name}>Agent 47</Text>
-        <Text style={styles.rank}>Senior Field Operative</Text>
+      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
-        <View style={styles.statsContainer}>
-          <View style={styles.statBox}>
-            <Text style={styles.statNumber}>142</Text>
-            <Text style={styles.statLabel}>Missions</Text>
+        {/* Operative Avatar */}
+        <View style={styles.avatarWrapper}>
+          <View
+            style={[
+              styles.avatarContainer,
+              {
+                borderColor: theme.colors.primary,
+                backgroundColor: theme.colors.surface,
+              },
+            ]}>
+            <Image
+              source={{
+                uri: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=300',
+              }}
+              resizeMode="cover"
+              style={styles.avatar}
+            />
           </View>
-          <View style={styles.statBox}>
-            <Text style={styles.statNumber}>98%</Text>
-            <Text style={styles.statLabel}>Success Rate</Text>
+          <View style={styles.beaconPosition}>
+            <StatusBeacon status="online" size={12} />
           </View>
         </View>
 
-        <View style={styles.actionContainer}>
-          <Button title="Edit Profile" onPress={() => {}} variant="secondary" style={styles.button} />
-          <Button title="Log Out" onPress={() => {}} variant="danger" style={styles.button} />
+        <Text style={[styles.name, { color: theme.colors.textPrimary }]}>Agent 47</Text>
+        <Text style={[styles.rank, { color: theme.colors.primary }]}>
+          SENIOR FIELD OPERATIVE
+        </Text>
+
+        {/* Tactical Performance Metrics */}
+        <View
+          style={[
+            styles.statsContainer,
+            {
+              backgroundColor: theme.colors.surface,
+              borderColor: theme.colors.border,
+              borderRadius: theme.radius.lg,
+            },
+          ]}>
+          <View style={styles.statBox}>
+            <Text style={[styles.statNumber, { color: theme.colors.textPrimary }]}>142</Text>
+            <Text style={[styles.statLabel, { color: theme.colors.textMuted }]}>MISSIONS</Text>
+          </View>
+          <View style={[styles.statDivider, { backgroundColor: theme.colors.border }]} />
+          <View style={styles.statBox}>
+            <Text style={[styles.statNumber, { color: theme.colors.primary }]}>98%</Text>
+            <Text style={[styles.statLabel, { color: theme.colors.textMuted }]}>
+              SUCCESS RATE
+            </Text>
+          </View>
         </View>
-      </View>
+
+        {/* Action Controls */}
+        <View style={styles.actionContainer}>
+          <Button
+            title="EDIT OPERATIVE PROFILE"
+            onPress={handleEditProfile}
+            variant="secondary"
+            size="md"
+          />
+          <Button
+            title="TERMINATE SESSION"
+            onPress={handleLogout}
+            variant="danger"
+            size="md"
+          />
+        </View>
+
+      </ScrollView>
     </View>
   );
 }
@@ -41,69 +99,78 @@ export default function ProfileScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: COLORS.background,
   },
   content: {
-    flex: 1,
     alignItems: 'center',
     padding: 24,
+    paddingBottom: 48,
+  },
+  avatarWrapper: {
+    position: 'relative',
+    marginTop: 10,
+    marginBottom: 16,
   },
   avatarContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
+    width: 110,
+    height: 110,
+    borderRadius: 55,
     borderWidth: 2,
-    borderColor: COLORS.primary,
     overflow: 'hidden',
-    marginTop: 20,
-    marginBottom: 16,
   },
   avatar: {
     width: '100%',
     height: '100%',
   },
+  beaconPosition: {
+    position: 'absolute',
+    bottom: 2,
+    right: 4,
+  },
   name: {
-    color: COLORS.text,
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: 22,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   rank: {
-    color: COLORS.primary,
-    fontSize: 16,
+    fontSize: 12,
+    fontWeight: '700',
     marginTop: 4,
-    letterSpacing: 1,
+    letterSpacing: 1.5,
   },
   statsContainer: {
     flexDirection: 'row',
-    marginTop: 32,
+    marginTop: 28,
     width: '100%',
     justifyContent: 'space-around',
-    backgroundColor: COLORS.secondary,
-    padding: 20,
-    borderRadius: 12,
+    alignItems: 'center',
+    paddingVertical: 18,
+    paddingHorizontal: 20,
     borderWidth: 1,
-    borderColor: COLORS.border,
+  },
+  statDivider: {
+    width: 1,
+    height: 36,
   },
   statBox: {
     alignItems: 'center',
+    flex: 1,
   },
   statNumber: {
-    color: COLORS.text,
-    fontSize: 28,
-    fontWeight: 'bold',
+    fontSize: 26,
+    fontWeight: '900',
+    fontStyle: 'italic',
   },
   statLabel: {
-    color: COLORS.textMuted,
-    fontSize: 12,
+    fontSize: 10,
+    fontWeight: '700',
     marginTop: 4,
-    textTransform: 'uppercase',
+    letterSpacing: 1.2,
   },
   actionContainer: {
     width: '100%',
-    marginTop: 40,
-    gap: 16,
-  },
-  button: {
-    width: '100%',
+    marginTop: 34,
+    gap: 14,
   },
 });

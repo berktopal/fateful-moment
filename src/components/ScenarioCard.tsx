@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, ViewStyle } from 'react-native';
 import { Feather } from '@expo/vector-icons';
-import { COLORS } from '../constants/Colors';
 import { Button } from './Button';
 import { LinearGradient } from 'expo-linear-gradient';
+import { useTheme } from '../theme';
 
-type ScenarioCardProps = {
+export interface ScenarioCardProps {
   title: string;
   description: string;
   imageUrl?: string;
@@ -15,7 +15,7 @@ type ScenarioCardProps = {
   isActive?: boolean;
   iconName?: keyof typeof Feather.glyphMap;
   headerText?: string;
-};
+}
 
 export const ScenarioCard = ({
   title,
@@ -28,36 +28,76 @@ export const ScenarioCard = ({
   iconName = 'activity',
   headerText = 'SCENARIO TIME',
 }: ScenarioCardProps) => {
+  const { theme } = useTheme();
+
   return (
-    <View style={[styles.container, style, isLarge && styles.containerLarge]}>
+    <View
+      style={[
+        styles.container,
+        {
+          borderRadius: theme.radius.xl,
+          borderColor: isActive ? theme.colors.border : theme.colors.surfaceElevated,
+          backgroundColor: theme.colors.surface,
+        },
+        isLarge && styles.containerLarge,
+        style,
+      ]}>
       <ImageBackground
         source={{ uri: imageUrl }}
+        resizeMode="cover"
         style={styles.imageBackground}
-        imageStyle={[styles.imageRadius, !isActive && styles.imagePassive]}>
+        imageStyle={[
+          styles.imageRadius,
+          { borderRadius: theme.radius.xl },
+          !isActive && styles.imagePassive,
+        ]}>
         <LinearGradient
-          colors={['rgba(2,6,23,0.3)', 'rgba(2,6,23,0.9)']}
-          style={styles.gradient}>
-          
+          colors={theme.colors.cardOverlayGradient}
+          style={[styles.gradient, isLarge && styles.gradientLarge]}>
           <View style={[styles.header, isLarge && styles.headerLarge]}>
-            <Feather name={iconName} size={16} color={!isActive ? COLORS.textMuted : COLORS.primary} style={styles.icon} />
-            <Text style={[styles.subtitle, !isActive && styles.subtitlePassive]}>{headerText}</Text>
+            <Feather
+              name={iconName}
+              size={15}
+              color={!isActive ? theme.colors.textMuted : theme.colors.primary}
+              style={styles.icon}
+            />
+            <Text
+              style={[
+                styles.subtitle,
+                { color: !isActive ? theme.colors.textMuted : theme.colors.primary },
+              ]}>
+              {headerText}
+            </Text>
           </View>
-          
-          <Text style={[styles.title, isLarge && styles.titleLarge, !isActive && styles.textPassive]}>{title}</Text>
-          
-          <Text style={[styles.description, isLarge && styles.descriptionLarge, !isActive && styles.textPassive]} numberOfLines={3}>
+
+          <Text
+            style={[
+              styles.title,
+              isLarge && styles.titleLarge,
+              !isActive && { color: theme.colors.textMuted },
+            ]}>
+            {title}
+          </Text>
+
+          <Text
+            style={[
+              styles.description,
+              isLarge && styles.descriptionLarge,
+              !isActive && { color: theme.colors.textMuted },
+            ]}
+            numberOfLines={isLarge ? 4 : 3}>
             {description}
           </Text>
 
           <View style={[styles.footer, isLarge && styles.footerLarge]}>
-            <Button 
-              title={isLarge ? 'START SIMULATION' : 'START'} 
-              onPress={onStart} 
+            <Button
+              title={isLarge ? 'START SIMULATION' : 'START'}
+              onPress={onStart}
               variant={isLarge ? 'primary' : 'dark'}
+              size={isLarge ? 'lg' : 'md'}
               disabled={!isActive}
             />
           </View>
-          
         </LinearGradient>
       </ImageBackground>
     </View>
@@ -66,28 +106,33 @@ export const ScenarioCard = ({
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 16,
     overflow: 'hidden',
-    height: 240,
+    height: 245,
     marginBottom: 20,
-    backgroundColor: COLORS.secondary,
     borderWidth: 1,
-    borderColor: COLORS.border,
+    elevation: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.35,
+    shadowRadius: 8,
   },
   containerLarge: {
-    height: 300,
+    height: 310,
   },
   imageBackground: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   imageRadius: {
-    borderRadius: 16,
+    // configured dynamically via theme
   },
   gradient: {
     flex: 1,
     padding: 20,
     justifyContent: 'flex-end',
+  },
+  gradientLarge: {
+    padding: 24,
   },
   header: {
     flexDirection: 'row',
@@ -96,37 +141,40 @@ const styles = StyleSheet.create({
   },
   headerLarge: {
     justifyContent: 'center',
+    marginBottom: 12,
   },
   icon: {
     marginRight: 6,
   },
   subtitle: {
-    color: COLORS.primary,
-    fontSize: 12,
-    fontWeight: 'bold',
+    fontSize: 11,
+    fontWeight: '800',
     letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   title: {
-    color: COLORS.text,
+    color: '#FFFFFF',
     fontSize: 22,
     fontWeight: '900',
     fontStyle: 'italic',
     marginBottom: 8,
     textTransform: 'uppercase',
+    letterSpacing: 0.5,
   },
   titleLarge: {
     fontSize: 28,
     textAlign: 'center',
+    marginBottom: 10,
   },
   description: {
-    color: COLORS.textMuted,
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 20,
+    color: '#94A3B8',
+    fontSize: 13,
+    lineHeight: 19,
+    marginBottom: 18,
   },
   descriptionLarge: {
     textAlign: 'center',
-    marginBottom: 24,
+    marginBottom: 22,
   },
   footer: {
     alignItems: 'flex-end',
@@ -135,12 +183,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   imagePassive: {
-    opacity: 0.4,
+    opacity: 0.35,
   },
-  textPassive: {
-    color: 'rgba(255, 255, 255, 0.7)',
-  },
-  subtitlePassive: {
-    color: 'rgba(255, 255, 255, 0.5)',
-  }
 });
