@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { Feather } from '@expo/vector-icons';
+import { Icon } from '../../components/Icon';
 import { SquareCard } from '../../components/SquareCard';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { useTheme } from '../../theme';
@@ -39,7 +39,7 @@ export default function SystemScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <NavBar title="System" leftIcon="grid" />
+      <NavBar title="System" leftIcon="squiggle" rightIcon="grid" />
       <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
         
         {/* Aspect Ratio Controlled 2-Column Grid */}
@@ -85,7 +85,7 @@ export default function SystemScreen() {
                   borderRadius: theme.radius.sm,
                 },
               ]}>
-              <Feather name={mod.icon} size={22} color={theme.colors.primary} />
+              <Icon name={mod.icon} size={22} color={theme.colors.primary} />
             </View>
 
             <View style={styles.moduleInfo}>
@@ -101,7 +101,7 @@ export default function SystemScreen() {
               </Text>
             </View>
 
-            <Feather
+            <Icon
               name={mod.isWarning ? 'alert-triangle' : 'check-circle'}
               size={18}
               color={mod.isWarning ? theme.colors.accent : theme.colors.primary}

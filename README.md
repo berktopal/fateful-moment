@@ -11,11 +11,14 @@
   * **Light Theme:** Marka kimliğini koruyan, WCAG AA erişilebilirlik standartlarına uygun kontrast oranları ve dinamik tema geçiş altyapısı (`useTheme()`).
   * **Runtime Selector:** Ayarlar (Settings) sekmesinden anlık olarak System / Dark / Light geçişi yapılabilir.
 * **Tasarım Sistemi Bileşenleri (Atomic Components):**
-  * `Button`: Primary, Secondary, Danger, Dark varyantları; SM, MD, LG boyutları; dokunma esnasında yaylı ölçekleme animasyonu (`Animated.spring`).
-  * `TimerBar`: Figma'daki Cyan → Kırmızı degradeye sahip, animasyonlu operasyon geri sayım çubuğu.
+  * `Button`: Figma "Buttons" panosuyla birebir — Primary, Secondary, Neutral, Soft, Danger, Glass varyantları × Solid / Outline / Link görünümleri × SM, MD, LG boyutları; opsiyonel sağ ok ikonu ve yaylı basma animasyonu.
+  * `Icon`: Figma ikon seti Lucide olduğu için `lucide-react-native` üzerine ince bir sarmalayıcı; ikonlar tek tek import edilir, böylece bundle'a yalnızca kullanılanlar girer.
+  * `HudCard`: Stil rehberindeki "Standard Card Layout" (mono HUD etiketi, italik başlık, durum çipleri, kırmızı uyarı noktası).
+  * `TimerBar`: Stil rehberindeki ince Cyan → Kırmızı degradeli, animasyonlu geri sayım çubuğu.
+  * `ScanlineOverlay`: Gerçek yatay tarama çizgileri çizen CRT efekti.
   * `StatusBeacon`: Gerçek zamanlı sistem ve operatif durumunu simüle eden yanıp sönen (pulsing) yeşil/kırmızı gösterge halkaları.
   * `OptionCard`: Karar Matrisi (Decision Matrix) için Active (Cyan degrade), Default ve Passive durumları.
-  * `ScenarioCard`: Kriz brifing kartı (büyük ve standart boyutlar, kilitli/pasif soluk mod, buton durumları).
+  * `ScenarioCard`: Kriz brifing kartı — mono HUD başlığı ("0:00 min" / "SCENARIO BRIEFING"), cam (glass) Start butonu, kilitli senaryolar için Figma'daki buzlu pasif katman.
   * `SquareCard`: 1:1 en-boy oranı (`aspectRatio: 1`) korunarak resim sünmelerini önleyen arşiv ızgara kartı.
   * `NavBar`: Çentik ve Dinamik Ada (Safe Area) paylarına tam uyumlu başlık ve interaktif aksiyon barı.
 * **Tasarım Doğrulama Galerisi (`/gallery`):**
@@ -36,8 +39,9 @@
 
 1. **Bağımlılıkları yükleyin:**
    ```bash
-   npm install
+   npm install --legacy-peer-deps
    ```
+   > `--legacy-peer-deps` gereklidir: Expo'nun opsiyonel `react-dom@19.3` peer'ı ile projedeki `react@19.2.3` arasında npm'in katı çözümleyicisi çakışma bildirir (uygulamanın çalışmasını etkilemez).
 
 2. **Geliştirme sunucusunu başlatın:**
    ```bash
@@ -53,7 +57,7 @@
 
 ## 🤖 AI Araçları Kullanımı ve Mühendislik Yaklaşımı
 
-Proje geliştirme sürecinde yapay zeka (Antigravity/Gemini) bir **Staff-Level Pair Programmer** olarak konumlandırılmış, körü körüne kod üretimi yerine sıkı bir mühendislik döngüsü izlenmiştir:
+Proje geliştirme sürecinde yapay zeka araçları (Antigravity/Gemini ve Claude Code) bir **Staff-Level Pair Programmer** olarak konumlandırılmış, körü körüne kod üretimi yerine sıkı bir mühendislik döngüsü izlenmiştir:
 
 1. **Phase 0 – Mimari Analiz & Gap Tespiti:**
    Figma ekranları ile mevcut kod tabanı karşılaştırılarak renk sapmaları, eksik bileşenler (TimerBar, StatusBeacon, Light Mode) ve veri mimarisi eksikleri raporlandı.
@@ -65,6 +69,9 @@ Proje geliştirme sürecinde yapay zeka (Antigravity/Gemini) bir **Staff-Level P
    Dummy veriler `src/repositories/` katmanına soyutlandı.
 5. **Phase 4 – Doğrulama & Tip Denetimi:**
    `npx tsc --noEmit` ile tip açıkları giderildi.
+
+6. **Phase 5 – Figma Gap Audit (Claude Code):**
+   Figma ekran görüntüleri tüm bileşenlerle yeniden karşılaştırıldı; ikon seti Lucide'e taşındı, buton matrisi / kartlar / navigasyon Figma'ya hizalandı, iPhone'da tab bar'ın home indicator altında kalması ve `userInterfaceStyle: "light"` yüzünden System temasının çalışmaması gibi hatalar giderildi. `npx expo lint`, `npx tsc --noEmit` ve `npx expo-doctor` (21/21) temiz.
 
 Detaylı karar günlüğü için [`docs/AI_LOG.md`](docs/AI_LOG.md) dosyasını inceleyebilirsiniz.
 

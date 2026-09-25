@@ -1,14 +1,14 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ImageBackground, ViewStyle, Animated, Pressable } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ImageBackground, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Feather } from '@expo/vector-icons';
+import { Icon, IconName } from './Icon';
 import { useTheme } from '../theme';
 
 export interface SquareCardProps {
   title: string;
   subtitle: string;
   imageUrl?: string;
-  iconName?: keyof typeof Feather.glyphMap;
+  iconName?: IconName;
   onPress?: () => void;
   style?: ViewStyle;
 }
@@ -17,12 +17,12 @@ export const SquareCard = ({
   title,
   subtitle,
   imageUrl = 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000',
-  iconName = 'activity',
+  iconName = 'squiggle',
   onPress,
   style,
 }: SquareCardProps) => {
   const { theme } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useAnimatedValue(1);
 
   const handlePressIn = () => {
     Animated.spring(scaleAnim, {
@@ -49,7 +49,7 @@ export const SquareCard = ({
         style={[
           styles.container,
           {
-            borderRadius: theme.radius.lg,
+            borderRadius: theme.radius.xl + 4,
             borderColor: theme.colors.border,
             backgroundColor: theme.colors.surface,
           },
@@ -58,13 +58,13 @@ export const SquareCard = ({
           source={{ uri: imageUrl }}
           resizeMode="cover"
           style={styles.imageBackground}
-          imageStyle={{ borderRadius: theme.radius.lg }}>
+          imageStyle={{ borderRadius: theme.radius.xl + 4 }}>
           <LinearGradient
-            colors={['transparent', 'rgba(2,6,23,0.92)']}
+            colors={['transparent', 'rgba(2,6,23,0.55)', 'rgba(2,6,23,0.95)']}
             style={styles.gradient}>
             <View style={styles.content}>
               <View style={styles.subtitleRow}>
-                <Feather name={iconName} size={13} color={theme.colors.primary} />
+                <Icon name={iconName} size={14} color={theme.colors.primary} />
                 <Text style={[styles.subtitle, { color: theme.colors.primary }]}>{subtitle}</Text>
               </View>
               <Text style={styles.title} numberOfLines={1}>
@@ -85,9 +85,9 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     elevation: 3,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
-    shadowRadius: 4,
+    shadowRadius: 12,
   },
   imageBackground: {
     flex: 1,
@@ -97,7 +97,7 @@ const styles = StyleSheet.create({
   gradient: {
     flex: 1,
     justifyContent: 'flex-end',
-    padding: 14,
+    padding: 12,
   },
   content: {
     gap: 4,
@@ -108,17 +108,13 @@ const styles = StyleSheet.create({
     gap: 5,
   },
   subtitle: {
-    fontSize: 11,
+    fontSize: 12,
     fontWeight: '800',
-    letterSpacing: 1,
-    textTransform: 'uppercase',
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 15,
-    fontWeight: '900',
+    fontSize: 16,
+    fontWeight: '800',
     fontStyle: 'italic',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
 });

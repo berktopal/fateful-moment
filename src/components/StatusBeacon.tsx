@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Animated, ViewStyle } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Animated, ViewStyle, useAnimatedValue } from 'react-native';
 import { useTheme } from '../theme';
 
 interface StatusBeaconProps {
@@ -16,8 +16,8 @@ export const StatusBeacon = ({
   style,
 }: StatusBeaconProps) => {
   const { theme } = useTheme();
-  const pulseAnim = useRef(new Animated.Value(1)).current;
-  const opacityAnim = useRef(new Animated.Value(0.7)).current;
+  const pulseAnim = useAnimatedValue(1);
+  const opacityAnim = useAnimatedValue(0.7);
 
   useEffect(() => {
     if (!pulse) return;

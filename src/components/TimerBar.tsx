@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from 'react';
-import { View, StyleSheet, Text, Animated, ViewStyle } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text, Animated, ViewStyle, useAnimatedValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../theme';
+import { useTheme, MONO_FONT } from '../theme';
 
 interface TimerBarProps {
   progress?: number; // 0 to 1
@@ -13,11 +13,11 @@ interface TimerBarProps {
 export const TimerBar = ({
   progress = 0.75,
   durationSeconds,
-  label = 'MISSION WINDOW',
+  label = 'TIMER',
   style,
 }: TimerBarProps) => {
   const { theme } = useTheme();
-  const animatedWidth = useRef(new Animated.Value(progress)).current;
+  const animatedWidth = useAnimatedValue(progress);
 
   useEffect(() => {
     Animated.timing(animatedWidth, {
@@ -25,7 +25,7 @@ export const TimerBar = ({
       duration: 600,
       useNativeDriver: false,
     }).start();
-  }, [progress]);
+  }, [progress, animatedWidth]);
 
   const widthInterpolation = animatedWidth.interpolate({
     inputRange: [0, 1],
@@ -40,10 +40,10 @@ export const TimerBar = ({
           {Math.round(progress * 100)}%
         </Text>
       </View>
-      <View style={[styles.track, { backgroundColor: theme.colors.surfaceElevated, borderColor: theme.colors.border }]}>
+      <View style={[styles.track, { backgroundColor: theme.colors.surfaceElevated }]}>
         <Animated.View style={[styles.barContainer, { width: widthInterpolation }]}>
           <LinearGradient
-            colors={[theme.colors.primary, '#F59E0B', theme.colors.accent]}
+            colors={[theme.colors.primary, '#7C8BA1', theme.colors.accent]}
             start={{ x: 0, y: 0.5 }}
             end={{ x: 1, y: 0.5 }}
             style={styles.gradient}
@@ -64,19 +64,18 @@ const styles = StyleSheet.create({
     marginBottom: 6,
   },
   label: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontFamily: MONO_FONT,
+    fontSize: 10,
     letterSpacing: 1.5,
   },
   percent: {
-    fontSize: 11,
-    fontWeight: '700',
+    fontFamily: MONO_FONT,
+    fontSize: 10,
     letterSpacing: 1,
   },
   track: {
-    height: 8,
-    borderRadius: 4,
-    borderWidth: 1,
+    height: 5,
+    borderRadius: 3,
     overflow: 'hidden',
   },
   barContainer: {
@@ -84,7 +83,7 @@ const styles = StyleSheet.create({
   },
   gradient: {
     flex: 1,
-    borderRadius: 4,
+    borderRadius: 3,
   },
 });
 

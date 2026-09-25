@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import { Feather } from '@expo/vector-icons';
+import { Icon } from './Icon';
 import { useTheme } from '../theme';
 
 export interface InteractiveSelectionProps {
@@ -14,23 +14,24 @@ export const InteractiveSelection = ({
   options,
   selectedIndex,
   onSelect,
-  title = 'INTERACTIVE PROTOCOL',
+  title = 'Interactive Selection',
 }: InteractiveSelectionProps) => {
   const { theme, isDark } = useTheme();
+  const selectedFill = isDark ? '#0092B8' : theme.colors.primary;
 
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: theme.colors.surface,
-          borderRadius: theme.radius.lg,
-          borderColor: isDark ? 'rgba(0, 211, 243, 0.25)' : theme.colors.border,
+          backgroundColor: isDark ? '#020C1B' : theme.colors.surface,
+          borderRadius: theme.radius.xl + 8,
+          borderColor: theme.colors.border,
         },
       ]}>
       <View style={styles.header}>
         <Text style={[styles.title, { color: theme.colors.primary }]}>{title}</Text>
-        <Feather name="check-circle" size={15} color={theme.colors.primary} />
+        <Icon name="check-circle" size={20} color={theme.colors.primary} />
       </View>
 
       <View style={styles.optionsContainer}>
@@ -47,20 +48,16 @@ export const InteractiveSelection = ({
                 styles.option,
                 {
                   borderRadius: theme.radius.md,
-                  backgroundColor: isSelected
-                    ? isDark
-                      ? 'rgba(0, 211, 243, 0.14)'
-                      : 'rgba(8, 145, 178, 0.12)'
-                    : theme.colors.surfaceElevated,
-                  borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                  // Style guide: selected option is a solid cyan bar, others are outlined.
+                  backgroundColor: isSelected ? selectedFill : 'transparent',
+                  borderColor: isSelected ? selectedFill : theme.colors.border,
                 },
               ]}>
               <Text
                 style={[
                   styles.optionText,
                   {
-                    color: isSelected ? theme.colors.primary : theme.colors.textPrimary,
-                    fontWeight: isSelected ? '700' : '500',
+                    color: isSelected ? theme.colors.onPrimary : theme.colors.textMuted,
                   },
                 ]}>
                 {option}
@@ -69,7 +66,7 @@ export const InteractiveSelection = ({
                 style={[
                   styles.radio,
                   {
-                    borderColor: isSelected ? theme.colors.primary : theme.colors.border,
+                    borderColor: isSelected ? theme.colors.onPrimary : theme.colors.textMuted,
                   },
                 ]}>
                 {isSelected && (
@@ -77,7 +74,7 @@ export const InteractiveSelection = ({
                     style={[
                       styles.radioInner,
                       {
-                        backgroundColor: theme.colors.primary,
+                        backgroundColor: theme.colors.onPrimary,
                       },
                     ]}
                   />
@@ -93,7 +90,7 @@ export const InteractiveSelection = ({
 
 const styles = StyleSheet.create({
   container: {
-    padding: 18,
+    padding: 24,
     borderWidth: 1,
     marginVertical: 12,
   },
@@ -104,9 +101,10 @@ const styles = StyleSheet.create({
     marginBottom: 14,
   },
   title: {
-    fontSize: 12,
-    fontWeight: '800',
-    letterSpacing: 1.5,
+    fontSize: 17,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    letterSpacing: -0.3,
     textTransform: 'uppercase',
   },
   optionsContainer: {
@@ -121,7 +119,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   optionText: {
-    fontSize: 14,
+    fontSize: 12,
+    fontWeight: '700',
+    letterSpacing: 1.5,
+    textTransform: 'uppercase',
     flex: 1,
     marginRight: 10,
   },
@@ -129,13 +130,13 @@ const styles = StyleSheet.create({
     width: 18,
     height: 18,
     borderRadius: 9,
-    borderWidth: 1.5,
+    borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
   },
   radioInner: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
+    width: 12,
+    height: 12,
+    borderRadius: 6,
   },
 });

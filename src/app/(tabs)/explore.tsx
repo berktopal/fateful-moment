@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, ImageBackground, ActivityIndicator } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { Feather } from '@expo/vector-icons';
+import { Icon } from '../../components/Icon';
 import { useTheme } from '../../theme';
 import { OptionCard } from '../../components/OptionCard';
 import { StatusBeacon } from '../../components/StatusBeacon';
+import { HudCard } from '../../components/HudCard';
 import { getIntelData, getDecisionOptions } from '../../repositories/intelRepository';
 import { IntelItem, DecisionOption } from '../../types';
 
@@ -77,7 +78,7 @@ export default function ExploreScreen() {
                 style={styles.mapImage}
                 imageStyle={{ borderRadius: theme.radius.lg, opacity: 0.45 }}>
                 <View style={styles.mapOverlay}>
-                  <Feather name="crosshair" size={44} color={theme.colors.primary} />
+                  <Icon name="crosshair" size={44} color={theme.colors.primary} />
                   <Text style={[styles.mapText, { color: theme.colors.primary }]}>
                     SCANNING ACTIVE SECTORS...
                   </Text>
@@ -94,39 +95,13 @@ export default function ExploreScreen() {
             </View>
 
             {intelData.map((intel) => (
-              <View
+              <HudCard
                 key={intel.id}
-                style={[
-                  styles.intelCard,
-                  {
-                    backgroundColor: theme.colors.surface,
-                    borderRadius: theme.radius.lg,
-                    borderColor: theme.colors.border,
-                  },
-                ]}>
-                <View style={styles.intelHeader}>
-                  <Text style={[styles.intelTitle, { color: theme.colors.textPrimary }]}>
-                    {intel.title}
-                  </Text>
-                  <View
-                    style={[
-                      styles.threatBadge,
-                      intel.threat === 'High'
-                        ? { backgroundColor: theme.colors.accent }
-                        : intel.threat === 'Medium'
-                        ? { backgroundColor: '#F59E0B' }
-                        : { backgroundColor: theme.colors.primary },
-                    ]}>
-                    <Text style={styles.threatText}>{intel.threat}</Text>
-                  </View>
-                </View>
-                <View style={styles.intelFooter}>
-                  <Feather name="map-pin" size={13} color={theme.colors.textMuted} />
-                  <Text style={[styles.intelLocation, { color: theme.colors.textMuted }]}>
-                    {intel.location}
-                  </Text>
-                </View>
-              </View>
+                tag={`INTEL_${intel.id.padStart(2, '0')} // ${intel.location}`}
+                title={intel.title}
+                chips={[`THREAT: ${intel.threat}`]}
+                alert={intel.threat === 'High'}
+              />
             ))}
           </>
         )}
@@ -174,41 +149,5 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '800',
     letterSpacing: 1.5,
-  },
-  intelCard: {
-    padding: 16,
-    marginBottom: 12,
-    borderWidth: 1,
-  },
-  intelHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 10,
-  },
-  intelTitle: {
-    fontSize: 15,
-    fontWeight: '700',
-    flex: 1,
-    marginRight: 12,
-  },
-  threatBadge: {
-    paddingHorizontal: 7,
-    paddingVertical: 3,
-    borderRadius: 4,
-  },
-  threatText: {
-    color: '#020617',
-    fontSize: 10,
-    fontWeight: '800',
-    textTransform: 'uppercase',
-  },
-  intelFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 6,
-  },
-  intelLocation: {
-    fontSize: 13,
   },
 });

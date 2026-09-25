@@ -37,7 +37,7 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <NavBar title="War Room Alpha" rightIcon="bell" />
+      <NavBar title="War Room Alpha" leftIcon="squiggle" rightIcon="bell-dot" />
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
         {loading ? (
           <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 40 }} />
@@ -49,15 +49,14 @@ export default function HomeScreen() {
                 title={featured.title}
                 description={featured.description}
                 imageUrl={featured.imageUrl}
-                headerText={`CRITICAL PROTOCOL • ${featured.duration}`}
-                iconName="activity"
+                headerText="Scenario Briefing"
                 onStart={() => handleStartMission(featured)}
                 isLarge
               />
             )}
 
             {/* Tactical Mission Timer Bar (Figma Style Guide) */}
-            <TimerBar progress={0.68} label="ACTIVE OPERATION WINDOW" />
+            <TimerBar progress={0.68} label={`OPERATION WINDOW // ${featured?.duration ?? ''}`} />
 
             <View style={{ height: theme.spacing.md }} />
 
@@ -70,8 +69,8 @@ export default function HomeScreen() {
                 imageUrl={scenario.imageUrl}
                 onStart={() => handleStartMission(scenario)}
                 isActive={scenario.isActive}
-                iconName="clock"
-                headerText={scenario.isActive ? scenario.duration : `LOCKED • ${scenario.duration}`}
+                iconName="alarm-clock"
+                headerText={scenario.isActive ? scenario.duration : `Locked · ${scenario.duration}`}
               />
             ))}
           </>

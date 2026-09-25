@@ -2,9 +2,9 @@ import { Scenario, IntelItem, SystemModule, CommanderVital, DecisionOption } fro
 
 export const FEATURED_SCENARIO: Scenario = {
   id: 'featured-1',
-  title: 'GLOBAL CRISIS',
+  title: 'Global Crisis',
   description: 'A worldwide alert has been triggered. Assemble your team, analyze the threat vectors, and execute the protocol that will define the fate of millions.',
-  duration: '45 MIN',
+  duration: '45:00 min',
   threatLevel: 'CRITICAL',
   imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=2000&auto=format&fit=crop',
   isActive: true,
@@ -13,27 +13,27 @@ export const FEATURED_SCENARIO: Scenario = {
 export const SCENARIOS: Scenario[] = [
   {
     id: '1',
-    title: 'OPERATION MIDNIGHT',
+    title: 'Operation Midnight',
     description: 'Infiltrate the secure compound and extract the VIP before dawn. Stealth is critical, every choice matters.',
-    duration: '15 MIN',
+    duration: '15:00 min',
     threatLevel: 'HIGH',
     imageUrl: 'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?q=80&w=2000&auto=format&fit=crop',
     isActive: true,
   },
   {
     id: '2',
-    title: 'CYBER HEIST',
+    title: 'Cyber Heist',
     description: 'Breach the mainframe of a mega-corporation. Hack the firewalls, avoid detection, and secure the encrypted payload.',
-    duration: '25 MIN',
+    duration: '25:00 min',
     threatLevel: 'MEDIUM',
     imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=2000&auto=format&fit=crop',
     isActive: false, // Locked / passive
   },
   {
     id: '3',
-    title: 'FALLOUT RESCUE',
+    title: 'Fallout Rescue',
     description: 'Navigate through a post-apocalyptic wasteland to rescue operatives trapped in a compromised subterranean bunker.',
-    duration: '40 MIN',
+    duration: '40:00 min',
     threatLevel: 'CRITICAL',
     imageUrl: 'https://images.unsplash.com/photo-1483086431886-3590a88317fe?q=80&w=2000&auto=format&fit=crop',
     isActive: false, // Locked / passive

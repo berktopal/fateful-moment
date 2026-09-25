@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, Switch, Pressable, Alert } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { Feather } from '@expo/vector-icons';
+import { Icon } from '../../components/Icon';
 import { useTheme } from '../../theme';
 
 export default function SettingsScreen() {
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name={isDark ? 'moon' : 'sun'} size={20} color={theme.colors.primary} />
+              <Icon name={isDark ? 'moon' : 'sun'} size={20} color={theme.colors.primary} />
               <View>
                 <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
                   Interface Theme
@@ -91,7 +91,7 @@ export default function SettingsScreen() {
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name="bell" size={20} color={theme.colors.primary} />
+              <Icon name="bell" size={20} color={theme.colors.primary} />
               <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
                 Encrypted Notifications
               </Text>
@@ -114,7 +114,7 @@ export default function SettingsScreen() {
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name="smartphone" size={20} color={theme.colors.primary} />
+              <Icon name="smartphone" size={20} color={theme.colors.primary} />
               <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
                 Haptic Actuation
               </Text>
@@ -150,7 +150,7 @@ export default function SettingsScreen() {
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name="shield" size={20} color={theme.colors.primary} />
+              <Icon name="shield" size={20} color={theme.colors.primary} />
               <View>
                 <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
                   Security & Privacy
@@ -160,7 +160,7 @@ export default function SettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={20} color={theme.colors.textMuted} />
+            <Icon name="chevron-right" size={20} color={theme.colors.textMuted} />
           </Pressable>
 
           <Pressable
@@ -179,7 +179,7 @@ export default function SettingsScreen() {
               },
             ]}>
             <View style={styles.settingLeft}>
-              <Feather name="lock" size={20} color={theme.colors.primary} />
+              <Icon name="lock" size={20} color={theme.colors.primary} />
               <View>
                 <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
                   Clearance Credentials
@@ -189,7 +189,7 @@ export default function SettingsScreen() {
                 </Text>
               </View>
             </View>
-            <Feather name="chevron-right" size={20} color={theme.colors.textMuted} />
+            <Icon name="chevron-right" size={20} color={theme.colors.textMuted} />
           </Pressable>
         </View>
 

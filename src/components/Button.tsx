@@ -1,4 +1,4 @@
-import React, { useRef } from 'react';
+import React from 'react';
 import {
   Text,
   StyleSheet,
@@ -7,149 +7,136 @@ import {
   ActivityIndicator,
   Animated,
   Pressable,
+  useAnimatedValue,
 } from 'react-native';
-import { useTheme } from '../theme';
+import { Icon, IconName } from './Icon';
+import { useTheme, ThemeTokens } from '../theme';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'dark';
+/**
+ * Figma "Buttons" board: 6 colour variants × 3 appearances (solid / outline / link) × 3 sizes.
+ * `glass` is the translucent Start button that sits on top of scenario imagery.
+ */
+export type ButtonVariant = 'primary' | 'secondary' | 'danger' | 'neutral' | 'soft' | 'glass';
+export type ButtonAppearance = 'solid' | 'outline' | 'link';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 export interface ButtonProps {
   title: string;
   onPress: () => void;
   variant?: ButtonVariant;
+  appearance?: ButtonAppearance;
   size?: ButtonSize;
+  /** Trailing icon, e.g. the Figma `arrow-right`. */
+  icon?: IconName;
   disabled?: boolean;
   loading?: boolean;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
 
+interface Palette {
+  fill: string;
+  border: string;
+  text: string;
+}
+
+const getPalette = (variant: ButtonVariant, theme: ThemeTokens, isDark: boolean): Palette => {
+  const { colors } = theme;
+  const tint = isDark ? 'rgba(0, 211, 243, 0.14)' : 'rgba(8, 145, 178, 0.12)';
+
+  switch (variant) {
+    case 'secondary':
+      // Figma: Slate 900 pill; on light surfaces it stays dark for contrast.
+      return isDark
+        ? { fill: colors.surface, border: colors.border, text: colors.textPrimary }
+        : { fill: colors.textPrimary, border: colors.textPrimary, text: '#FFFFFF' };
+    case 'danger':
+      return { fill: colors.danger, border: colors.danger, text: '#FFFFFF' };
+    case 'neutral':
+      return { fill: colors.textMuted, border: colors.textMuted, text: '#FFFFFF' };
+    case 'soft':
+      return { fill: tint, border: 'transparent', text: colors.primary };
+    case 'glass':
+      return { fill: colors.glass, border: colors.glassBorder, text: colors.primary };
+    case 'primary':
+    default:
+      return { fill: colors.primary, border: colors.primary, text: colors.onPrimary };
+  }
+};
+
+const SIZES: Record<ButtonSize, { container: ViewStyle; fontSize: number; icon: number }> = {
+  sm: { container: { paddingVertical: 7, paddingHorizontal: 12 }, fontSize: 12, icon: 14 },
+  md: { container: { paddingVertical: 11, paddingHorizontal: 18 }, fontSize: 14, icon: 16 },
+  lg: { container: { paddingVertical: 15, paddingHorizontal: 26 }, fontSize: 16, icon: 18 },
+};
+
 export const Button = ({
   title,
   onPress,
   variant = 'primary',
+  appearance = 'solid',
   size = 'md',
+  icon,
   disabled = false,
   loading = false,
   style,
   textStyle,
 }: ButtonProps) => {
   const { theme, isDark } = useTheme();
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const scaleAnim = useAnimatedValue(1);
 
-  const handlePressIn = () => {
-    if (disabled || loading) return;
-    Animated.spring(scaleAnim, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 24,
-      bounciness: 4,
-    }).start();
-  };
+  const animateTo = (toValue: number) =>
+    Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 24, bounciness: 4 }).start();
 
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 24,
-      bounciness: 4,
-    }).start();
-  };
+  // A disabled primary renders as the Figma "soft" tint rather than just fading out.
+  const effectiveVariant = disabled && variant === 'primary' ? 'soft' : variant;
+  const palette = getPalette(effectiveVariant, theme, isDark);
+  const sizeSpec = SIZES[size];
 
-  const getSizeStyle = (): ViewStyle => {
-    switch (size) {
-      case 'sm':
-        return { paddingVertical: 8, paddingHorizontal: 14, borderRadius: theme.radius.sm };
-      case 'lg':
-        return { paddingVertical: 18, paddingHorizontal: 32, borderRadius: theme.radius.lg };
-      case 'md':
-      default:
-        return { paddingVertical: 13, paddingHorizontal: 22, borderRadius: theme.radius.md };
-    }
-  };
+  const containerStyle: ViewStyle =
+    appearance === 'solid'
+      ? { backgroundColor: palette.fill, borderColor: palette.border }
+      : appearance === 'outline'
+        ? { backgroundColor: 'transparent', borderColor: variant === 'soft' ? palette.text : palette.fill }
+        : { backgroundColor: 'transparent', borderColor: 'transparent', paddingHorizontal: 0 };
 
-  const getTextSizeStyle = (): TextStyle => {
-    switch (size) {
-      case 'sm':
-        return { fontSize: 11, letterSpacing: 0.8 };
-      case 'lg':
-        return { fontSize: 15, letterSpacing: 1.2 };
-      case 'md':
-      default:
-        return { fontSize: 13, letterSpacing: 1 };
-    }
-  };
+  // Outline/link buttons draw their label in the variant's accent colour.
+  const textColor =
+    appearance === 'solid'
+      ? palette.text
+      : variant === 'primary' || variant === 'soft' || variant === 'glass'
+        ? theme.colors.primary
+        : variant === 'secondary'
+          ? theme.colors.textPrimary
+          : palette.fill;
 
-  const getContainerStyle = (): ViewStyle => {
-    switch (variant) {
-      case 'primary':
-        return disabled
-          ? {
-              backgroundColor: isDark ? 'rgba(0, 211, 243, 0.12)' : 'rgba(8, 145, 178, 0.12)',
-              borderColor: 'transparent',
-              borderWidth: 1,
-            }
-          : {
-              backgroundColor: theme.colors.primary,
-              borderColor: theme.colors.primary,
-              borderWidth: 1,
-            };
-      case 'secondary':
-        return {
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.border,
-          borderWidth: 1,
-        };
-      case 'danger':
-        return {
-          backgroundColor: theme.colors.danger,
-          borderColor: theme.colors.danger,
-          borderWidth: 1,
-        };
-      case 'dark':
-        return {
-          backgroundColor: isDark ? 'rgba(15, 23, 42, 0.85)' : theme.colors.surfaceElevated,
-          borderColor: isDark ? 'rgba(0, 211, 243, 0.35)' : theme.colors.borderActive,
-          borderWidth: 1,
-        };
-      default:
-        return {
-          backgroundColor: theme.colors.primary,
-        };
-    }
-  };
-
-  const getTextColor = (): string => {
-    switch (variant) {
-      case 'primary':
-        return disabled ? theme.colors.primary : theme.colors.onPrimary;
-      case 'secondary':
-        return theme.colors.textPrimary;
-      case 'danger':
-        return '#FFFFFF';
-      case 'dark':
-        return theme.colors.primary;
-      default:
-        return theme.colors.onPrimary;
-    }
-  };
+  const isInactive = disabled || loading;
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
       <Pressable
         onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        disabled={disabled || loading}
+        onPressIn={() => !isInactive && animateTo(0.96)}
+        onPressOut={() => animateTo(1)}
+        disabled={isInactive}
         accessibilityRole="button"
-        accessibilityState={{ disabled: disabled || loading }}
-        style={[styles.base, getSizeStyle(), getContainerStyle()]}>
+        accessibilityState={{ disabled: isInactive }}
+        style={[
+          styles.base,
+          { borderRadius: theme.radius.lg },
+          sizeSpec.container,
+          containerStyle,
+          disabled && effectiveVariant !== 'soft' && styles.disabled,
+        ]}>
         {loading ? (
-          <ActivityIndicator color={getTextColor()} size="small" />
+          <ActivityIndicator color={textColor} size="small" />
         ) : (
-          <Text style={[styles.text, getTextSizeStyle(), { color: getTextColor() }, textStyle]}>
-            {title}
-          </Text>
+          <>
+            <Text style={[styles.text, { fontSize: sizeSpec.fontSize, color: textColor }, textStyle]}>
+              {title}
+            </Text>
+            {icon && <Icon name={icon} size={sizeSpec.icon} color={textColor} />}
+          </>
         )}
       </Pressable>
     </Animated.View>
@@ -158,12 +145,17 @@ export const Button = ({
 
 const styles = StyleSheet.create({
   base: {
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+    gap: 8,
+    borderWidth: 1,
   },
   text: {
-    fontWeight: '800',
-    fontStyle: 'italic',
-    textTransform: 'uppercase',
+    fontWeight: '700',
+    letterSpacing: 0.3,
+  },
+  disabled: {
+    opacity: 0.45,
   },
 });

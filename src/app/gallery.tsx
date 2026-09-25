@@ -7,6 +7,14 @@ import { TimerBar } from '../components/TimerBar';
 import { StatusBeacon } from '../components/StatusBeacon';
 import { SquareCard } from '../components/SquareCard';
 import { InteractiveSelection } from '../components/InteractiveSelection';
+import { IconButton } from '../components/IconButton';
+import { HudCard } from '../components/HudCard';
+import { ScanlineOverlay } from '../components/ScanlineOverlay';
+import { ScenarioCard } from '../components/ScenarioCard';
+import type { ButtonAppearance, ButtonVariant } from '../components/Button';
+
+const BUTTON_VARIANTS: ButtonVariant[] = ['primary', 'secondary', 'neutral', 'soft', 'danger'];
+const BUTTON_APPEARANCES: ButtonAppearance[] = ['solid', 'outline', 'link'];
 
 export default function GalleryScreen() {
   const { theme, preference, setPreference, isDark } = useTheme();
@@ -76,18 +84,71 @@ export default function GalleryScreen() {
         <TimerBar progress={0.35} label="SECURITY OVERRIDE" />
       </View>
 
-      {/* Button Matrix */}
+      {/* Button Matrix (Figma "Buttons" board) */}
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>BUTTON STATE MATRIX</Text>
+        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>BUTTON MATRIX</Text>
+        {BUTTON_VARIANTS.map((variant) => (
+          <View key={variant} style={styles.buttonRow}>
+            {BUTTON_APPEARANCES.map((appearance) => (
+              <Button
+                key={appearance}
+                title="Button"
+                icon="arrow-right"
+                size="sm"
+                variant={variant}
+                appearance={appearance}
+                onPress={() => {}}
+              />
+            ))}
+          </View>
+        ))}
         <View style={styles.buttonCol}>
-          <Button title="PRIMARY ACTIVE (LG)" size="lg" variant="primary" onPress={() => {}} />
-          <Button title="PRIMARY DISABLED" variant="primary" disabled onPress={() => {}} />
-          <Button title="SECONDARY ACTION" variant="secondary" onPress={() => {}} />
-          <Button title="DANGER OVERRIDE" variant="danger" onPress={() => {}} />
-          <Button title="DARK HUD VARIANT" variant="dark" onPress={() => {}} />
-          <Button title="LOADING STATE" loading onPress={() => {}} />
+          <Button title="PRIMARY ACTIVE" size="lg" onPress={() => {}} />
+          <Button title="PRIMARY DISABLED" disabled onPress={() => {}} />
+          <Button title="SECONDARY" variant="secondary" onPress={() => {}} />
+          <Button title="DANGER ACTION" variant="danger" onPress={() => {}} />
+          <Button title="Loading" loading onPress={() => {}} />
         </View>
       </View>
+
+      {/* Icon Buttons */}
+      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>ICON BUTTONS</Text>
+        <View style={styles.row}>
+          <IconButton icon="squiggle" isActive />
+          <IconButton icon="squiggle" />
+          <IconButton icon="compass" bordered />
+          <IconButton icon="history" bordered />
+          <IconButton icon="shield-alert" bordered />
+        </View>
+      </View>
+
+      {/* HUD Surfaces */}
+      <HudCard
+        tag="SURFACE_A // ENCRYPTED"
+        title="Standard Card Layout"
+        description="Example of a cinematic container with HUD accents and specific typography alignment."
+        chips={['STATUS: GREEN', 'LOAD: STABLE']}
+        alert
+      />
+      <View style={[styles.scanlineDemo, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+        <ScanlineOverlay />
+      </View>
+
+      {/* Scenario Cards */}
+      <ScenarioCard
+        title="Title"
+        description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+        headerText="0:00 min"
+        onStart={() => {}}
+      />
+      <ScenarioCard
+        title="Title"
+        description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+        headerText="0:00 min"
+        isActive={false}
+        onStart={() => {}}
+      />
 
       {/* Option Cards */}
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
@@ -112,7 +173,7 @@ export default function GalleryScreen() {
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>1:1 SQUARE CARD (ASPECT RATIO FIX)</Text>
         <View style={styles.cardPreview}>
-          <SquareCard title="Echo Protocol" subtitle="12 SCENARIOS" />
+          <SquareCard title="Description" subtitle="12 Scenarios" />
         </View>
       </View>
 
@@ -163,6 +224,20 @@ const styles = StyleSheet.create({
   },
   buttonCol: {
     gap: 10,
+    marginTop: 8,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'center',
+    gap: 8,
+    marginBottom: 10,
+  },
+  scanlineDemo: {
+    height: 80,
+    borderRadius: 16,
+    borderWidth: 1,
+    overflow: 'hidden',
   },
   cardPreview: {
     width: 170,

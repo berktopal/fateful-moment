@@ -1,3 +1,8 @@
+import { Platform } from 'react-native';
+
+/** Figma HUD text ("SCENARIO BRIEFING", "0:00 min", "SYSTEM INTEGRITY") uses a monospace face. */
+export const MONO_FONT = Platform.select({ ios: 'Menlo', default: 'monospace' });
+
 export interface ThemeTokens {
   mode: 'dark' | 'light';
   colors: {
@@ -18,6 +23,9 @@ export interface ThemeTokens {
     beaconRed: string;
     overlay: string;
     cardOverlayGradient: readonly [string, string];
+    /** Translucent "glass" fill + hairline border used by the Start buttons on scenario cards. */
+    glass: string;
+    glassBorder: string;
   };
   spacing: {
     xs: number;
@@ -44,7 +52,7 @@ export interface ThemeTokens {
     };
     heading: {
       fontSize: number;
-      fontWeight: 'bold';
+      fontWeight: '900';
       fontStyle: 'italic';
       letterSpacing: number;
     };
@@ -59,8 +67,9 @@ export interface ThemeTokens {
       lineHeight: number;
     };
     hudMono: {
+      fontFamily: string;
       fontSize: number;
-      fontWeight: '700';
+      fontWeight: '500';
       letterSpacing: number;
     };
     caption: {
@@ -91,6 +100,8 @@ export const DARK_TOKENS: ThemeTokens = {
     beaconRed: '#FB2C36',
     overlay: 'rgba(2, 6, 23, 0.75)',
     cardOverlayGradient: ['rgba(2,6,23,0.2)', 'rgba(2,6,23,0.92)'] as const,
+    glass: 'rgba(2, 6, 23, 0.55)',
+    glassBorder: 'rgba(148, 163, 184, 0.35)',
   },
   spacing: {
     xs: 4,
@@ -110,16 +121,16 @@ export const DARK_TOKENS: ThemeTokens = {
   },
   typography: {
     displayLarge: {
-      fontSize: 28,
+      fontSize: 32,
       fontWeight: '900',
       fontStyle: 'italic',
-      letterSpacing: 0.5,
+      letterSpacing: -1,
     },
     heading: {
-      fontSize: 20,
-      fontWeight: 'bold',
+      fontSize: 22,
+      fontWeight: '900',
       fontStyle: 'italic',
-      letterSpacing: 0.5,
+      letterSpacing: -0.5,
     },
     title: {
       fontSize: 16,
@@ -132,8 +143,9 @@ export const DARK_TOKENS: ThemeTokens = {
       lineHeight: 20,
     },
     hudMono: {
-      fontSize: 12,
-      fontWeight: '700',
+      fontFamily: MONO_FONT,
+      fontSize: 11,
+      fontWeight: '500',
       letterSpacing: 2,
     },
     caption: {
@@ -164,6 +176,8 @@ export const LIGHT_TOKENS: ThemeTokens = {
     beaconRed: '#DC2626',
     overlay: 'rgba(15, 23, 42, 0.4)',
     cardOverlayGradient: ['rgba(15,23,42,0.3)', 'rgba(15,23,42,0.92)'] as const,
+    glass: 'rgba(2, 6, 23, 0.55)',
+    glassBorder: 'rgba(148, 163, 184, 0.35)',
   },
   spacing: DARK_TOKENS.spacing,
   radius: DARK_TOKENS.radius,

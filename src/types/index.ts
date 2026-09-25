@@ -1,4 +1,4 @@
-import { Feather } from '@expo/vector-icons';
+import type { IconName } from '../components/Icon';
 
 export interface Scenario {
   id: string;
@@ -21,7 +21,7 @@ export interface SystemModule {
   id: string;
   name: string;
   status: string;
-  icon: keyof typeof Feather.glyphMap;
+  icon: IconName;
   isWarning: boolean;
 }
 

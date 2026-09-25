@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, ImageBackground, ViewStyle } from 'react-native';
-import { Feather } from '@expo/vector-icons';
-import { Button } from './Button';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../theme';
+import { Button } from './Button';
+import { Icon, IconName } from './Icon';
+import { useTheme, MONO_FONT } from '../theme';
 
 export interface ScenarioCardProps {
   title: string;
@@ -11,22 +11,30 @@ export interface ScenarioCardProps {
   imageUrl?: string;
   onStart: () => void;
   style?: ViewStyle;
+  /** Hero "Scenario Briefing" layout: centred copy and a "Start Simulation" CTA. */
   isLarge?: boolean;
+  /** Locked scenarios get the Figma passive state: a frosted wash over the whole card. */
   isActive?: boolean;
-  iconName?: keyof typeof Feather.glyphMap;
+  iconName?: IconName;
   headerText?: string;
 }
+
+const DEFAULT_IMAGE =
+  'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop';
+
+// Imagery is always darkened so white copy stays legible in both themes (Figma uses one look).
+const IMAGE_SCRIM = ['rgba(2, 6, 23, 0.45)', 'rgba(2, 6, 23, 0.92)'] as const;
 
 export const ScenarioCard = ({
   title,
   description,
-  imageUrl = 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop',
+  imageUrl = DEFAULT_IMAGE,
   onStart,
   style,
   isLarge = false,
   isActive = true,
-  iconName = 'activity',
-  headerText = 'SCENARIO TIME',
+  iconName = 'alarm-clock',
+  headerText = 'Scenario Time',
 }: ScenarioCardProps) => {
   const { theme } = useTheme();
 
@@ -34,72 +42,44 @@ export const ScenarioCard = ({
     <View
       style={[
         styles.container,
-        {
-          borderRadius: theme.radius.xl,
-          borderColor: isActive ? theme.colors.border : theme.colors.surfaceElevated,
-          backgroundColor: theme.colors.surface,
-        },
+        { borderRadius: theme.radius.xl + 4, borderColor: theme.colors.border },
         isLarge && styles.containerLarge,
         style,
       ]}>
-      <ImageBackground
-        source={{ uri: imageUrl }}
-        resizeMode="cover"
-        style={styles.imageBackground}
-        imageStyle={[
-          styles.imageRadius,
-          { borderRadius: theme.radius.xl },
-          !isActive && styles.imagePassive,
-        ]}>
+      <ImageBackground source={{ uri: imageUrl }} resizeMode="cover" style={styles.image}>
         <LinearGradient
-          colors={theme.colors.cardOverlayGradient}
-          style={[styles.gradient, isLarge && styles.gradientLarge]}>
-          <View style={[styles.header, isLarge && styles.headerLarge]}>
-            <Feather
-              name={iconName}
-              size={15}
-              color={!isActive ? theme.colors.textMuted : theme.colors.primary}
-              style={styles.icon}
-            />
-            <Text
-              style={[
-                styles.subtitle,
-                { color: !isActive ? theme.colors.textMuted : theme.colors.primary },
-              ]}>
+          colors={IMAGE_SCRIM}
+          style={[styles.content, isLarge && styles.contentLarge]}>
+          <View style={[styles.header, isLarge && styles.centered]}>
+            {!isLarge && <Icon name={iconName} size={14} color={theme.colors.primary} />}
+            <Text style={[styles.hud, isLarge && styles.hudLarge, { color: theme.colors.primary }]}>
               {headerText}
             </Text>
           </View>
 
-          <Text
-            style={[
-              styles.title,
-              isLarge && styles.titleLarge,
-              !isActive && { color: theme.colors.textMuted },
-            ]}>
+          <Text style={[styles.title, isLarge && styles.titleLarge]} numberOfLines={isLarge ? 2 : 1}>
             {title}
           </Text>
 
           <Text
-            style={[
-              styles.description,
-              isLarge && styles.descriptionLarge,
-              !isActive && { color: theme.colors.textMuted },
-            ]}
+            style={[styles.description, isLarge && styles.descriptionLarge]}
             numberOfLines={isLarge ? 4 : 3}>
             {description}
           </Text>
 
-          <View style={[styles.footer, isLarge && styles.footerLarge]}>
+          <View style={[styles.footer, isLarge && styles.centered]}>
             <Button
-              title={isLarge ? 'START SIMULATION' : 'START'}
+              title={isLarge ? 'Start Simulation' : 'Start'}
               onPress={onStart}
-              variant={isLarge ? 'primary' : 'dark'}
+              variant="glass"
               size={isLarge ? 'lg' : 'md'}
               disabled={!isActive}
             />
           </View>
         </LinearGradient>
       </ImageBackground>
+
+      {!isActive && <View pointerEvents="none" style={styles.passiveWash} />}
     </View>
   );
 };
@@ -107,82 +87,83 @@ export const ScenarioCard = ({
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    height: 245,
+    minHeight: 230,
     marginBottom: 20,
     borderWidth: 1,
-    elevation: 4,
+    backgroundColor: '#020617',
+    elevation: 6,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.35,
-    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 16,
   },
   containerLarge: {
-    height: 310,
+    minHeight: 290,
   },
-  imageBackground: {
+  image: {
     flex: 1,
+  },
+  content: {
+    flex: 1,
+    padding: 16,
     justifyContent: 'flex-end',
   },
-  imageRadius: {
-    // configured dynamically via theme
-  },
-  gradient: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'flex-end',
-  },
-  gradientLarge: {
+  contentLarge: {
     padding: 24,
+    justifyContent: 'center',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginBottom: 8,
+    gap: 6,
+    marginBottom: 4,
   },
-  headerLarge: {
+  centered: {
     justifyContent: 'center',
-    marginBottom: 12,
+    alignItems: 'center',
   },
-  icon: {
-    marginRight: 6,
+  hud: {
+    fontFamily: MONO_FONT,
+    fontSize: 12,
   },
-  subtitle: {
+  hudLarge: {
     fontSize: 11,
-    fontWeight: '800',
     letterSpacing: 2,
     textTransform: 'uppercase',
   },
   title: {
     color: '#FFFFFF',
-    fontSize: 22,
-    fontWeight: '900',
+    fontSize: 17,
+    fontWeight: '800',
     fontStyle: 'italic',
-    marginBottom: 8,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    marginBottom: 4,
   },
   titleLarge: {
-    fontSize: 28,
+    fontSize: 26,
+    fontWeight: '900',
+    letterSpacing: -0.5,
     textAlign: 'center',
+    textTransform: 'uppercase',
     marginBottom: 10,
   },
   description: {
+    color: '#E2E8F0',
+    fontSize: 14,
+    lineHeight: 20,
+    marginBottom: 12,
+  },
+  descriptionLarge: {
     color: '#94A3B8',
     fontSize: 13,
     lineHeight: 19,
-    marginBottom: 18,
-  },
-  descriptionLarge: {
     textAlign: 'center',
     marginBottom: 22,
   },
   footer: {
     alignItems: 'flex-end',
   },
-  footerLarge: {
-    alignItems: 'center',
-  },
-  imagePassive: {
-    opacity: 0.35,
+  passiveWash: {
+    ...StyleSheet.absoluteFill,
+    backgroundColor: 'rgba(226, 232, 240, 0.6)',
   },
 });

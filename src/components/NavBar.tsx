@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Feather } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton } from './IconButton';
+import { IconName } from './Icon';
 import { useTheme } from '../theme';
 
 export interface NavBarProps {
   title: string;
-  leftIcon?: keyof typeof Feather.glyphMap;
-  rightIcon?: keyof typeof Feather.glyphMap;
+  leftIcon?: IconName;
+  rightIcon?: IconName;
   onLeftPress?: () => void;
   onRightPress?: () => void;
 }
@@ -28,21 +28,25 @@ export const NavBar = ({
       style={[
         styles.container,
         {
-          paddingTop: insets.top + theme.spacing.sm,
+          paddingTop: insets.top,
           backgroundColor: theme.colors.background,
-          borderBottomColor: theme.colors.border,
         },
       ]}>
       {leftIcon ? (
-        <IconButton icon={leftIcon} onPress={onLeftPress} />
+        <IconButton icon={leftIcon} onPress={onLeftPress} color={theme.colors.textPrimary} />
       ) : (
         <View style={styles.iconPlaceholder} />
       )}
 
-      <Text style={[styles.title, { color: theme.colors.textPrimary }]}>{title}</Text>
+      <Text
+        style={[styles.title, { color: theme.colors.textPrimary }]}
+        numberOfLines={1}
+        accessibilityRole="header">
+        {title}
+      </Text>
 
       {rightIcon ? (
-        <IconButton icon={rightIcon} onPress={onRightPress} />
+        <IconButton icon={rightIcon} onPress={onRightPress} color={theme.colors.textPrimary} />
       ) : (
         <View style={styles.iconPlaceholder} />
       )}
@@ -55,17 +59,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    borderBottomWidth: 1,
-    paddingHorizontal: 16,
-    paddingBottom: 14,
+    paddingHorizontal: 12,
+    paddingBottom: 4,
   },
   title: {
-    fontSize: 17,
-    fontWeight: '800',
-    letterSpacing: 0.5,
-    textTransform: 'uppercase',
+    flex: 1,
+    textAlign: 'center',
+    fontSize: 16,
+    fontWeight: '600',
   },
   iconPlaceholder: {
-    width: 40,
+    width: 44,
   },
 });

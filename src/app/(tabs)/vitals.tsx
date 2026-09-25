@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { Feather } from '@expo/vector-icons';
+import { Icon } from '../../components/Icon';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { useTheme } from '../../theme';
 import { COMMANDER_VITALS } from '../../data/mockData';
@@ -23,7 +23,7 @@ export default function VitalsScreen() {
         {/* Heart Telemetry Header */}
         <View style={styles.header}>
           <View style={styles.iconWrapper}>
-            <Feather name="heart" size={46} color={theme.colors.primary} />
+            <Icon name="heart" size={46} color={theme.colors.primary} />
             <View style={styles.beaconOffset}>
               <StatusBeacon status="online" size={10} />
             </View>
