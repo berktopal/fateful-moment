@@ -70,3 +70,17 @@ This log documents the iterative engineering decisions, design-fidelity correcti
   - **Motion:** staggered `FadeIn` per step and on the outcome screen, score count-up; both respect the OS "Reduce motion" setting.
   - **Light theme fix:** content on imagery (HUD labels, glass buttons) always uses Figma cyan; the darker light-theme cyan was low-contrast on photos.
 * **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21, and on-device review on the Android emulator.
+
+---
+
+### Phase 8: Figma Fidelity Pass via Figma MCP (Claude Code)
+* **Trigger:** A Figma MCP connection became available, replacing screenshot-based estimates with the file's real values.
+* **Findings (screenshot guesses that were wrong):**
+  - The file is a component library only (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon) — no full screens.
+  - **Option Card** fills are translucent (`rgba(15,23,43,0.63)`, selected gradient to `rgba(0,211,243,0.63)`, `#F8FAFC` border 1/2px); "Passive" is the selected look at 48% opacity. It only looked grey/pale on Figma's light canvas.
+  - **Buttons:** the grey/dark/light-cyan columns are Primary *Disabled / Pressed / Glass* states, not colour variants. Real set: Primary · Secondary (cyan outline) · Ghost · Link, radius 16, 24px horizontal padding, 24/20/16 icons.
+  - **Inactive cards** are 35% opacity (not a white wash). **Start buttons** are `rgba(0,184,219,0.14)`, borderless, Inter Black.
+  - **Scenario Container** radius 24 with a bottom-up scrim; **Card** is 220×176 (5:4), not 1:1; **Nav Bar** has a `#314158` divider; inactive tab icons `#62748E`; active tile `rgba(0,184,219,0.1)` radius 12.
+* **Changes:** tokens now mirror the Figma variables (with names in comments), `TYPE_SCALE` from the `typhography/*` styles; `Button` rebuilt on Figma's hierarchy × state × size model; `OptionCard`, `ScenarioCard`, `SquareCard`, `NavBar`, `IconButton` and the tab bar updated to the exact values; removed a leftover hard-coded tab tint.
+* **Kept deliberately:** the "dimmed" state for unchosen options (Figma Default at the Passive 48% opacity), since Figma's Passive keeps the cyan gradient and would read as a second selection.
+* **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21; visual check on the Android emulator (Home, list and locked cards, simulation, Gallery button matrix, System grid). Found and fixed on-device: list card width with `aspectRatio`, Secondary button invisible on Slate 900 surfaces.

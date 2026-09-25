@@ -12,11 +12,11 @@ import { IconButton } from '../components/IconButton';
 import { HudCard } from '../components/HudCard';
 import { ScanlineOverlay } from '../components/ScanlineOverlay';
 import { ScenarioCard } from '../components/ScenarioCard';
-import type { ButtonAppearance, ButtonVariant } from '../components/Button';
+import type { ButtonSize, ButtonVariant } from '../components/Button';
 import { SCENARIOS } from '../data/mockData';
 
-const BUTTON_VARIANTS: ButtonVariant[] = ['primary', 'secondary', 'neutral', 'soft', 'danger'];
-const BUTTON_APPEARANCES: ButtonAppearance[] = ['solid', 'outline', 'link'];
+const BUTTON_HIERARCHY: ButtonVariant[] = ['primary', 'secondary', 'ghost', 'link'];
+const BUTTON_SIZES: ButtonSize[] = ['lg', 'md', 'sm'];
 
 export default function GalleryScreen() {
   const { theme, preference, setPreference, isDark } = useTheme();
@@ -89,26 +89,34 @@ export default function GalleryScreen() {
       {/* Button Matrix (Figma "Buttons" board) */}
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>BUTTON MATRIX</Text>
-        {BUTTON_VARIANTS.map((variant) => (
+        <Text style={[styles.label, { color: theme.colors.textMuted }]}>
+          Hierarchy × size (press to see the Pressed state)
+        </Text>
+        {BUTTON_HIERARCHY.map((variant) => (
           <View key={variant} style={styles.buttonRow}>
-            {BUTTON_APPEARANCES.map((appearance) => (
+            {BUTTON_SIZES.map((size) => (
               <Button
-                key={appearance}
+                key={size}
                 title="Button"
                 icon="arrow-right"
-                size="sm"
+                size={size}
                 variant={variant}
-                appearance={appearance}
                 onPress={() => {}}
               />
             ))}
           </View>
         ))}
-        <View style={styles.buttonCol}>
-          <Button title="PRIMARY ACTIVE" size="lg" onPress={() => {}} />
-          <Button title="PRIMARY DISABLED" disabled onPress={() => {}} />
-          <Button title="SECONDARY" variant="secondary" onPress={() => {}} />
-          <Button title="DANGER ACTION" variant="danger" onPress={() => {}} />
+        <Text style={[styles.label, { color: theme.colors.textMuted }]}>Disabled</Text>
+        <View style={styles.buttonRow}>
+          {BUTTON_HIERARCHY.map((variant) => (
+            <Button key={variant} title="Button" icon="arrow-right" size="sm" variant={variant} disabled onPress={() => {}} />
+          ))}
+        </View>
+        <Text style={[styles.label, { color: theme.colors.textMuted }]}>Style guide</Text>
+        <View style={styles.buttonRow}>
+          <Button title="Primary Button" variant="glass" size="md" onPress={() => {}} />
+          <Button title="Secondary Button" variant="dark" size="md" onPress={() => {}} />
+          <Button title="Danger Action" variant="danger" size="md" onPress={() => {}} />
           <Button title="Loading" loading onPress={() => {}} />
         </View>
       </View>

@@ -83,17 +83,19 @@ Geliştirmede **Antigravity (Gemini)** ve **Claude Code** kullanıldı. AI'ı ko
 
 1. **Denetim:** Figma ekran görüntüleri mevcut kodla bileşen bileşen karşılaştırıldı, sapmalar listelendi. Örneğin ikon setinin Lucide olduğu, buton varyantlarının eksik olduğu, pasif kart durumunun Figma'dan farklı olduğu bu aşamada görüldü.
 2. **Plan:** Kapsam ve öncelik benim kararımdı. Senaryo akışı, kalıcılık, testler ve çevrimdışı görseller sırasıyla ele alındı.
-3. **Doğrulama:** Her aşamada `tsc`, lint, testler ve `expo-doctor` çalıştırıldı. Uygulama bir Android emülatöründe baştan sona oynatıldı ve ekran görüntüleri incelendi. Statik analizin yakalayamadığı birkaç hata bu şekilde bulunup düzeltildi:
+3. **Figma'dan birebir değer alma:** Figma MCP ile dosyadaki bileşenlerin gerçek değerleri (renk değişkenleri, tipografi, radius, padding, gölge, durumlar) okundu. İlk sürümdeki bazı ekran görüntüsü tahminlerinin yanlış olduğu bu sayede görüldü: Option Card'ın yarı saydam olduğu, kilitli kartın %35 opaklıkla gösterildiği, buton panosundaki gri/koyu sütunların ayrı renk varyantı değil Disabled/Pressed durumları olduğu gibi. Hepsi Figma değerleriyle düzeltildi.
+4. **Doğrulama:** Her aşamada `tsc`, lint, testler ve `expo-doctor` çalıştırıldı. Uygulama bir Android emülatöründe baştan sona oynatıldı ve ekran görüntüleri incelendi. Statik analizin yakalayamadığı birkaç hata bu şekilde bulunup düzeltildi:
    - iPhone'da tab bar'ın home indicator altında kalması
    - `userInterfaceStyle: "light"` nedeniyle System temasının hiç çalışmaması
    - Light temada status bar ikonlarının görünmemesi
    - Tab bar altındaki beyaz şerit
    - Brifing görselinin tam genişlikte olmaması
-4. **Kayıt:** Karar günlüğü [`docs/AI_LOG.md`](docs/AI_LOG.md) dosyasında.
+5. **Kayıt:** Karar günlüğü [`docs/AI_LOG.md`](docs/AI_LOG.md) dosyasında.
 
 ## Notlar ve bilinen sınırlamalar
 
-- Renkler ve boşluklar Figma ekran görüntülerinden alındı, Figma inspect değerleriyle birebir karşılaştırılmadı. Küçük farklar olabilir.
+- Figma dosyası yalnızca bileşen kütüphanesi içeriyor (tam ekran tasarımı yok). Ekran yerleşimleri bu bileşenlerle kuruldu; brifing, simülasyon ve sonuç ekranları Figma'da olmadığı için tasarım dili korunarak eklendi.
+- Android'de Menlo bulunmadığından HUD metinleri sistemin monospace fontuyla gösterilir.
 - *Mission Alerts* ayarı yalnızca tercihi kaydeder. Bu demoda push bildirim servisi yok.
 - Android akışı emülatörde (Pixel, Android 14) uçtan uca test edildi. iOS bundle'ı `expo export` ile doğrulandı.
 - Expo Go'da ekranda görünen dişli simgesi Expo'nun geliştirici menüsüdür, APK'da yer almaz.

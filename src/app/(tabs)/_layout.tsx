@@ -17,9 +17,8 @@ const TABS: { name: string; icon: IconName; title: string }[] = [
 const BAR_HEIGHT = 60;
 
 export default function TabLayout() {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const insets = useSafeAreaInsets();
-  const activeBg = isDark ? 'rgba(0, 211, 243, 0.12)' : 'rgba(8, 145, 178, 0.12)';
 
   return (
     <Tabs
@@ -27,7 +26,7 @@ export default function TabLayout() {
         headerShown: false,
         tabBarShowLabel: false,
         tabBarActiveTintColor: theme.colors.primary,
-        tabBarInactiveTintColor: theme.colors.textMuted,
+        tabBarInactiveTintColor: theme.colors.iconMuted,
         tabBarStyle: {
           backgroundColor: theme.colors.background,
           borderTopColor: theme.colors.border,
@@ -50,9 +49,9 @@ export default function TabLayout() {
                 style={[
                   styles.iconContainer,
                   { borderRadius: theme.radius.lg },
-                  focused && { backgroundColor: activeBg },
+                  focused && { backgroundColor: theme.colors.primaryTint },
                 ]}>
-                <Icon name={tab.icon} size={22} color={color as string} />
+                <Icon name={tab.icon} size={24} color={color as string} />
               </View>
             ),
           }}

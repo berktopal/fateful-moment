@@ -89,7 +89,7 @@ export default function ProfileScreen() {
           <Text style={[theme.typography.body, { color: theme.colors.textMuted, textAlign: 'center' }]}>
             No missions completed yet. Your after-action reports will appear here.
           </Text>
-          <Button title="Open War Room" icon="arrow-right" variant="soft" onPress={() => router.navigate('/')} />
+          <Button title="Open War Room" icon="arrow-right" variant="glass" onPress={() => router.navigate('/')} />
         </View>
       ) : (
         history.slice(0, 5).map((record) => (
@@ -121,7 +121,6 @@ export default function ProfileScreen() {
         <Button
           title="Reset Progress"
           variant="danger"
-          appearance="outline"
           onPress={confirmReset}
           style={styles.reset}
         />

@@ -5,7 +5,7 @@ import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from './Button';
 import { Icon, IconName } from './Icon';
-import { useTheme, MONO_FONT, MEDIA_COLORS } from '../theme';
+import { useTheme, MONO_FONT, MEDIA_COLORS, TYPE_SCALE } from '../theme';
 import type { MediaSource } from '../types';
 
 export interface ScenarioCardProps {
@@ -14,9 +14,9 @@ export interface ScenarioCardProps {
   image: MediaSource;
   onStart: () => void;
   style?: ViewStyle;
-  /** Hero "Scenario Briefing" layout: centred copy and a "Start Simulation" CTA. */
+  /** Figma "Scenario Container" (hero). Otherwise the Figma "Card" list layout. */
   isLarge?: boolean;
-  /** Locked scenarios get the Figma passive state: a frosted wash over the whole card. */
+  /** Locked scenarios use Figma's inactive state: the whole card at 35% opacity. */
   isActive?: boolean;
   iconName?: IconName;
   headerText?: string;
@@ -36,17 +36,17 @@ export const ScenarioCard = ({
   ctaLabel,
 }: ScenarioCardProps) => {
   const { theme } = useTheme();
-  const radius = theme.radius.xxl;
+  const radius = isLarge ? theme.radius.hero : theme.radius.xl;
 
   return (
     <View
       style={[
         styles.container,
-        { borderRadius: radius, borderColor: theme.colors.border, shadowColor: theme.colors.shadow },
-        isLarge && styles.containerLarge,
+        isLarge ? styles.hero : styles.list,
+        { borderRadius: radius, shadowColor: theme.colors.shadow },
+        !isActive && styles.inactive,
         style,
-      ]}
-      accessible={false}>
+      ]}>
       <Image
         source={image}
         contentFit="cover"
@@ -55,41 +55,63 @@ export const ScenarioCard = ({
         accessibilityIgnoresInvertColors
       />
       <LinearGradient
-        colors={MEDIA_COLORS.scrim}
-        style={[styles.content, isLarge && styles.contentLarge]}>
-        <View style={[styles.header, isLarge && styles.centered]}>
-          {!isLarge && <Icon name={iconName} size={14} color={MEDIA_COLORS.accent} />}
-          <Text style={[styles.hud, isLarge && styles.hudLarge, { color: MEDIA_COLORS.accent }]}>
-            {headerText}
-          </Text>
-        </View>
+        colors={isLarge ? MEDIA_COLORS.scrimHero : MEDIA_COLORS.scrimList}
+        style={StyleSheet.absoluteFill}
+      />
 
-        <Text
-          style={[styles.title, isLarge && styles.titleLarge]}
-          numberOfLines={isLarge ? 2 : 1}
-          accessibilityRole="header">
-          {title}
-        </Text>
-
-        <Text
-          style={[styles.description, isLarge && styles.descriptionLarge]}
-          numberOfLines={isLarge ? 4 : 3}>
-          {description}
-        </Text>
-
-        <View style={[styles.footer, isLarge && styles.centered]}>
+      {isLarge ? (
+        <View style={styles.heroContent}>
+          <View style={styles.heroText}>
+            <View style={styles.heroTitleGroup}>
+              <Text style={styles.heroHud}>{headerText}</Text>
+              <Text style={styles.heroTitle} numberOfLines={2} accessibilityRole="header">
+                {title}
+              </Text>
+            </View>
+            <Text style={styles.heroDescription} numberOfLines={4}>
+              {description}
+            </Text>
+          </View>
           <Button
-            title={ctaLabel ?? (isLarge ? 'Start Simulation' : isActive ? 'Start' : 'Locked')}
+            title={ctaLabel ?? 'Start Simulation'}
             onPress={onStart}
             variant="glass"
-            size={isLarge ? 'lg' : 'md'}
+            size="lg"
+            onMedia
             disabled={!isActive}
+            fadeWhenDisabled={false}
+            accessibilityLabel={`Start ${title}`}
+          />
+        </View>
+      ) : (
+        <View style={styles.listContent}>
+          <View style={styles.listText}>
+            <View style={styles.listHeader}>
+              <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
+              <Text style={styles.listHud}>{headerText}</Text>
+            </View>
+            <Text style={styles.listTitle} numberOfLines={1} accessibilityRole="header">
+              {title}
+            </Text>
+            <Text style={styles.listDescription} numberOfLines={3}>
+              {description}
+            </Text>
+          </View>
+          <Button
+            title={ctaLabel ?? (isActive ? 'Start' : 'Locked')}
+            onPress={onStart}
+            variant="glass"
+            size="md"
+            onMedia
+            disabled={!isActive}
+            fadeWhenDisabled={false}
+            // Figma Card: Inter Black 16/24 label with the compact 8px vertical padding.
+            textStyle={TYPE_SCALE.body}
+            style={styles.listButton}
             accessibilityLabel={isActive ? `Start ${title}` : `${title} is locked`}
           />
         </View>
-      </LinearGradient>
-
-      {!isActive && <View pointerEvents="none" style={styles.passiveWash} />}
+      )}
     </View>
   );
 };
@@ -97,79 +119,100 @@ export const ScenarioCard = ({
 const styles = StyleSheet.create({
   container: {
     overflow: 'hidden',
-    minHeight: 230,
     marginBottom: 20,
     borderWidth: 1,
+    borderColor: MEDIA_COLORS.border,
     backgroundColor: MEDIA_COLORS.base,
+  },
+  // Figma Scenario Container shadow: 0 25 50 -12 rgba(0,0,0,0.25).
+  hero: {
+    minHeight: 292,
+    elevation: 10,
+    shadowOffset: { width: 0, height: 25 },
+    shadowOpacity: 0.25,
+    shadowRadius: 25,
+  },
+  // Figma Card: 326 × 261 with a 20/25 + 8/10 double shadow (approximated as one).
+  list: {
+    // Explicit width: with only aspectRatio, Yoga can derive the width from the height.
+    width: '100%',
+    aspectRatio: 326 / 261,
     elevation: 6,
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.3,
-    shadowRadius: 16,
+    shadowOffset: { width: 0, height: 14 },
+    shadowOpacity: 0.12,
+    shadowRadius: 18,
   },
-  containerLarge: {
-    minHeight: 290,
+  inactive: {
+    opacity: 0.35,
   },
-  content: {
+  heroContent: {
     flex: 1,
-    padding: 16,
-    justifyContent: 'flex-end',
-  },
-  contentLarge: {
     padding: 24,
+    gap: 24,
+    alignItems: 'center',
     justifyContent: 'center',
   },
-  header: {
+  heroText: {
+    alignItems: 'center',
+    gap: 16,
+  },
+  heroTitleGroup: {
+    alignItems: 'center',
+    gap: 4,
+  },
+  heroHud: {
+    ...TYPE_SCALE.caption02,
+    fontFamily: MONO_FONT,
+    fontWeight: '700',
+    letterSpacing: 1,
+    textTransform: 'uppercase',
+    color: MEDIA_COLORS.accent,
+  },
+  heroTitle: {
+    ...TYPE_SCALE.title01,
+    fontWeight: '900',
+    fontStyle: 'italic',
+    textTransform: 'uppercase',
+    textAlign: 'center',
+    color: MEDIA_COLORS.textPrimary,
+  },
+  heroDescription: {
+    ...TYPE_SCALE.subhead,
+    opacity: 0.8,
+    textAlign: 'center',
+    color: MEDIA_COLORS.textSecondary,
+  },
+  listContent: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    padding: 12,
+    gap: 12,
+  },
+  listText: {
+    gap: 2,
+  },
+  listHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
+    gap: 4,
   },
-  centered: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  hud: {
+  listHud: {
+    ...TYPE_SCALE.caption01,
     fontFamily: MONO_FONT,
-    fontSize: 12,
+    fontWeight: '700',
+    color: MEDIA_COLORS.accent,
   },
-  hudLarge: {
-    fontSize: 11,
-    letterSpacing: 2,
-    textTransform: 'uppercase',
-  },
-  title: {
-    color: MEDIA_COLORS.textPrimary,
-    fontSize: 17,
-    fontWeight: '800',
-    fontStyle: 'italic',
-    marginBottom: 4,
-  },
-  titleLarge: {
-    fontSize: 26,
+  listTitle: {
+    ...TYPE_SCALE.subhead,
     fontWeight: '900',
-    letterSpacing: -0.5,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    marginBottom: 10,
+    fontStyle: 'italic',
+    color: MEDIA_COLORS.textPrimary,
   },
-  description: {
+  listDescription: {
+    ...TYPE_SCALE.subhead,
     color: MEDIA_COLORS.textSecondary,
-    fontSize: 14,
-    lineHeight: 20,
-    marginBottom: 12,
   },
-  descriptionLarge: {
-    color: MEDIA_COLORS.textMuted,
-    fontSize: 13,
-    lineHeight: 19,
-    textAlign: 'center',
-    marginBottom: 22,
-  },
-  footer: {
-    alignItems: 'flex-end',
-  },
-  passiveWash: {
-    ...StyleSheet.absoluteFill,
-    backgroundColor: MEDIA_COLORS.passiveWash,
+  listButton: {
+    alignSelf: 'flex-end',
   },
 });

@@ -4,7 +4,7 @@ import { Text } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton } from './IconButton';
 import { IconName } from './Icon';
-import { useTheme } from '../theme';
+import { useTheme, TYPE_SCALE } from '../theme';
 
 export interface NavBarProps {
   title: string;
@@ -31,6 +31,7 @@ export const NavBar = ({
         {
           paddingTop: insets.top,
           backgroundColor: theme.colors.background,
+          borderBottomColor: theme.colors.divider,
         },
       ]}>
       {leftIcon ? (
@@ -56,17 +57,20 @@ export const NavBar = ({
 };
 
 const styles = StyleSheet.create({
+  // Figma Nav Bar: 48px tall, 24px icons inset 24px from the edges, 1px sec-700 divider.
   container: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingBottom: 4,
+    paddingHorizontal: 14,
+    paddingBottom: 2,
+    minHeight: 48,
+    borderBottomWidth: StyleSheet.hairlineWidth * 2,
   },
   title: {
+    ...TYPE_SCALE.headline,
     flex: 1,
     textAlign: 'center',
-    fontSize: 16,
     fontWeight: '600',
   },
   // Same footprint as an IconButton so the title stays centred and the bar height is stable.

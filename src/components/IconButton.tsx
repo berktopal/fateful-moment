@@ -23,7 +23,7 @@ export const IconButton = ({
   bordered = false,
   color,
   style,
-  size = 20,
+  size = 24,
   accessibilityLabel,
 }: IconButtonProps) => {
   const { theme } = useTheme();
@@ -33,7 +33,7 @@ export const IconButton = ({
     Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 28 }).start();
 
   const glyphColor =
-    isActive || bordered ? theme.colors.primary : (color ?? theme.colors.textMuted);
+    isActive || bordered ? theme.colors.primary : (color ?? theme.colors.iconMuted);
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>

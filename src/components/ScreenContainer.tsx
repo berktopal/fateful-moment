@@ -45,7 +45,7 @@ export const ScreenContainer = ({
       return (
         <View style={styles.state}>
           <Text style={[styles.errorText, { color: theme.colors.textMuted }]}>{error}</Text>
-          {onRetry && <Button title={retryLabel} icon="refresh-cw" variant="soft" onPress={onRetry} />}
+          {onRetry && <Button title={retryLabel} icon="refresh-cw" variant="glass" onPress={onRetry} />}
         </View>
       );
     }

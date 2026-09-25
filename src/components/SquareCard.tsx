@@ -4,7 +4,7 @@ import { Text } from './Text';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon, IconName } from './Icon';
-import { useTheme, MEDIA_COLORS } from '../theme';
+import { useTheme, MEDIA_COLORS, TYPE_SCALE } from '../theme';
 import type { MediaSource } from '../types';
 
 export interface SquareCardProps {
@@ -17,8 +17,8 @@ export interface SquareCardProps {
 }
 
 /**
- * Figma "Card": locked to 1:1 so imagery of any aspect ratio is cropped (`contentFit="cover"`)
- * instead of stretched — the "Aspect ratio problem" board.
+ * Figma "Card" (220 × 176). The aspect ratio is locked so imagery of any shape is cropped
+ * (`contentFit="cover"`) instead of stretched — the Figma "Aspect ratio problem" board.
  */
 export const SquareCard = ({
   title,
@@ -30,7 +30,7 @@ export const SquareCard = ({
 }: SquareCardProps) => {
   const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
-  const radius = theme.radius.xxl;
+  const radius = theme.radius.xl;
 
   const animateTo = (toValue: number) =>
     Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 26 }).start();
@@ -48,7 +48,6 @@ export const SquareCard = ({
           styles.container,
           {
             borderRadius: radius,
-            borderColor: theme.colors.border,
             shadowColor: theme.colors.shadow,
           },
         ]}>
@@ -66,10 +65,10 @@ export const SquareCard = ({
             <Icon name="grid" size={32} color={MEDIA_COLORS.placeholderIcon} />
           </LinearGradient>
         )}
-        <LinearGradient colors={MEDIA_COLORS.scrimBottom} style={styles.gradient}>
+        <LinearGradient colors={MEDIA_COLORS.scrimCard} style={styles.gradient}>
           <View style={styles.content}>
             <View style={styles.subtitleRow}>
-              <Icon name={iconName} size={14} color={MEDIA_COLORS.accent} />
+              <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
               <Text style={[styles.subtitle, { color: MEDIA_COLORS.accent }]}>{subtitle}</Text>
             </View>
             <Text style={styles.title} numberOfLines={1}>
@@ -84,9 +83,10 @@ export const SquareCard = ({
 
 const styles = StyleSheet.create({
   container: {
-    aspectRatio: 1,
+    aspectRatio: 220 / 176,
     overflow: 'hidden',
     borderWidth: 1,
+    borderColor: MEDIA_COLORS.border,
     backgroundColor: MEDIA_COLORS.base,
     elevation: 3,
     shadowOffset: { width: 0, height: 6 },
@@ -104,21 +104,21 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   content: {
-    gap: 4,
+    gap: 2,
   },
   subtitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 5,
+    gap: 4,
   },
   subtitle: {
-    fontSize: 12,
-    fontWeight: '800',
+    ...TYPE_SCALE.caption01,
+    fontWeight: '900',
   },
   title: {
+    ...TYPE_SCALE.subhead,
     color: MEDIA_COLORS.textPrimary,
-    fontSize: 16,
-    fontWeight: '800',
+    fontWeight: '900',
     fontStyle: 'italic',
   },
 });

@@ -69,9 +69,9 @@ export default function ScenarioBriefingScreen() {
           />
         </View>
       }>
-      <View style={[styles.hero, { borderRadius: theme.radius.xxl, borderColor: theme.colors.border }]}>
+      <View style={[styles.hero, { borderRadius: theme.radius.hero, borderColor: MEDIA_COLORS.border }]}>
         <Image source={scenario.image} contentFit="cover" transition={250} style={StyleSheet.absoluteFill} />
-        <LinearGradient colors={MEDIA_COLORS.scrim} style={styles.heroContent}>
+        <LinearGradient colors={MEDIA_COLORS.scrimHero} style={styles.heroContent}>
           <Text style={[styles.hud, { color: MEDIA_COLORS.accent }]}>SCENARIO BRIEFING</Text>
           <Text style={[theme.typography.displayLarge, styles.heroTitle]} accessibilityRole="header">
             {scenario.title.toUpperCase()}
