@@ -40,3 +40,20 @@ This log documents the iterative engineering decisions, design-fidelity correcti
   - Replaced `useRef(new Animated.Value()).current` with React Native's `useAnimatedValue`.
   - Configured `expo-splash-screen` (dark background + app icon), cropped icons to 1024×1024, set adaptive icon background to `#020617`.
 * **Verification:** `npx tsc --noEmit`, `npx expo lint`, `npx expo-doctor` (21/21) and an Android `expo export` bundle all pass. Colours were matched from screenshots, not Figma inspect values.
+
+---
+
+### Phase 6: Senior-Level Completion (Claude Code)
+* **User Request:** Take the project to a finished, senior-quality state.
+* **Gaps found:** "Start" only opened an `Alert` (no actual simulation), theme preference was not persisted, imagery depended on remote Unsplash URLs, components still contained hard-coded `isDark ? '#…' : '#…'` colours, a duplicate `src/constants/` layer, no tests, a fresh `npm install` / EAS build would fail on a peer-dependency conflict, and the README over-claimed ("pixel-perfect").
+* **Decisions:**
+  - **Simulation flow** (`scenario/[id]` → `play` → `outcome`): a pure engine (`evaluateRun`, `ratingFor`, clamped metrics, timeout penalty) plus a phase reducer; the outcome screen recomputes from URL params so results are reproducible. Runs are recorded once via a stable `runId`.
+  - **Timer:** wall-clock `useCountdown` that pauses on review and when the app is backgrounded; a highlighted option is committed on timeout.
+  - **State:** `AppStoreProvider` persisting preferences + mission history to AsyncStorage with field-level sanitising; splash screen held until hydrated.
+  - **Tokens:** semantic palette (`primaryTint`, `surfaceHud`, `inverseSurface`, `MEDIA_COLORS`, `OPTION_GRADIENTS`, …); removed all hex literals from components and deleted `src/constants/`.
+  - **Assets:** bundled local images rendered with `expo-image` (offline, cached, fade-in); dropped a candidate photo of a real public figure.
+  - **Shared UI:** `ScreenContainer` (loading / error / retry), `SectionHeader`, `MetricBar`, `useAsyncData`, `useHaptics`, `useAppActive`.
+  - **Tooling:** `.npmrc` with `legacy-peer-deps`, Jest (`jest-expo`) with a CJS mapping for Lucide, `"types": ["jest"]` for TypeScript 6.
+* **Tests:** 41 tests — engine, reducer, countdown (fake timers), storage sanitising/round-trip, `Button`, `ScenarioCard`, and an Expo Router integration test that plays Operation Midnight end-to-end and asserts the persisted history.
+* **Device verification:** Ran the app on an Android 14 emulator via Expo Go and inspected screenshots. Bugs found only this way and fixed: missing deep-link `scheme` warning, white window strip under the tab bar (`expo-system-ui`), unreadable status bar icons in light mode, briefing hero not full width, NavBar title offset when no icons, low-contrast map label.
+* **Verification:** `tsc --noEmit`, `expo lint`, `jest` (41/41), `expo-doctor` (21/21), iOS + Android `expo export`.

@@ -1,129 +1,110 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { useState } from 'react';
+import { View, Text, StyleSheet } from 'react-native';
 import { NavBar } from '../../components/NavBar';
-import { Icon } from '../../components/Icon';
+import { ScreenContainer } from '../../components/ScreenContainer';
 import { StatusBeacon } from '../../components/StatusBeacon';
-import { useTheme } from '../../theme';
+import { Icon } from '../../components/Icon';
+import { useHaptics } from '../../hooks/useHaptics';
 import { COMMANDER_VITALS } from '../../data/mockData';
+import { useTheme, MONO_FONT } from '../../theme';
 
 export default function VitalsScreen() {
   const { theme } = useTheme();
+  const haptics = useHaptics();
   const [pulse, setPulse] = useState(84);
 
-  const handleRefreshTelemetry = () => {
+  // Dummy telemetry: nudge the heart rate within a plausible band on each refresh.
+  const refreshTelemetry = () => {
+    haptics.selection();
     const jitter = Math.floor(Math.random() * 5) - 2;
     setPulse((prev) => Math.max(78, Math.min(96, prev + jitter)));
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <NavBar title="Vitals" rightIcon="activity" onRightPress={handleRefreshTelemetry} />
-      <ScrollView contentContainerStyle={styles.content} showsVerticalScrollIndicator={false}>
-        
-        {/* Heart Telemetry Header */}
-        <View style={styles.header}>
-          <View style={styles.iconWrapper}>
-            <Icon name="heart" size={46} color={theme.colors.primary} />
-            <View style={styles.beaconOffset}>
-              <StatusBeacon status="online" size={10} />
-            </View>
-          </View>
-          <Text style={[styles.mainTitle, { color: theme.colors.textPrimary }]}>
-            Commander Health
-          </Text>
-          <Text style={[styles.subTitle, { color: theme.colors.textMuted }]}>
-            BIOMETRIC TELEMETRY FEED
-          </Text>
+    <ScreenContainer
+      header={
+        <NavBar
+          title="Vitals"
+          leftIcon="squiggle"
+          rightIcon="refresh-cw"
+          onRightPress={refreshTelemetry}
+        />
+      }>
+      <View style={styles.header}>
+        <View>
+          <Icon name="activity" size={46} color={theme.colors.primary} strokeWidth={1.75} />
+          <StatusBeacon status="online" size={10} style={styles.beacon} />
         </View>
+        <Text style={[theme.typography.heading, styles.title, { color: theme.colors.textPrimary }]}>
+          COMMANDER HEALTH
+        </Text>
+        <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>BIOMETRIC TELEMETRY FEED</Text>
+      </View>
 
-        {/* Telemetry Card */}
-        <View
-          style={[
-            styles.card,
-            {
-              backgroundColor: theme.colors.surface,
-              borderColor: theme.colors.border,
-              borderRadius: theme.radius.lg,
-            },
-          ]}>
-          {COMMANDER_VITALS.map((vital, index) => (
-            <View
-              key={index}
-              style={[
-                styles.statRow,
-                { borderBottomColor: theme.colors.border },
-                index === COMMANDER_VITALS.length - 1 && { borderBottomWidth: 0 },
-              ]}>
-              <Text style={[styles.statLabel, { color: theme.colors.textMuted }]}>
-                {vital.label}
-              </Text>
-              <Text
-                style={[
-                  styles.statValue,
-                  { color: theme.colors.primary },
-                  vital.danger && { color: theme.colors.accent },
-                ]}>
-                {vital.label === 'Heart Rate' ? `${pulse} BPM` : vital.value}
-              </Text>
-            </View>
-          ))}
-        </View>
-      </ScrollView>
-    </View>
+      <View
+        style={[
+          styles.card,
+          { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderRadius: theme.radius.xl },
+        ]}>
+        {COMMANDER_VITALS.map((vital, index) => (
+          <View
+            key={vital.label}
+            accessible
+            style={[
+              styles.row,
+              { borderBottomColor: theme.colors.border },
+              index === COMMANDER_VITALS.length - 1 && styles.lastRow,
+            ]}>
+            <Text style={[styles.label, { color: theme.colors.textMuted }]}>{vital.label}</Text>
+            <Text style={[styles.value, { color: vital.danger ? theme.colors.danger : theme.colors.primary }]}>
+              {vital.label === 'Heart Rate' ? `${pulse} BPM` : vital.value}
+            </Text>
+          </View>
+        ))}
+      </View>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
   header: {
     alignItems: 'center',
-    marginBottom: 28,
-    marginTop: 16,
+    marginVertical: 20,
   },
-  iconWrapper: {
-    position: 'relative',
-  },
-  beaconOffset: {
+  beacon: {
     position: 'absolute',
-    top: -2,
-    right: -6,
+    top: -6,
+    right: -14,
   },
-  mainTitle: {
-    fontSize: 22,
-    fontWeight: '900',
-    fontStyle: 'italic',
-    textTransform: 'uppercase',
+  title: {
     marginTop: 14,
-    letterSpacing: 0.5,
   },
-  subTitle: {
+  subtitle: {
+    fontFamily: MONO_FONT,
     fontSize: 11,
-    fontWeight: '700',
-    letterSpacing: 1.5,
+    letterSpacing: 2,
     marginTop: 4,
   },
   card: {
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 6,
     borderWidth: 1,
   },
-  statRow: {
+  row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingVertical: 14,
-    borderBottomWidth: 1,
+    borderBottomWidth: StyleSheet.hairlineWidth,
   },
-  statLabel: {
+  lastRow: {
+    borderBottomWidth: 0,
+  },
+  label: {
     fontSize: 15,
   },
-  statValue: {
-    fontSize: 15,
-    fontWeight: '800',
-    letterSpacing: 0.5,
+  value: {
+    fontFamily: MONO_FONT,
+    fontSize: 14,
+    fontWeight: '700',
   },
 });

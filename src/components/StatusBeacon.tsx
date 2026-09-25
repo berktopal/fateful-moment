@@ -58,11 +58,11 @@ export const StatusBeacon = ({
   const getColor = () => {
     switch (status) {
       case 'online':
-        return theme.colors.beaconGreen;
+        return theme.colors.success;
       case 'warning':
-        return '#F59E0B'; // Amber
+        return theme.colors.warning;
       case 'critical':
-        return theme.colors.beaconRed;
+        return theme.colors.danger;
       case 'standby':
       default:
         return theme.colors.primary;

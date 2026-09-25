@@ -16,16 +16,16 @@ export const InteractiveSelection = ({
   onSelect,
   title = 'Interactive Selection',
 }: InteractiveSelectionProps) => {
-  const { theme, isDark } = useTheme();
-  const selectedFill = isDark ? '#0092B8' : theme.colors.primary;
+  const { theme } = useTheme();
+  const selectedFill = theme.colors.primaryStrong;
 
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: isDark ? '#020C1B' : theme.colors.surface,
-          borderRadius: theme.radius.xl + 8,
+          backgroundColor: theme.colors.surfaceHud,
+          borderRadius: theme.radius.xxl + 4,
           borderColor: theme.colors.border,
         },
       ]}>

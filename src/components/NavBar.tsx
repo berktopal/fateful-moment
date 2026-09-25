@@ -68,7 +68,9 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
   },
+  // Same footprint as an IconButton so the title stays centred and the bar height is stable.
   iconPlaceholder: {
     width: 44,
+    height: 44,
   },
 });

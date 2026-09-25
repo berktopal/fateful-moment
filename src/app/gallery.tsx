@@ -12,6 +12,7 @@ import { HudCard } from '../components/HudCard';
 import { ScanlineOverlay } from '../components/ScanlineOverlay';
 import { ScenarioCard } from '../components/ScenarioCard';
 import type { ButtonAppearance, ButtonVariant } from '../components/Button';
+import { SCENARIOS } from '../data/mockData';
 
 const BUTTON_VARIANTS: ButtonVariant[] = ['primary', 'secondary', 'neutral', 'soft', 'danger'];
 const BUTTON_APPEARANCES: ButtonAppearance[] = ['solid', 'outline', 'link'];
@@ -139,12 +140,14 @@ export default function GalleryScreen() {
       <ScenarioCard
         title="Title"
         description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+        image={SCENARIOS[0].image}
         headerText="0:00 min"
         onStart={() => {}}
       />
       <ScenarioCard
         title="Title"
         description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+        image={SCENARIOS[0].image}
         headerText="0:00 min"
         isActive={false}
         onStart={() => {}}

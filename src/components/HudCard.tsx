@@ -24,16 +24,16 @@ export const HudCard = ({
   children,
   style,
 }: HudCardProps) => {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
 
   return (
     <View
       style={[
         styles.container,
         {
-          backgroundColor: isDark ? '#0A0F1E' : theme.colors.surface,
+          backgroundColor: theme.colors.surfaceHud,
           borderColor: theme.colors.border,
-          borderRadius: theme.radius.xl + 8,
+          borderRadius: theme.radius.xxl + 4,
         },
         style,
       ]}>

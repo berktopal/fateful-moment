@@ -1,8 +1,10 @@
-import React, { createContext, useContext, useState, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, useMemo, ReactNode } from 'react';
 import { useColorScheme } from 'react-native';
 import { DARK_TOKENS, LIGHT_TOKENS, ThemeTokens } from './tokens';
+import { useAppStore } from '../store/AppStore';
+import type { ThemePreference } from '../store/storage';
 
-export type ThemePreference = 'system' | 'dark' | 'light';
+export type { ThemePreference };
 
 interface ThemeContextType {
   theme: ThemeTokens;
@@ -13,45 +15,32 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
+/** Resolves the persisted preference (+ OS scheme for "system") into concrete tokens. */
 export const ThemeProvider = ({ children }: { children: ReactNode }) => {
   const systemScheme = useColorScheme();
-  const [preference, setPreference] = useState<ThemePreference>('dark'); // Default to dark per Figma spec
+  const { preferences, setPreference } = useAppStore();
+  const preference = preferences.theme;
 
-  const activeMode = useMemo(() => {
-    if (preference === 'system') {
-      return systemScheme === 'light' ? 'light' : 'dark';
-    }
-    return preference;
-  }, [preference, systemScheme]);
-
-  const theme = useMemo(() => {
-    return activeMode === 'light' ? LIGHT_TOKENS : DARK_TOKENS;
-  }, [activeMode]);
-
-  const value = useMemo(
-    () => ({
-      theme,
+  const value = useMemo<ThemeContextType>(() => {
+    const mode =
+      preference === 'system' ? (systemScheme === 'light' ? 'light' : 'dark') : preference;
+    return {
+      theme: mode === 'light' ? LIGHT_TOKENS : DARK_TOKENS,
       preference,
-      setPreference,
-      isDark: activeMode === 'dark',
-    }),
-    [theme, preference, activeMode]
-  );
+      setPreference: (next) => setPreference('theme', next),
+      isDark: mode === 'dark',
+    };
+  }, [preference, systemScheme, setPreference]);
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 };
 
-export const useTheme = (): ThemeContextType => {
-  const context = useContext(ThemeContext);
-  if (!context) {
-    // Graceful fallback to dark theme if rendered outside provider
-    return {
-      theme: DARK_TOKENS,
-      preference: 'dark',
-      setPreference: () => {},
-      isDark: true,
-    };
-  }
-  return context;
+const FALLBACK: ThemeContextType = {
+  theme: DARK_TOKENS,
+  preference: 'dark',
+  setPreference: () => {},
+  isDark: true,
 };
 
+/** Falls back to the dark (Figma baseline) theme so components render in isolation, e.g. tests. */
+export const useTheme = (): ThemeContextType => useContext(ThemeContext) ?? FALLBACK;

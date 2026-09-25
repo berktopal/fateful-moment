@@ -13,8 +13,9 @@ interface ScanlineOverlayProps {
 const LINE_COUNT = 160;
 
 export const ScanlineOverlay = ({ opacity = 0.08, spacing = 4, style }: ScanlineOverlayProps) => {
-  const { isDark } = useTheme();
-  const lineColor = isDark ? '#00D3F3' : '#0F172A';
+  const { theme, isDark } = useTheme();
+  const lineColor = isDark ? theme.colors.primary : theme.colors.textPrimary;
+  // Lines read much stronger on light surfaces, so they are toned down there.
   const effectiveOpacity = isDark ? opacity : opacity * 0.5;
 
   return (

@@ -26,13 +26,12 @@ export const IconButton = ({
   size = 20,
   accessibilityLabel,
 }: IconButtonProps) => {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
 
   const animateTo = (toValue: number) =>
     Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 28 }).start();
 
-  const activeBg = isDark ? 'rgba(0, 211, 243, 0.16)' : 'rgba(8, 145, 178, 0.12)';
   const glyphColor =
     isActive || bordered ? theme.colors.primary : (color ?? theme.colors.textMuted);
 
@@ -49,7 +48,7 @@ export const IconButton = ({
           styles.container,
           {
             borderRadius: theme.radius.lg,
-            backgroundColor: isActive ? activeBg : bordered ? theme.colors.surface : 'transparent',
+            backgroundColor: isActive ? theme.colors.primaryTint : bordered ? theme.colors.surface : 'transparent',
             borderColor: bordered ? theme.colors.border : 'transparent',
           },
         ]}>

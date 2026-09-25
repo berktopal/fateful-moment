@@ -1,13 +1,13 @@
-import { IntelItem, DecisionOption } from '../types';
-import { INTEL_DATA, DECISION_OPTIONS } from '../data/mockData';
+import type { IntelItem, ProtocolOption } from '../types';
+import { INTEL_DATA, PROTOCOL_OPTIONS } from '../data/mockData';
+import { simulateLatency } from './latency';
 
 export const getIntelData = async (): Promise<IntelItem[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 50));
+  await simulateLatency();
   return INTEL_DATA;
 };
 
-export const getDecisionOptions = async (): Promise<DecisionOption[]> => {
-  await new Promise((resolve) => setTimeout(resolve, 50));
-  return DECISION_OPTIONS;
+export const getProtocolOptions = async (): Promise<ProtocolOption[]> => {
+  await simulateLatency();
+  return PROTOCOL_OPTIONS;
 };
-

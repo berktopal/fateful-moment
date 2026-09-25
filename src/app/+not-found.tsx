@@ -1,19 +1,21 @@
-import { Link, Stack } from 'expo-router';
-import { StyleSheet, Text, View } from 'react-native';
-import { COLORS } from '../constants/Colors';
+import { View, Text, StyleSheet } from 'react-native';
+import { router } from 'expo-router';
+import { Button } from '../components/Button';
+import { Icon } from '../components/Icon';
+import { useTheme, MONO_FONT } from '../theme';
 
 export default function NotFoundScreen() {
-  return (
-    <>
-      <Stack.Screen options={{ title: 'Oops!' }} />
-      <View style={styles.container}>
-        <Text style={styles.title}>This screen doesn&apos;t exist.</Text>
+  const { theme } = useTheme();
 
-        <Link href="/" style={styles.link}>
-          <Text style={styles.linkText}>Go to home screen!</Text>
-        </Link>
-      </View>
-    </>
+  return (
+    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
+      <Icon name="shield-alert" size={48} color={theme.colors.danger} />
+      <Text style={[styles.code, { color: theme.colors.primary }]}>ERROR 404 // SIGNAL LOST</Text>
+      <Text style={[theme.typography.heading, { color: theme.colors.textPrimary }]}>
+        This screen doesn&apos;t exist.
+      </Text>
+      <Button title="Return to War Room" icon="arrow-right" onPress={() => router.replace('/')} />
+    </View>
   );
 }
 
@@ -22,21 +24,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
-    backgroundColor: COLORS.background,
+    padding: 24,
+    gap: 16,
   },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: COLORS.text,
-  },
-  link: {
-    marginTop: 15,
-    paddingVertical: 15,
-  },
-  linkText: {
-    fontSize: 14,
-    color: COLORS.primary,
+  code: {
+    fontFamily: MONO_FONT,
+    fontSize: 11,
+    letterSpacing: 2,
   },
 });
-

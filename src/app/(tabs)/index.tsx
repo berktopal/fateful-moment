@@ -1,91 +1,78 @@
-import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
+import { useMemo } from 'react';
+import { router } from 'expo-router';
 import { NavBar } from '../../components/NavBar';
 import { ScenarioCard } from '../../components/ScenarioCard';
 import { TimerBar } from '../../components/TimerBar';
-import { useTheme } from '../../theme';
+import { SectionHeader } from '../../components/SectionHeader';
+import { ScreenContainer } from '../../components/ScreenContainer';
+import { StatusBeacon } from '../../components/StatusBeacon';
+import { useAsyncData } from '../../hooks/useAsyncData';
+import { useAppStore } from '../../store/AppStore';
 import { getFeaturedScenario, getScenarios } from '../../repositories/scenarioRepository';
-import { Scenario } from '../../types';
+import type { Scenario } from '../../types';
+
+const loadHome = () => Promise.all([getFeaturedScenario(), getScenarios()]);
+
+const openBriefing = (scenario: Scenario) => router.push(`/scenario/${scenario.id}`);
 
 export default function HomeScreen() {
-  const { theme } = useTheme();
-  const [featured, setFeatured] = useState<Scenario | null>(null);
-  const [scenarios, setScenarios] = useState<Scenario[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { data, loading, error, reload } = useAsyncData(loadHome);
+  const { history } = useAppStore();
+  const [featured, scenarios] = data ?? [null, []];
 
-  useEffect(() => {
-    let mounted = true;
-    Promise.all([getFeaturedScenario(), getScenarios()]).then(([feat, list]) => {
-      if (mounted) {
-        setFeatured(feat);
-        setScenarios(list);
-        setLoading(false);
-      }
-    });
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  const handleStartMission = (scenario: Scenario) => {
-    Alert.alert(
-      'TACTICAL PROTOCOL ENGAGED',
-      `Deploying tactical operatives to "${scenario.title}". Estimated time to objective: ${scenario.duration}.`,
-      [{ text: 'PROCEED TO OPS', style: 'default' }, { text: 'ABORT', style: 'cancel' }]
+  // Campaign progress: distinct playable scenarios completed at least once.
+  const progress = useMemo(() => {
+    const playable = [featured, ...scenarios].filter(
+      (s): s is Scenario => !!s && s.isActive && s.steps.length > 0
     );
-  };
+    const done = new Set(history.map((r) => r.scenarioId));
+    const completed = playable.filter((s) => done.has(s.id)).length;
+    return { completed, total: playable.length };
+  }, [featured, scenarios, history]);
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <NavBar title="War Room Alpha" leftIcon="squiggle" rightIcon="bell-dot" />
-      <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false}>
-        {loading ? (
-          <ActivityIndicator color={theme.colors.primary} size="large" style={{ marginTop: 40 }} />
-        ) : (
-          <>
-            {/* Critical Scenario Briefing */}
-            {featured && (
-              <ScenarioCard
-                title={featured.title}
-                description={featured.description}
-                imageUrl={featured.imageUrl}
-                headerText="Scenario Briefing"
-                onStart={() => handleStartMission(featured)}
-                isLarge
-              />
-            )}
+    <ScreenContainer
+      header={
+        <NavBar
+          title="War Room Alpha"
+          leftIcon="squiggle"
+          rightIcon="bell-dot"
+          onRightPress={() => router.push('/explore')}
+        />
+      }
+      loading={loading}
+      error={error}
+      onRetry={reload}>
+      {featured && (
+        <ScenarioCard
+          title={featured.title}
+          description={featured.description}
+          image={featured.image}
+          headerText="Scenario Briefing"
+          onStart={() => openBriefing(featured)}
+          isLarge
+        />
+      )}
 
-            {/* Tactical Mission Timer Bar (Figma Style Guide) */}
-            <TimerBar progress={0.68} label={`OPERATION WINDOW // ${featured?.duration ?? ''}`} />
+      <TimerBar
+        progress={progress.total ? progress.completed / progress.total : 0}
+        label="CAMPAIGN PROGRESS"
+        trailingLabel={`${progress.completed}/${progress.total}`}
+        style={{ marginBottom: 24 }}
+      />
 
-            <View style={{ height: theme.spacing.md }} />
-
-            {/* Tactical Mission List */}
-            {scenarios.map((scenario) => (
-              <ScenarioCard
-                key={scenario.id}
-                title={scenario.title}
-                description={scenario.description}
-                imageUrl={scenario.imageUrl}
-                onStart={() => handleStartMission(scenario)}
-                isActive={scenario.isActive}
-                iconName="alarm-clock"
-                headerText={scenario.isActive ? scenario.duration : `Locked · ${scenario.duration}`}
-              />
-            ))}
-          </>
-        )}
-      </ScrollView>
-    </View>
+      <SectionHeader title="Scenarios" accessory={<StatusBeacon status="online" size={8} />} />
+      {scenarios.map((scenario) => (
+        <ScenarioCard
+          key={scenario.id}
+          title={scenario.title}
+          description={scenario.description}
+          image={scenario.image}
+          onStart={() => openBriefing(scenario)}
+          isActive={scenario.isActive}
+          headerText={scenario.isActive ? scenario.duration : `Locked · ${scenario.duration}`}
+        />
+      ))}
+    </ScreenContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: 16,
-    paddingBottom: 48,
-  },
-});

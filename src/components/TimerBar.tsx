@@ -1,49 +1,74 @@
 import React, { useEffect } from 'react';
-import { View, StyleSheet, Text, Animated, ViewStyle, useAnimatedValue } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Animated,
+  Easing,
+  ViewStyle,
+  useAnimatedValue,
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, MONO_FONT } from '../theme';
 
 interface TimerBarProps {
-  progress?: number; // 0 to 1
-  durationSeconds?: number;
+  /** 0 → 1 fill. */
+  progress: number;
   label?: string;
+  /** Right-hand HUD readout; defaults to the percentage. */
+  trailingLabel?: string;
+  /** Turns the readout red below this progress (e.g. the last seconds of a countdown). */
+  criticalBelow?: number;
+  /** Use a short duration when progress is driven by a live countdown. */
+  animationMs?: number;
   style?: ViewStyle;
 }
 
+/** Style guide "Timer": thin track with a Cyan → Red gradient fill. */
 export const TimerBar = ({
-  progress = 0.75,
-  durationSeconds,
+  progress,
   label = 'TIMER',
+  trailingLabel,
+  criticalBelow,
+  animationMs = 600,
   style,
 }: TimerBarProps) => {
   const { theme } = useTheme();
-  const animatedWidth = useAnimatedValue(progress);
+  const clamped = Math.min(1, Math.max(0, progress));
+  const animatedWidth = useAnimatedValue(clamped);
 
   useEffect(() => {
     Animated.timing(animatedWidth, {
-      toValue: progress,
-      duration: 600,
-      useNativeDriver: false,
+      toValue: clamped,
+      duration: animationMs,
+      easing: Easing.linear,
+      useNativeDriver: false, // width is a layout prop
     }).start();
-  }, [progress, animatedWidth]);
+  }, [clamped, animationMs, animatedWidth]);
 
-  const widthInterpolation = animatedWidth.interpolate({
-    inputRange: [0, 1],
-    outputRange: ['0%', '100%'],
-  });
+  const width = animatedWidth.interpolate({ inputRange: [0, 1], outputRange: ['0%', '100%'] });
+  const isCritical = criticalBelow !== undefined && clamped < criticalBelow;
 
   return (
-    <View style={[styles.container, style]}>
+    <View
+      style={[styles.container, style]}
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: 100, now: Math.round(clamped * 100) }}>
       <View style={styles.header}>
         <Text style={[styles.label, { color: theme.colors.textMuted }]}>{label}</Text>
-        <Text style={[styles.percent, { color: theme.colors.primary }]}>
-          {Math.round(progress * 100)}%
+        <Text
+          style={[
+            styles.readout,
+            { color: isCritical ? theme.colors.danger : theme.colors.primary },
+          ]}>
+          {trailingLabel ?? `${Math.round(clamped * 100)}%`}
         </Text>
       </View>
       <View style={[styles.track, { backgroundColor: theme.colors.surfaceElevated }]}>
-        <Animated.View style={[styles.barContainer, { width: widthInterpolation }]}>
+        <Animated.View style={[styles.fill, { width }]}>
           <LinearGradient
-            colors={[theme.colors.primary, '#7C8BA1', theme.colors.accent]}
+            colors={theme.colors.timerGradient}
             start={{ x: 0, y: 0.5 }}
             end={{ x: 1, y: 0.5 }}
             style={styles.gradient}
@@ -68,9 +93,10 @@ const styles = StyleSheet.create({
     fontSize: 10,
     letterSpacing: 1.5,
   },
-  percent: {
+  readout: {
     fontFamily: MONO_FONT,
-    fontSize: 10,
+    fontSize: 11,
+    fontWeight: '700',
     letterSpacing: 1,
   },
   track: {
@@ -78,7 +104,7 @@ const styles = StyleSheet.create({
     borderRadius: 3,
     overflow: 'hidden',
   },
-  barContainer: {
+  fill: {
     height: '100%',
   },
   gradient: {
@@ -86,4 +112,3 @@ const styles = StyleSheet.create({
     borderRadius: 3,
   },
 });
-

@@ -1,259 +1,239 @@
-import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Switch, Pressable, Alert } from 'react-native';
+import { ReactNode } from 'react';
+import { View, Text, StyleSheet, Switch, Pressable, Alert } from 'react-native';
+import { router } from 'expo-router';
+import Constants from 'expo-constants';
 import { NavBar } from '../../components/NavBar';
-import { Icon } from '../../components/Icon';
-import { useTheme } from '../../theme';
+import { ScreenContainer } from '../../components/ScreenContainer';
+import { SectionHeader } from '../../components/SectionHeader';
+import { Icon, IconName } from '../../components/Icon';
+import { useAppStore } from '../../store/AppStore';
+import { useHaptics } from '../../hooks/useHaptics';
+import { useTheme, MONO_FONT, ThemePreference } from '../../theme';
+
+const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
+  { value: 'dark', label: 'DARK' },
+  { value: 'light', label: 'LIGHT' },
+  { value: 'system', label: 'SYSTEM' },
+];
+
+interface SettingRowProps {
+  icon: IconName;
+  title: string;
+  subtitle?: string;
+  trailing?: ReactNode;
+  onPress?: () => void;
+}
+
+const SettingRow = ({ icon, title, subtitle, trailing, onPress }: SettingRowProps) => {
+  const { theme } = useTheme();
+  return (
+    <Pressable
+      onPress={onPress}
+      disabled={!onPress}
+      accessibilityRole={onPress ? 'button' : undefined}
+      style={({ pressed }) => [
+        styles.row,
+        {
+          backgroundColor: pressed ? theme.colors.surfaceElevated : theme.colors.surface,
+          borderColor: theme.colors.border,
+          borderRadius: theme.radius.lg,
+        },
+      ]}>
+      <View style={[styles.rowIcon, { backgroundColor: theme.colors.primaryTint }]}>
+        <Icon name={icon} size={18} color={theme.colors.primary} />
+      </View>
+      <View style={styles.rowText}>
+        <Text style={[styles.rowTitle, { color: theme.colors.textPrimary }]}>{title}</Text>
+        {subtitle ? (
+          <Text style={[styles.rowSubtitle, { color: theme.colors.textMuted }]}>{subtitle}</Text>
+        ) : null}
+      </View>
+      {trailing ?? (onPress ? <Icon name="chevron-right" size={18} color={theme.colors.textMuted} /> : null)}
+    </Pressable>
+  );
+};
 
 export default function SettingsScreen() {
   const { theme, preference, setPreference, isDark } = useTheme();
+  const { preferences, setPreference: setStorePreference } = useAppStore();
+  const haptics = useHaptics();
 
-  const [haptic, setHaptic] = useState(true);
-  const [notifications, setNotifications] = useState(false);
+  const switchColors = {
+    trackColor: { false: theme.colors.border, true: theme.colors.primary },
+    ios_backgroundColor: theme.colors.border,
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
-      <NavBar title="Settings" />
-      <ScrollView contentContainerStyle={styles.content}>
-        
-        {/* Theme Preferences */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>
-            THEME & APPEARANCE
-          </Text>
-
-          <View
-            style={[
-              styles.themeSelectorCard,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-              },
-            ]}>
-            <View style={styles.settingLeft}>
-              <Icon name={isDark ? 'moon' : 'sun'} size={20} color={theme.colors.primary} />
-              <View>
-                <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                  Interface Theme
-                </Text>
-                <Text style={[styles.settingSubtext, { color: theme.colors.textMuted }]}>
-                  Active: {isDark ? 'Dark (Figma Baseline)' : 'Light (Accessible)'}
-                </Text>
-              </View>
-            </View>
-
-            <View style={styles.segmentedContainer}>
-              {(['dark', 'light', 'system'] as const).map((mode) => {
-                const isActive = preference === mode;
-                return (
-                  <Pressable
-                    key={mode}
-                    onPress={() => setPreference(mode)}
-                    style={[
-                      styles.segmentButton,
-                      {
-                        backgroundColor: isActive
-                          ? theme.colors.primary
-                          : theme.colors.surfaceElevated,
-                        borderRadius: theme.radius.sm,
-                      },
-                    ]}>
-                    <Text
-                      style={[
-                        styles.segmentText,
-                        {
-                          color: isActive ? theme.colors.onPrimary : theme.colors.textMuted,
-                          fontWeight: isActive ? '800' : '600',
-                        },
-                      ]}>
-                      {mode.toUpperCase()}
-                    </Text>
-                  </Pressable>
-                );
-              })}
-            </View>
+    <ScreenContainer header={<NavBar title="Settings" leftIcon="squiggle" />}>
+      <SectionHeader title="Appearance" />
+      <View
+        style={[
+          styles.themeCard,
+          { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderRadius: theme.radius.lg },
+        ]}>
+        <View style={styles.themeHeader}>
+          <View style={[styles.rowIcon, { backgroundColor: theme.colors.primaryTint }]}>
+            <Icon name={isDark ? 'moon' : 'sun'} size={18} color={theme.colors.primary} />
+          </View>
+          <View style={styles.rowText}>
+            <Text style={[styles.rowTitle, { color: theme.colors.textPrimary }]}>Interface Theme</Text>
+            <Text style={[styles.rowSubtitle, { color: theme.colors.textMuted }]}>
+              {preference === 'system' ? `Following system (${isDark ? 'dark' : 'light'})` : 'Saved on this device'}
+            </Text>
           </View>
         </View>
-
-        {/* System Preferences */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>
-            TACTICAL PREFERENCES
-          </Text>
-
-          <View
-            style={[
-              styles.settingRow,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-              },
-            ]}>
-            <View style={styles.settingLeft}>
-              <Icon name="bell" size={20} color={theme.colors.primary} />
-              <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                Encrypted Notifications
-              </Text>
-            </View>
-            <Switch
-              value={notifications}
-              onValueChange={setNotifications}
-              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-              thumbColor={notifications ? '#FFFFFF' : '#94A3B8'}
-            />
-          </View>
-
-          <View
-            style={[
-              styles.settingRow,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-              },
-            ]}>
-            <View style={styles.settingLeft}>
-              <Icon name="smartphone" size={20} color={theme.colors.primary} />
-              <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                Haptic Actuation
-              </Text>
-            </View>
-            <Switch
-              value={haptic}
-              onValueChange={setHaptic}
-              trackColor={{ false: theme.colors.border, true: theme.colors.primary }}
-              thumbColor={haptic ? '#FFFFFF' : '#94A3B8'}
-            />
-          </View>
+        <View style={[styles.segmented, { backgroundColor: theme.colors.surfaceElevated }]} accessibilityRole="radiogroup">
+          {THEME_OPTIONS.map(({ value, label }) => {
+            const active = preference === value;
+            return (
+              <Pressable
+                key={value}
+                onPress={() => {
+                  haptics.selection();
+                  setPreference(value);
+                }}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: active }}
+                accessibilityLabel={`${label.toLowerCase()} theme`}
+                style={[
+                  styles.segment,
+                  { borderRadius: theme.radius.md, backgroundColor: active ? theme.colors.primary : 'transparent' },
+                ]}>
+                <Text
+                  style={[styles.segmentText, { color: active ? theme.colors.onPrimary : theme.colors.textMuted }]}>
+                  {label}
+                </Text>
+              </Pressable>
+            );
+          })}
         </View>
+      </View>
 
-        {/* Account & Security */}
-        <View style={styles.section}>
-          <Text style={[styles.sectionTitle, { color: theme.colors.textMuted }]}>
-            ACCOUNT & SECURITY
-          </Text>
+      <SectionHeader title="Preferences" style={styles.section} />
+      <SettingRow
+        icon="smartphone"
+        title="Haptic Feedback"
+        subtitle="Vibration on decisions and timeouts"
+        trailing={
+          <Switch
+            value={preferences.haptics}
+            onValueChange={(value) => setStorePreference('haptics', value)}
+            thumbColor={preferences.haptics ? theme.colors.onAccent : theme.colors.switchThumbOff}
+            accessibilityLabel="Haptic feedback"
+            {...switchColors}
+          />
+        }
+      />
+      <SettingRow
+        icon="bell"
+        title="Mission Alerts"
+        subtitle="Saved preference — no push service in this demo"
+        trailing={
+          <Switch
+            value={preferences.notifications}
+            onValueChange={(value) => setStorePreference('notifications', value)}
+            thumbColor={preferences.notifications ? theme.colors.onAccent : theme.colors.switchThumbOff}
+            accessibilityLabel="Mission alerts"
+            {...switchColors}
+          />
+        }
+      />
 
-          <Pressable
-            onPress={() =>
-              Alert.alert(
-                'SECURITY & PRIVACY PROTOCOLS',
-                'All telemetry data and tactical operations are end-to-end encrypted with zero local retention. Clearance Level: ALPHA-OPERATIVE.'
-              )
-            }
-            style={[
-              styles.settingRow,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-              },
-            ]}>
-            <View style={styles.settingLeft}>
-              <Icon name="shield" size={20} color={theme.colors.primary} />
-              <View>
-                <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                  Security & Privacy
-                </Text>
-                <Text style={[styles.settingSubtext, { color: theme.colors.textMuted }]}>
-                  E2E Encrypted • Zero Data Retention
-                </Text>
-              </View>
-            </View>
-            <Icon name="chevron-right" size={20} color={theme.colors.textMuted} />
-          </Pressable>
+      <SectionHeader title="Account & Privacy" style={styles.section} />
+      <SettingRow
+        icon="shield"
+        title="Security & Privacy"
+        subtitle="All data stays on this device"
+        onPress={() =>
+          Alert.alert(
+            'Security & Privacy',
+            'Fateful Moment runs entirely on dummy data. Preferences and mission history are stored locally with AsyncStorage and never leave the device.'
+          )
+        }
+      />
+      <SettingRow
+        icon="fingerprint"
+        title="Clearance Credentials"
+        subtitle="Level 4 Tactical Clearance"
+        onPress={() => Alert.alert('Clearance Level', 'Operative credentials verified.')}
+      />
 
-          <Pressable
-            onPress={() =>
-              Alert.alert(
-                'CLEARANCE LEVEL',
-                'Operative credentials verified. Active encryption standard: AES-256 Military Grade.'
-              )
-            }
-            style={[
-              styles.settingRow,
-              {
-                backgroundColor: theme.colors.surface,
-                borderColor: theme.colors.border,
-                borderRadius: theme.radius.lg,
-              },
-            ]}>
-            <View style={styles.settingLeft}>
-              <Icon name="lock" size={20} color={theme.colors.primary} />
-              <View>
-                <Text style={[styles.settingText, { color: theme.colors.textPrimary }]}>
-                  Clearance Credentials
-                </Text>
-                <Text style={[styles.settingSubtext, { color: theme.colors.textMuted }]}>
-                  Level 4 Tactical Clearance
-                </Text>
-              </View>
-            </View>
-            <Icon name="chevron-right" size={20} color={theme.colors.textMuted} />
-          </Pressable>
-        </View>
+      <SectionHeader title="Developer" style={styles.section} />
+      <SettingRow
+        icon="grid"
+        title="Design System Gallery"
+        subtitle="Every component and state from the Figma file"
+        onPress={() => router.push('/gallery')}
+      />
 
-      </ScrollView>
-    </View>
+      <Text style={[styles.version, { color: theme.colors.textMuted }]}>
+        {`FATEFUL MOMENT // v${Constants.expoConfig?.version ?? '1.0.0'}`}
+      </Text>
+    </ScreenContainer>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
-  content: {
-    padding: 16,
-    paddingBottom: 48,
-  },
   section: {
-    marginBottom: 28,
+    marginTop: 20,
   },
-  sectionTitle: {
-    fontSize: 11,
-    fontWeight: '800',
-    letterSpacing: 1.5,
-    marginBottom: 12,
-  },
-  settingRow: {
+  row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    padding: 16,
+    gap: 12,
+    padding: 14,
     marginBottom: 10,
     borderWidth: 1,
   },
-  themeSelectorCard: {
-    padding: 16,
-    borderWidth: 1,
-    marginBottom: 10,
-    gap: 14,
-  },
-  segmentedContainer: {
-    flexDirection: 'row',
-    gap: 8,
-  },
-  segmentButton: {
-    flex: 1,
-    paddingVertical: 10,
+  rowIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  segmentText: {
-    fontSize: 11,
-    letterSpacing: 1,
+  rowText: {
+    flex: 1,
   },
-  settingLeft: {
+  rowTitle: {
+    fontSize: 15,
+    fontWeight: '600',
+  },
+  rowSubtitle: {
+    fontSize: 12,
+    marginTop: 2,
+  },
+  themeCard: {
+    padding: 14,
+    borderWidth: 1,
+    gap: 14,
+  },
+  themeHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 12,
   },
-  settingText: {
-    fontSize: 15,
-    fontWeight: '600',
+  segmented: {
+    flexDirection: 'row',
+    padding: 4,
+    borderRadius: 10,
   },
-  settingSubtext: {
-    fontSize: 12,
-    marginTop: 2,
+  segment: {
+    flex: 1,
+    paddingVertical: 9,
+    alignItems: 'center',
+  },
+  segmentText: {
+    fontFamily: MONO_FONT,
+    fontSize: 11,
+    fontWeight: '700',
+    letterSpacing: 1,
+  },
+  version: {
+    fontFamily: MONO_FONT,
+    fontSize: 10,
+    letterSpacing: 1.5,
+    textAlign: 'center',
+    marginTop: 24,
   },
 });

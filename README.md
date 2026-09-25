@@ -1,101 +1,99 @@
-# Fateful Moment (React Native)
+# Fateful Moment
 
-"Fateful Moment", Figma tasarımına sadık kalınarak geliştirilmiş, taktiksel kriz yönetimi ve askeri/bilimkurgu simülasyonu temalı, yüksek performanslı ve çift temalı (Dark + Light) bir mobil uygulamadır.
+Kriz anlarında zamana karşı karar verdiğiniz, taktiksel bir simülasyon uygulaması. React Native + Expo ile iOS ve Android için geliştirildi; paylaşılan Figma tasarımını temel alır ve tamamen dummy veriyle çalışır.
 
----
+## Öne çıkanlar
 
-## 🚀 Öne Çıkan Mühendislik & Tasarım Standartları
+- **Oynanabilir senaryo akışı:** Brifing → zamanlı karar turları → After Action Report. Her karar *Stability* ve *Public Trust* değerlerini değiştirir. Süre dolarsa işaretli seçenek otomatik uygulanır, hiçbir seçenek işaretli değilse ceza puanı yazılır. Sonuç 0–100 arası bir skor ve bir derece olarak gösterilir (Decisive / Contained / Compromised / Catastrophic).
+- **Figma tasarım sistemi:** Semantik token'lar (renk, tipografi, boşluk, radius), Lucide ikon seti ve Figma'daki bileşen durumları: 6 renk varyantı × solid/outline/link buton, senaryo kartları (aktif / pasif), option kartları, HUD kartı, timer, status beacon, scanline. Tüm bileşenler ve durumları *Settings → Design System Gallery* ekranında toplu olarak görülebilir.
+- **Dark + Light tema:** Dark, Figma'daki temel görünüm. Light tema WCAG AA kontrastına göre türetildi. *System* seçeneği işletim sisteminin temasını takip eder.
+- **Kalıcı durum:** Tema ve titreşim tercihleri ile görev geçmişi AsyncStorage'da tutulur. Diskteki veri bozuksa alan bazında varsayılana dönülür. Tercihler yüklenene kadar splash ekranı açık kalır, böylece açılışta tema yanıp sönmez.
+- **Çevrimdışı çalışır:** Tüm görseller uygulama içinde gömülüdür ve `expo-image` ile önbelleklenip yumuşak geçişle yüklenir.
+- **Erişilebilirlik ve detaylar:** Anlamlı erişilebilirlik rolleri (button / radio / progressbar / header), haptik geri bildirim (ayarlardan kapatılabilir), uygulama arka plana geçince duran timer, simülasyonun ortasında kazara çıkışa karşı onay (iOS kaydırma hareketi ve Android geri tuşu dahil).
 
-* **Çift Tema Desteği (Dark & Light Mode):**
-  * **Dark Theme:** Figma Stil Rehberindeki renk kodları (`#00D3F3`, `#0F172A`, `#FB2C36`, `#020617`, `#1D293D`, `#F1F5F9`) ile piksel-kusursuz (pixel-perfect) uyum.
-  * **Light Theme:** Marka kimliğini koruyan, WCAG AA erişilebilirlik standartlarına uygun kontrast oranları ve dinamik tema geçiş altyapısı (`useTheme()`).
-  * **Runtime Selector:** Ayarlar (Settings) sekmesinden anlık olarak System / Dark / Light geçişi yapılabilir.
-* **Tasarım Sistemi Bileşenleri (Atomic Components):**
-  * `Button`: Figma "Buttons" panosuyla birebir — Primary, Secondary, Neutral, Soft, Danger, Glass varyantları × Solid / Outline / Link görünümleri × SM, MD, LG boyutları; opsiyonel sağ ok ikonu ve yaylı basma animasyonu.
-  * `Icon`: Figma ikon seti Lucide olduğu için `lucide-react-native` üzerine ince bir sarmalayıcı; ikonlar tek tek import edilir, böylece bundle'a yalnızca kullanılanlar girer.
-  * `HudCard`: Stil rehberindeki "Standard Card Layout" (mono HUD etiketi, italik başlık, durum çipleri, kırmızı uyarı noktası).
-  * `TimerBar`: Stil rehberindeki ince Cyan → Kırmızı degradeli, animasyonlu geri sayım çubuğu.
-  * `ScanlineOverlay`: Gerçek yatay tarama çizgileri çizen CRT efekti.
-  * `StatusBeacon`: Gerçek zamanlı sistem ve operatif durumunu simüle eden yanıp sönen (pulsing) yeşil/kırmızı gösterge halkaları.
-  * `OptionCard`: Karar Matrisi (Decision Matrix) için Active (Cyan degrade), Default ve Passive durumları.
-  * `ScenarioCard`: Kriz brifing kartı — mono HUD başlığı ("0:00 min" / "SCENARIO BRIEFING"), cam (glass) Start butonu, kilitli senaryolar için Figma'daki buzlu pasif katman.
-  * `SquareCard`: 1:1 en-boy oranı (`aspectRatio: 1`) korunarak resim sünmelerini önleyen arşiv ızgara kartı.
-  * `NavBar`: Çentik ve Dinamik Ada (Safe Area) paylarına tam uyumlu başlık ve interaktif aksiyon barı.
-* **Tasarım Doğrulama Galerisi (`/gallery`):**
-  * Tüm bileşenlerin açık ve koyu temalardaki tüm durumlarını yan yana test edebilmek için Settings sekmesinden erişilebilen canlı bir **Component Gallery** ekranı bulunmaktadır.
-* **Async Repository Mimarisi:**
-  * UI katmanı statik verilere doğrudan bağımlı değildir; `scenarioRepository`, `intelRepository` gibi asenkron servisler üzerinden beslenir. İleride backend veya GraphQL eklendiğinde tek satır UI kodu değiştirmeden entegrasyon sağlanabilir.
-* **Tam Tip Güvenliği:** Strict TypeScript (`npx tsc --noEmit` sıfır hata).
+## Ekranlar
 
----
+| Ekran | İçerik |
+|---|---|
+| **War Room** (Home) | Öne çıkan brifing kartı, kampanya ilerlemesi, senaryo listesi (kilitli senaryo Figma'daki pasif durumda) |
+| **Briefing** | Senaryo görseli, tehdit seviyesi / süre / karar sayısı, kurallar, en iyi skor |
+| **Simulation** | Karar sayacı, geri sayım çubuğu, durum raporu, seçenekler, sonuç ve metrik değişimleri |
+| **After Action Report** | Derece, skor, final metrikleri, karar zaman çizelgesi, Retry |
+| **Intel / Vitals / System** | Protokol seçimi, istihbarat akışı, telemetri, 1:1 arşiv ızgarası, modül teşhisi |
+| **Profile** | Gerçek görev geçmişinden hesaplanan istatistikler, son görevler, ilerlemeyi sıfırlama |
+| **Settings** | Tema seçimi, haptik, bildirim tercihi, gizlilik, Design System Gallery |
 
-## 🛠️ Kurulum ve Çalıştırma
+## Kurulum
 
-### Gereksinimler
-* Node.js (v18+)
-* Expo Go uygulaması (iOS App Store veya Android Google Play)
+Gereksinimler: Node.js 20+, telefonda **Expo Go** (SDK 57) ya da bir iOS simülatörü / Android emülatörü.
 
-### Adımlar
+```bash
+npm install
+npx expo start        # QR kodu Expo Go ile okutun; emülatör için "a", iOS simülatörü için "i"
+```
 
-1. **Bağımlılıkları yükleyin:**
-   ```bash
-   npm install --legacy-peer-deps
-   ```
-   > `--legacy-peer-deps` gereklidir: Expo'nun opsiyonel `react-dom@19.3` peer'ı ile projedeki `react@19.2.3` arasında npm'in katı çözümleyicisi çakışma bildirir (uygulamanın çalışmasını etkilemez).
+> Repodaki `.npmrc` dosyası `legacy-peer-deps=true` ayarını içerir. Expo'nun opsiyonel `react-dom` peer bağımlılığı ile projedeki `react@19.2.3` arasında npm'in katı çözümleyicisi sahte bir çakışma bildiriyor. Bu ayar hem yerel kurulumun hem de EAS build'in sorunsuz çalışmasını sağlar.
 
-2. **Geliştirme sunucusunu başlatın:**
-   ```bash
-   npx expo start
-   ```
+### Kalite kontrolleri
 
-3. **Cihazda Çalıştırma:**
-   * **iOS:** Kameranız ile terminaldeki QR kodu okutun (Expo Go açılacaktır).
-   * **Android:** Expo Go uygulamasından "Scan QR Code" seçeneğiyle terminaldeki QR kodu okutun.
-   * **Simulator:** Terminalde `i` (iOS simulator) veya `a` (Android emulator) tuşuna basabilirsiniz.
+```bash
+npm test              # Jest + React Native Testing Library (41 test)
+npm run typecheck     # tsc --noEmit (strict)
+npm run lint          # expo lint
+npx expo-doctor       # 21/21
+```
 
----
+### Android APK
 
-## 🤖 AI Araçları Kullanımı ve Mühendislik Yaklaşımı
+```bash
+npx eas-cli@latest build -p android --profile preview   # eas.json → preview: buildType "apk"
+```
 
-Proje geliştirme sürecinde yapay zeka araçları (Antigravity/Gemini ve Claude Code) bir **Staff-Level Pair Programmer** olarak konumlandırılmış, körü körüne kod üretimi yerine sıkı bir mühendislik döngüsü izlenmiştir:
-
-1. **Phase 0 – Mimari Analiz & Gap Tespiti:**
-   Figma ekranları ile mevcut kod tabanı karşılaştırılarak renk sapmaları, eksik bileşenler (TimerBar, StatusBeacon, Light Mode) ve veri mimarisi eksikleri raporlandı.
-2. **Phase 1 – Semantic Design Token & Context:**
-   Sert kodlanmış hex değerleri temizlenerek `src/theme/tokens.ts` altında semantik token yapısı kuruldu.
-3. **Phase 2 – Bileşen & Ekran Entegrasyonu:**
-   Bileşenler tek tek elden geçirilerek animasyon, erişilebilirlik ve çift tema desteği kazandırıldı.
-4. **Phase 3 – Asenkron Katman:**
-   Dummy veriler `src/repositories/` katmanına soyutlandı.
-5. **Phase 4 – Doğrulama & Tip Denetimi:**
-   `npx tsc --noEmit` ile tip açıkları giderildi.
-
-6. **Phase 5 – Figma Gap Audit (Claude Code):**
-   Figma ekran görüntüleri tüm bileşenlerle yeniden karşılaştırıldı; ikon seti Lucide'e taşındı, buton matrisi / kartlar / navigasyon Figma'ya hizalandı, iPhone'da tab bar'ın home indicator altında kalması ve `userInterfaceStyle: "light"` yüzünden System temasının çalışmaması gibi hatalar giderildi. `npx expo lint`, `npx tsc --noEmit` ve `npx expo-doctor` (21/21) temiz.
-
-Detaylı karar günlüğü için [`docs/AI_LOG.md`](docs/AI_LOG.md) dosyasını inceleyebilirsiniz.
-
----
-
-## 📦 Proje Dosya Yapısı
+## Mimari
 
 ```text
 src/
-├── app/
-│   ├── (tabs)/
-│   │   ├── _layout.tsx    # Dinamik temalı alt gezinme menüsü (6 tab)
-│   │   ├── index.tsx      # War Room Alpha (Senaryolar ve TimerBar)
-│   │   ├── explore.tsx    # Intel (Canlı Karar Matrisi ve Uydu Haritası)
-│   │   ├── vitals.tsx     # Biyometrik Durum ve Canlı Telemetri
-│   │   ├── profile.tsx    # Ajan 47 Dosyası ve Görev Metrikleri
-│   │   ├── system.tsx     # 2x2 Kare Arşiv Izgarası & Modül Teşhisi
-│   │   └── settings.tsx   # Tema Değiştirici (Dark/Light/System) & Galeri Linki
-│   ├── gallery.tsx        # Bileşen Doğrulama Vitrini
-│   └── _layout.tsx        # Root ThemeProvider ve Dinamik StatusBar
-├── components/            # Yeniden kullanılabilir atomik tasarım bileşenleri
-├── constants/             # Geriye dönük uyumluluk sabitleri
-├── data/                  # Mock veriler
-├── repositories/          # Asenkron servis soyutlama katmanı
-├── theme/                 # Semantik renk, tipografi, boşluk tokenları ve useTheme hook'u
-└── types/                 # Katı TypeScript modelleri
+├── app/                       # Expo Router — her dosya bir ekran
+│   ├── (tabs)/                # 6 sekme: War Room, Intel, Vitals, Profile, System, Settings
+│   ├── scenario/[id]/         # index (brifing) → play (simülasyon) → outcome (rapor)
+│   ├── gallery.tsx            # Tasarım sistemi vitrini
+│   └── _layout.tsx            # Provider'lar, splash gating, Stack
+├── components/                # Tasarım sistemi bileşenleri (+ __tests__)
+├── features/simulation/       # Saf oyun motoru, reducer, countdown hook (+ __tests__)
+├── store/                     # AppStore (context) + AsyncStorage kalıcılığı (+ __tests__)
+├── hooks/                     # useAsyncData, useHaptics, useAppActive
+├── repositories/              # Async veri katmanı (backend'e geçişte UI değişmez)
+├── data/                      # Dummy veri ve gömülü görseller
+├── theme/                     # Token'lar + ThemeProvider
+└── types/                     # Domain modelleri
 ```
+
+**Temel kararlar**
+
+- **Oyun mantığı UI'dan ayrı.** `engine.ts` saf fonksiyonlardan oluşur. Sonuç ekranı skoru, senaryo tanımı ve URL'deki seçimlerden yeniden hesaplar. Bu sayede sonuçlar tekrar üretilebilir ve kolayca test edilebilir.
+- **Akış bir reducer ile yönetiliyor** (`deciding → reviewing → complete`). O andaki duruma uymayan aksiyonlar yok sayılır. Böylece çift dokunma ya da "onayla" ile "süre doldu"nun aynı anda gelmesi hata üretmez.
+- **Timer tik saymaz, gerçek geçen süreyi ölçer.** JS thread'i yavaşlasa bile süre uzamaz. Uygulama arka plana alınınca timer duraklar.
+- **Bileşenler ham renk kullanmaz.** Her şey semantik token'lardan gelir. Görsellerin üstündeki içerik, Figma'da olduğu gibi iki temada da aynı kalır (`MEDIA_COLORS`).
+- **Lucide ikonları tek tek import ediliyor.** Metro tree-shaking yapmadığı için bundle'a yalnızca kullanılan ikonlar girer.
+
+## AI araçları ve yaklaşım
+
+Geliştirmede **Antigravity (Gemini)** ve **Claude Code** kullanıldı. AI'ı kod üreten bir araçtan çok, her adımı doğrulanan bir eşli programlama ortağı olarak konumlandırdım:
+
+1. **Denetim:** Figma ekran görüntüleri mevcut kodla bileşen bileşen karşılaştırıldı, sapmalar listelendi. Örneğin ikon setinin Lucide olduğu, buton varyantlarının eksik olduğu, pasif kart durumunun Figma'dan farklı olduğu bu aşamada görüldü.
+2. **Plan:** Kapsam ve öncelik benim kararımdı. Senaryo akışı, kalıcılık, testler ve çevrimdışı görseller sırasıyla ele alındı.
+3. **Doğrulama:** Her aşamada `tsc`, lint, testler ve `expo-doctor` çalıştırıldı. Uygulama bir Android emülatöründe baştan sona oynatıldı ve ekran görüntüleri incelendi. Statik analizin yakalayamadığı birkaç hata bu şekilde bulunup düzeltildi:
+   - iPhone'da tab bar'ın home indicator altında kalması
+   - `userInterfaceStyle: "light"` nedeniyle System temasının hiç çalışmaması
+   - Light temada status bar ikonlarının görünmemesi
+   - Tab bar altındaki beyaz şerit
+   - Brifing görselinin tam genişlikte olmaması
+4. **Kayıt:** Karar günlüğü [`docs/AI_LOG.md`](docs/AI_LOG.md) dosyasında.
+
+## Notlar ve bilinen sınırlamalar
+
+- Renkler ve boşluklar Figma ekran görüntülerinden alındı, Figma inspect değerleriyle birebir karşılaştırılmadı. Küçük farklar olabilir.
+- *Mission Alerts* ayarı yalnızca tercihi kaydeder. Bu demoda push bildirim servisi yok.
+- Android akışı emülatörde (Pixel, Android 14) uçtan uca test edildi. iOS bundle'ı `expo export` ile doğrulandı.
+- Expo Go'da ekranda görünen dişli simgesi Expo'nun geliştirici menüsüdür, APK'da yer almaz.
+- Görseller Unsplash lisansı altında kullanılmıştır.

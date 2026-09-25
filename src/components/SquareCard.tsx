@@ -1,78 +1,81 @@
 import React from 'react';
-import { View, Text, StyleSheet, ImageBackground, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { View, Text, StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon, IconName } from './Icon';
-import { useTheme } from '../theme';
+import { useTheme, MEDIA_COLORS } from '../theme';
+import type { MediaSource } from '../types';
 
 export interface SquareCardProps {
   title: string;
   subtitle: string;
-  imageUrl?: string;
+  image?: MediaSource;
   iconName?: IconName;
   onPress?: () => void;
   style?: ViewStyle;
 }
 
+/**
+ * Figma "Card": locked to 1:1 so imagery of any aspect ratio is cropped (`contentFit="cover"`)
+ * instead of stretched — the "Aspect ratio problem" board.
+ */
 export const SquareCard = ({
   title,
   subtitle,
-  imageUrl = 'https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1000',
+  image,
   iconName = 'squiggle',
   onPress,
   style,
 }: SquareCardProps) => {
   const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
+  const radius = theme.radius.xxl;
 
-  const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.96,
-      useNativeDriver: true,
-      speed: 26,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 26,
-    }).start();
-  };
+  const animateTo = (toValue: number) =>
+    Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 26 }).start();
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
       <Pressable
         onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
+        onPressIn={() => onPress && animateTo(0.96)}
+        onPressOut={() => animateTo(1)}
+        disabled={!onPress}
+        accessibilityRole={onPress ? 'button' : undefined}
+        accessibilityLabel={`${title}, ${subtitle}`}
         style={[
           styles.container,
           {
-            borderRadius: theme.radius.xl + 4,
+            borderRadius: radius,
             borderColor: theme.colors.border,
-            backgroundColor: theme.colors.surface,
+            shadowColor: theme.colors.shadow,
           },
         ]}>
-        <ImageBackground
-          source={{ uri: imageUrl }}
-          resizeMode="cover"
-          style={styles.imageBackground}
-          imageStyle={{ borderRadius: theme.radius.xl + 4 }}>
-          <LinearGradient
-            colors={['transparent', 'rgba(2,6,23,0.55)', 'rgba(2,6,23,0.95)']}
-            style={styles.gradient}>
-            <View style={styles.content}>
-              <View style={styles.subtitleRow}>
-                <Icon name={iconName} size={14} color={theme.colors.primary} />
-                <Text style={[styles.subtitle, { color: theme.colors.primary }]}>{subtitle}</Text>
-              </View>
-              <Text style={styles.title} numberOfLines={1}>
-                {title}
-              </Text>
-            </View>
+        {image ? (
+          <Image
+            source={image}
+            contentFit="cover"
+            transition={250}
+            style={StyleSheet.absoluteFill}
+            accessibilityIgnoresInvertColors
+          />
+        ) : (
+          // Figma placeholder: grey → navy fade with an image glyph.
+          <LinearGradient colors={MEDIA_COLORS.placeholder} style={styles.placeholder}>
+            <Icon name="grid" size={32} color={MEDIA_COLORS.placeholderIcon} />
           </LinearGradient>
-        </ImageBackground>
+        )}
+        <LinearGradient colors={MEDIA_COLORS.scrimBottom} style={styles.gradient}>
+          <View style={styles.content}>
+            <View style={styles.subtitleRow}>
+              <Icon name={iconName} size={14} color={theme.colors.primary} />
+              <Text style={[styles.subtitle, { color: theme.colors.primary }]}>{subtitle}</Text>
+            </View>
+            <Text style={styles.title} numberOfLines={1}>
+              {title}
+            </Text>
+          </View>
+        </LinearGradient>
       </Pressable>
     </Animated.View>
   );
@@ -83,16 +86,16 @@ const styles = StyleSheet.create({
     aspectRatio: 1,
     overflow: 'hidden',
     borderWidth: 1,
+    backgroundColor: MEDIA_COLORS.base,
     elevation: 3,
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
   },
-  imageBackground: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
+  placeholder: {
+    ...StyleSheet.absoluteFill,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   gradient: {
     flex: 1,
@@ -112,7 +115,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
   },
   title: {
-    color: '#FFFFFF',
+    color: MEDIA_COLORS.textPrimary,
     fontSize: 16,
     fontWeight: '800',
     fontStyle: 'italic',

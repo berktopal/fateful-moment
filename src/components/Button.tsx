@@ -30,6 +30,7 @@ export interface ButtonProps {
   icon?: IconName;
   disabled?: boolean;
   loading?: boolean;
+  accessibilityLabel?: string;
   style?: ViewStyle;
   textStyle?: TextStyle;
 }
@@ -40,22 +41,23 @@ interface Palette {
   text: string;
 }
 
-const getPalette = (variant: ButtonVariant, theme: ThemeTokens, isDark: boolean): Palette => {
+const getPalette = (variant: ButtonVariant, theme: ThemeTokens): Palette => {
   const { colors } = theme;
-  const tint = isDark ? 'rgba(0, 211, 243, 0.14)' : 'rgba(8, 145, 178, 0.12)';
 
   switch (variant) {
     case 'secondary':
-      // Figma: Slate 900 pill; on light surfaces it stays dark for contrast.
-      return isDark
-        ? { fill: colors.surface, border: colors.border, text: colors.textPrimary }
-        : { fill: colors.textPrimary, border: colors.textPrimary, text: '#FFFFFF' };
+      // Figma: Slate 900 pill in both themes (bordered on dark backgrounds).
+      return {
+        fill: colors.inverseSurface,
+        border: theme.mode === 'dark' ? colors.border : colors.inverseSurface,
+        text: colors.onInverseSurface,
+      };
     case 'danger':
-      return { fill: colors.danger, border: colors.danger, text: '#FFFFFF' };
+      return { fill: colors.danger, border: colors.danger, text: colors.onAccent };
     case 'neutral':
-      return { fill: colors.textMuted, border: colors.textMuted, text: '#FFFFFF' };
+      return { fill: colors.textMuted, border: colors.textMuted, text: colors.onAccent };
     case 'soft':
-      return { fill: tint, border: 'transparent', text: colors.primary };
+      return { fill: colors.primaryTint, border: 'transparent', text: colors.primary };
     case 'glass':
       return { fill: colors.glass, border: colors.glassBorder, text: colors.primary };
     case 'primary':
@@ -79,10 +81,11 @@ export const Button = ({
   icon,
   disabled = false,
   loading = false,
+  accessibilityLabel,
   style,
   textStyle,
 }: ButtonProps) => {
-  const { theme, isDark } = useTheme();
+  const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
 
   const animateTo = (toValue: number) =>
@@ -90,7 +93,7 @@ export const Button = ({
 
   // A disabled primary renders as the Figma "soft" tint rather than just fading out.
   const effectiveVariant = disabled && variant === 'primary' ? 'soft' : variant;
-  const palette = getPalette(effectiveVariant, theme, isDark);
+  const palette = getPalette(effectiveVariant, theme);
   const sizeSpec = SIZES[size];
 
   const containerStyle: ViewStyle =
@@ -120,7 +123,8 @@ export const Button = ({
         onPressOut={() => animateTo(1)}
         disabled={isInactive}
         accessibilityRole="button"
-        accessibilityState={{ disabled: isInactive }}
+        accessibilityLabel={accessibilityLabel ?? title}
+        accessibilityState={{ disabled: isInactive, busy: loading }}
         style={[
           styles.base,
           { borderRadius: theme.radius.lg },

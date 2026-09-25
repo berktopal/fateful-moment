@@ -1,7 +1,7 @@
 import React from 'react';
 import { Text, StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useTheme } from '../theme';
+import { useTheme, OPTION_GRADIENTS } from '../theme';
 
 export interface OptionCardProps {
   text: string;
@@ -37,12 +37,7 @@ export const OptionCard = ({
   };
 
   // Figma "Option" cards: diagonal sheen gradients, identical in both themes, always white copy.
-  const gradientColors: readonly [string, string, ...string[]] =
-    state === 'active'
-      ? ['#5E7F8E', '#3FB9CC', '#52E3F5', '#3FB9CC', '#5E7F8E']
-      : state === 'passive'
-        ? ['#B4BFCA', '#AEDDE6', '#B2F0F7', '#AEDDE6', '#B4BFCA']
-        : ['#667085', '#667085'];
+  const gradientColors = OPTION_GRADIENTS[state];
 
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
@@ -51,7 +46,8 @@ export const OptionCard = ({
         onPressIn={handlePressIn}
         onPressOut={handlePressOut}
         disabled={state === 'passive'}
-        accessibilityRole="checkbox"
+        accessibilityRole="radio"
+        accessibilityLabel={text}
         accessibilityState={{ checked: state === 'active', disabled: state === 'passive' }}>
         <LinearGradient
           colors={gradientColors}
@@ -61,7 +57,7 @@ export const OptionCard = ({
             styles.container,
             {
               borderRadius: theme.radius.xl,
-              borderColor: state === 'active' ? 'rgba(0, 211, 243, 0.6)' : 'transparent',
+              borderColor: state === 'active' ? OPTION_GRADIENTS.activeBorder : 'transparent',
             },
           ]}>
           <Text style={styles.text}>{text}</Text>
@@ -80,7 +76,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   text: {
-    color: '#FFFFFF',
+    color: OPTION_GRADIENTS.text,
     fontSize: 14,
     fontWeight: '500',
   },
