@@ -1,54 +1,46 @@
 import React from 'react';
-import { Text, StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { Text } from './Text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, OPTION_GRADIENTS } from '../theme';
 
+/**
+ * - `default` / `active` / `passive`: the three Figma "Option" states.
+ * - `dimmed`: a default card faded back, used for the options *not* chosen once a decision is
+ *   locked. Figma's pale passive gradient is brighter than the active one on dark surfaces,
+ *   so it would pull the eye away from the actual choice.
+ */
+export type OptionCardState = 'default' | 'active' | 'passive' | 'dimmed';
+
 export interface OptionCardProps {
   text: string;
-  state?: 'default' | 'active' | 'passive';
+  state?: OptionCardState;
   onPress?: () => void;
   style?: ViewStyle;
 }
 
-export const OptionCard = ({
-  text,
-  state = 'default',
-  onPress,
-  style,
-}: OptionCardProps) => {
+export const OptionCard = ({ text, state = 'default', onPress, style }: OptionCardProps) => {
   const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
+  const disabled = state === 'passive' || state === 'dimmed';
 
-  const handlePressIn = () => {
-    if (state === 'passive') return;
-    Animated.spring(scaleAnim, {
-      toValue: 0.97,
-      useNativeDriver: true,
-      speed: 26,
-    }).start();
-  };
-
-  const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 26,
-    }).start();
-  };
+  const animateTo = (toValue: number) =>
+    Animated.spring(scaleAnim, { toValue, useNativeDriver: true, speed: 26 }).start();
 
   // Figma "Option" cards: diagonal sheen gradients, identical in both themes, always white copy.
-  const gradientColors = OPTION_GRADIENTS[state];
+  const gradientColors = OPTION_GRADIENTS[state === 'dimmed' ? 'default' : state];
 
   return (
-    <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
+    <Animated.View
+      style={[{ transform: [{ scale: scaleAnim }] }, state === 'dimmed' && styles.dimmed, style]}>
       <Pressable
         onPress={onPress}
-        onPressIn={handlePressIn}
-        onPressOut={handlePressOut}
-        disabled={state === 'passive'}
+        onPressIn={() => !disabled && animateTo(0.97)}
+        onPressOut={() => animateTo(1)}
+        disabled={disabled}
         accessibilityRole="radio"
         accessibilityLabel={text}
-        accessibilityState={{ checked: state === 'active', disabled: state === 'passive' }}>
+        accessibilityState={{ checked: state === 'active', disabled }}>
         <LinearGradient
           colors={gradientColors}
           start={{ x: 0, y: 0.3 }}
@@ -79,5 +71,8 @@ const styles = StyleSheet.create({
     color: OPTION_GRADIENTS.text,
     fontSize: 14,
     fontWeight: '500',
+  },
+  dimmed: {
+    opacity: 0.35,
   },
 });

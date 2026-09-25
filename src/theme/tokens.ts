@@ -74,6 +74,8 @@ export const MEDIA_COLORS = {
   base: PALETTE.slate950,
   scrim: ['rgba(2, 6, 23, 0.45)', 'rgba(2, 6, 23, 0.92)'] as Gradient,
   scrimBottom: ['transparent', 'rgba(2, 6, 23, 0.55)', 'rgba(2, 6, 23, 0.95)'] as Gradient,
+  /** Figma cyan on imagery in both themes (the light theme's darker cyan is for light surfaces). */
+  accent: PALETTE.cyan400,
   textPrimary: PALETTE.white,
   textSecondary: PALETTE.slate200,
   textMuted: PALETTE.slate400,

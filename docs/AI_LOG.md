@@ -57,3 +57,16 @@ This log documents the iterative engineering decisions, design-fidelity correcti
 * **Tests:** 41 tests — engine, reducer, countdown (fake timers), storage sanitising/round-trip, `Button`, `ScenarioCard`, and an Expo Router integration test that plays Operation Midnight end-to-end and asserts the persisted history.
 * **Device verification:** Ran the app on an Android 14 emulator via Expo Go and inspected screenshots. Bugs found only this way and fixed: missing deep-link `scheme` warning, white window strip under the tab bar (`expo-system-ui`), unreadable status bar icons in light mode, briefing hero not full width, NavBar title offset when no icons, low-contrast map label.
 * **Verification:** `tsc --noEmit`, `expo lint`, `jest` (41/41), `expo-doctor` (21/21), iOS + Android `expo export`.
+
+---
+
+### Phase 7: UI/UX Polish within the Figma Spec (Claude Code)
+* **User Request:** Keep to Figma, apply only the proposed UX improvements.
+* **Changes:**
+  - **Inter** (Figma face) bundled per weight via `expo-font`; a `Text` wrapper maps `fontWeight`/`fontStyle` to the right Inter file (Android ignores weights on custom fonts). An ESLint rule blocks importing React Native's `Text` directly. Splash stays up until fonts load. Found and added the missing `expo-asset` peer while doing this.
+  - **Decision review:** unchosen options now fade back (`dimmed`) instead of using Figma's pale passive gradient, which read brighter than the chosen card on dark surfaces.
+  - **Auto-scroll** to the consequence card after locking in; each new step starts at the top.
+  - **Countdown timer:** gradient pinned to the full track and anchored to the fill's right edge — identical to the Figma timer when full, turning red as time runs out.
+  - **Motion:** staggered `FadeIn` per step and on the outcome screen, score count-up; both respect the OS "Reduce motion" setting.
+  - **Light theme fix:** content on imagery (HUD labels, glass buttons) always uses Figma cyan; the darker light-theme cyan was low-contrast on photos.
+* **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21, and on-device review on the Android emulator.

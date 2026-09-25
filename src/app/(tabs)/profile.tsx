@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { View, StyleSheet, Alert } from 'react-native';
+import { Text } from '../../components/Text';
 import { Image } from 'expo-image';
 import { router } from 'expo-router';
 import { NavBar } from '../../components/NavBar';

@@ -1,13 +1,13 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   View,
   StyleSheet,
-  Text,
   Animated,
   Easing,
   ViewStyle,
   useAnimatedValue,
 } from 'react-native';
+import { Text } from './Text';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme, MONO_FONT } from '../theme';
 
@@ -21,6 +21,12 @@ interface TimerBarProps {
   criticalBelow?: number;
   /** Use a short duration when progress is driven by a live countdown. */
   animationMs?: number;
+  /**
+   * Countdown mode pins the gradient to the full track width and anchors it to the fill's
+   * right edge: a full bar looks exactly like the Figma timer (cyan → red) and, as time runs
+   * out, only the red end remains visible — the colour itself signals urgency.
+   */
+  countdown?: boolean;
   style?: ViewStyle;
 }
 
@@ -31,8 +37,10 @@ export const TimerBar = ({
   trailingLabel,
   criticalBelow,
   animationMs = 600,
+  countdown = false,
   style,
 }: TimerBarProps) => {
+  const [trackWidth, setTrackWidth] = useState(0);
   const { theme } = useTheme();
   const clamped = Math.min(1, Math.max(0, progress));
   const animatedWidth = useAnimatedValue(clamped);
@@ -65,13 +73,19 @@ export const TimerBar = ({
           {trailingLabel ?? `${Math.round(clamped * 100)}%`}
         </Text>
       </View>
-      <View style={[styles.track, { backgroundColor: theme.colors.surfaceElevated }]}>
+      <View
+        style={[styles.track, { backgroundColor: theme.colors.surfaceElevated }]}
+        onLayout={(e) => setTrackWidth(e.nativeEvent.layout.width)}>
         <Animated.View style={[styles.fill, { width }]}>
           <LinearGradient
             colors={theme.colors.timerGradient}
             start={{ x: 0, y: 0.5 }}
             end={{ x: 1, y: 0.5 }}
-            style={styles.gradient}
+            style={
+              countdown && trackWidth > 0
+                ? [styles.gradientPinned, { width: trackWidth }]
+                : styles.gradient
+            }
           />
         </Animated.View>
       </View>
@@ -106,6 +120,14 @@ const styles = StyleSheet.create({
   },
   fill: {
     height: '100%',
+    overflow: 'hidden',
+    borderRadius: 3,
+  },
+  gradientPinned: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0,
   },
   gradient: {
     flex: 1,

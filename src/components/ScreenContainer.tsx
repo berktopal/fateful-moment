@@ -1,5 +1,6 @@
-import React, { ReactNode } from 'react';
-import { View, ScrollView, StyleSheet, ActivityIndicator, Text, ViewStyle } from 'react-native';
+import React, { ReactNode, Ref } from 'react';
+import { View, ScrollView, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
+import { Text } from './Text';
 import { useTheme } from '../theme';
 import { Button } from './Button';
 
@@ -14,6 +15,8 @@ interface ScreenContainerProps {
   contentStyle?: ViewStyle;
   /** Rendered below the scroll area, e.g. a sticky CTA. */
   footer?: ReactNode;
+  /** Lets a screen scroll programmatically (e.g. to reveal a result). */
+  scrollRef?: Ref<ScrollView>;
 }
 
 /** Shared screen shell: themed background, scroll area and consistent loading / error states. */
@@ -26,6 +29,7 @@ export const ScreenContainer = ({
   retryLabel = 'Retry',
   contentStyle,
   footer,
+  scrollRef,
 }: ScreenContainerProps) => {
   const { theme } = useTheme();
 
@@ -47,6 +51,7 @@ export const ScreenContainer = ({
     }
     return (
       <ScrollView
+        ref={scrollRef}
         contentContainerStyle={[styles.content, contentStyle]}
         showsVerticalScrollIndicator={false}>
         {children}

@@ -39,7 +39,8 @@ describe('simulation flow', () => {
 
     // 50/50 start → +25 stability, +20 trust → score 73 → DECISIVE.
     expect(await screen.findByText('DECISIVE')).toBeOnTheScreen();
-    expect(screen.getByText('73')).toBeOnTheScreen();
+    // The visible number counts up; the accessible label carries the final score immediately.
+    expect(screen.getByLabelText('Score 73 out of 100')).toBeOnTheScreen();
     expect(screen.getByText('After Action Report')).toBeOnTheScreen();
 
     const stored = JSON.parse((await AsyncStorage.getItem(STORAGE_KEY)) ?? '{}');

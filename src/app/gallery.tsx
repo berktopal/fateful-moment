@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import { Text } from '../components/Text';
 import { useTheme } from '../theme';
 import { Button } from '../components/Button';
 import { OptionCard } from '../components/OptionCard';

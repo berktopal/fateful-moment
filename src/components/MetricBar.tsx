@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Text } from './Text';
 import { useTheme, MONO_FONT } from '../theme';
 
 interface MetricBarProps {
@@ -30,7 +31,11 @@ export const MetricBar = ({ label, value, delta, style }: MetricBarProps) => {
         <Text style={[styles.value, { color }]}>
           {clamped}
           {delta !== undefined && delta !== 0 && (
-            <Text style={{ color: delta > 0 ? theme.colors.success : theme.colors.danger }}>
+            <Text
+              style={{
+                fontFamily: MONO_FONT,
+                color: delta > 0 ? theme.colors.success : theme.colors.danger,
+              }}>
               {`  ${delta > 0 ? '+' : ''}${delta}`}
             </Text>
           )}

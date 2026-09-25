@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useMemo, useReducer, useState } from 'react';
-import { View, Text, StyleSheet, Alert, BackHandler } from 'react-native';
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { View, StyleSheet, Alert, BackHandler, ScrollView } from 'react-native';
+import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavBar } from '../../../components/NavBar';
 import { ScreenContainer } from '../../../components/ScreenContainer';
 import { TimerBar } from '../../../components/TimerBar';
-import { OptionCard } from '../../../components/OptionCard';
+import { OptionCard, OptionCardState } from '../../../components/OptionCard';
+import { FadeIn } from '../../../components/FadeIn';
 import { HudCard } from '../../../components/HudCard';
 import { MetricBar } from '../../../components/MetricBar';
 import { Button } from '../../../components/Button';
@@ -34,7 +36,9 @@ export default function SimulationRoute() {
   if (!scenario || !scenario.isActive || scenario.steps.length === 0) {
     return (
       <ScreenContainer
-        header={<NavBar title="Simulation" leftIcon="arrow-left" onLeftPress={() => router.back()} />}
+        header={
+          <NavBar title="Simulation" leftIcon="arrow-left" onLeftPress={() => router.back()} />
+        }
         error="This scenario is not available."
         onRetry={() => router.back()}
         retryLabel="Go Back"
@@ -67,13 +71,17 @@ function Simulation({ scenario }: { scenario: Scenario }) {
     step.timeLimitSec * 1000,
     state.phase === 'deciding' && appActive,
     step.id,
-    handleExpire
+    handleExpire,
   );
 
   // Running totals, replayed from the committed choices.
   const run = useMemo(
-    () => evaluateRun({ ...scenario, steps: scenario.steps.slice(0, state.choices.length) }, state.choices),
-    [scenario, state.choices]
+    () =>
+      evaluateRun(
+        { ...scenario, steps: scenario.steps.slice(0, state.choices.length) },
+        state.choices,
+      ),
+    [scenario, state.choices],
   );
   const committed = isReviewing ? run.timeline[run.timeline.length - 1] : undefined;
 
@@ -99,8 +107,19 @@ function Simulation({ scenario }: { scenario: Scenario }) {
     return () => subscription.remove();
   }, [confirmAbort]);
 
-  const optionState = (optionId: string) => {
-    if (isReviewing) return committed?.option?.id === optionId ? 'active' : 'passive';
+  const scrollRef = useRef<ScrollView>(null);
+
+  // Bring the consequence into view once an order is locked; start each new step at the top.
+  useEffect(() => {
+    if (state.phase === 'reviewing') {
+      const id = setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 150);
+      return () => clearTimeout(id);
+    }
+    if (state.phase === 'deciding') scrollRef.current?.scrollTo({ y: 0, animated: false });
+  }, [state.phase, state.stepIndex]);
+
+  const optionState = (optionId: string): OptionCardState => {
+    if (isReviewing) return committed?.option?.id === optionId ? 'active' : 'dimmed';
     return state.selectedId === optionId ? 'active' : 'default';
   };
 
@@ -109,6 +128,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
 
   return (
     <ScreenContainer
+      scrollRef={scrollRef}
       header={<NavBar title={scenario.title} leftIcon="arrow-left" onLeftPress={confirmAbort} />}
       footer={
         <View
@@ -170,43 +190,55 @@ function Simulation({ scenario }: { scenario: Scenario }) {
         trailingLabel={formatCountdown(remainingMs)}
         criticalBelow={0.3}
         animationMs={100}
+        countdown
         style={styles.timer}
       />
 
-      <HudCard
-        tag={`SITREP // ${step.id.toUpperCase()}`}
-        title={step.prompt}
-        description={step.context}
-      />
-
-      <View accessibilityRole="radiogroup">
-        {step.options.map((option) => (
-          <OptionCard
-            key={option.id}
-            text={option.text}
-            state={optionState(option.id)}
-            onPress={() => {
-              if (isReviewing) return;
-              haptics.selection();
-              dispatch({ type: 'SELECT', optionId: option.id });
-            }}
+      {/* Keyed by step so each new decision animates in. */}
+      <View key={step.id}>
+        <FadeIn>
+          <HudCard
+            tag={`SITREP // ${step.id.toUpperCase()}`}
+            title={step.prompt}
+            description={step.context}
           />
-        ))}
+        </FadeIn>
+
+        <View accessibilityRole="radiogroup">
+          {step.options.map((option, index) => (
+            <FadeIn key={option.id} delay={80 + index * 60}>
+              <OptionCard
+                text={option.text}
+                state={optionState(option.id)}
+                onPress={() => {
+                  if (isReviewing) return;
+                  haptics.selection();
+                  dispatch({ type: 'SELECT', optionId: option.id });
+                }}
+              />
+            </FadeIn>
+          ))}
+        </View>
       </View>
 
       {isReviewing && committed && (
-        <HudCard
-          tag={committed.option ? 'OUTCOME // ORDER EXECUTED' : 'OUTCOME // TIMEOUT'}
-          title={committed.option ? 'Consequence' : 'No order issued'}
-          description={committed.option?.consequence ?? TIMEOUT_CONSEQUENCE}
-          chips={[`STABILITY ${formatDelta(impact.stability)}`, `TRUST ${formatDelta(impact.trust)}`]}
-          alert={!committed.option}
-          style={styles.consequence}>
-          <View style={styles.metrics}>
-            <MetricBar label="STABILITY" value={run.metrics.stability} delta={impact.stability} />
-            <MetricBar label="PUBLIC TRUST" value={run.metrics.trust} delta={impact.trust} />
-          </View>
-        </HudCard>
+        <FadeIn>
+          <HudCard
+            tag={committed.option ? 'OUTCOME // ORDER EXECUTED' : 'OUTCOME // TIMEOUT'}
+            title={committed.option ? 'Consequence' : 'No order issued'}
+            description={committed.option?.consequence ?? TIMEOUT_CONSEQUENCE}
+            chips={[
+              `STABILITY ${formatDelta(impact.stability)}`,
+              `TRUST ${formatDelta(impact.trust)}`,
+            ]}
+            alert={!committed.option}
+            style={styles.consequence}>
+            <View style={styles.metrics}>
+              <MetricBar label="STABILITY" value={run.metrics.stability} delta={impact.stability} />
+              <MetricBar label="PUBLIC TRUST" value={run.metrics.trust} delta={impact.trust} />
+            </View>
+          </HudCard>
+        </FadeIn>
       )}
     </ScreenContainer>
   );

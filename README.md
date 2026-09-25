@@ -9,6 +9,7 @@ Kriz anlarında zamana karşı karar verdiğiniz, taktiksel bir simülasyon uygu
 - **Dark + Light tema:** Dark, Figma'daki temel görünüm. Light tema WCAG AA kontrastına göre türetildi. *System* seçeneği işletim sisteminin temasını takip eder.
 - **Kalıcı durum:** Tema ve titreşim tercihleri ile görev geçmişi AsyncStorage'da tutulur. Diskteki veri bozuksa alan bazında varsayılana dönülür. Tercihler yüklenene kadar splash ekranı açık kalır, böylece açılışta tema yanıp sönmez.
 - **Çevrimdışı çalışır:** Tüm görseller uygulama içinde gömülüdür ve `expo-image` ile önbelleklenip yumuşak geçişle yüklenir.
+- **Tipografi ve hareket:** Figma'daki Inter fontu (Black Italic başlıklar dahil) kullanılır; HUD metinleri monospace. Karar kartları kademeli olarak belirir, skor sayarak yükselir, kalan süre azaldıkça timer kırmızıya döner. Cihazda "hareketi azalt" açıksa animasyonlar kapanır.
 - **Erişilebilirlik ve detaylar:** Anlamlı erişilebilirlik rolleri (button / radio / progressbar / header), haptik geri bildirim (ayarlardan kapatılabilir), uygulama arka plana geçince duran timer, simülasyonun ortasında kazara çıkışa karşı onay (iOS kaydırma hareketi ve Android geri tuşu dahil).
 
 ## Ekranlar

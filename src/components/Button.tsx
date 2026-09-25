@@ -1,6 +1,5 @@
 import React from 'react';
 import {
-  Text,
   StyleSheet,
   ViewStyle,
   TextStyle,
@@ -9,8 +8,9 @@ import {
   Pressable,
   useAnimatedValue,
 } from 'react-native';
+import { Text } from './Text';
 import { Icon, IconName } from './Icon';
-import { useTheme, ThemeTokens } from '../theme';
+import { useTheme, ThemeTokens, MEDIA_COLORS } from '../theme';
 
 /**
  * Figma "Buttons" board: 6 colour variants × 3 appearances (solid / outline / link) × 3 sizes.
@@ -59,7 +59,8 @@ const getPalette = (variant: ButtonVariant, theme: ThemeTokens): Palette => {
     case 'soft':
       return { fill: colors.primaryTint, border: 'transparent', text: colors.primary };
     case 'glass':
-      return { fill: colors.glass, border: colors.glassBorder, text: colors.primary };
+      // Glass sits on imagery, so it keeps the Figma cyan in both themes.
+      return { fill: colors.glass, border: colors.glassBorder, text: MEDIA_COLORS.accent };
     case 'primary':
     default:
       return { fill: colors.primary, border: colors.primary, text: colors.onPrimary };
@@ -107,11 +108,13 @@ export const Button = ({
   const textColor =
     appearance === 'solid'
       ? palette.text
-      : variant === 'primary' || variant === 'soft' || variant === 'glass'
-        ? theme.colors.primary
-        : variant === 'secondary'
-          ? theme.colors.textPrimary
-          : palette.fill;
+      : variant === 'glass'
+        ? MEDIA_COLORS.accent
+        : variant === 'primary' || variant === 'soft'
+          ? theme.colors.primary
+          : variant === 'secondary'
+            ? theme.colors.textPrimary
+            : palette.fill;
 
   const isInactive = disabled || loading;
 

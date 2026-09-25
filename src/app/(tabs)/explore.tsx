@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '../../components/Text';
 import { Image } from 'expo-image';
 import { NavBar } from '../../components/NavBar';
 import { ScreenContainer } from '../../components/ScreenContainer';

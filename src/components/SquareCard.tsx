@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { View, StyleSheet, ViewStyle, Animated, Pressable, useAnimatedValue } from 'react-native';
+import { Text } from './Text';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Icon, IconName } from './Icon';
@@ -68,8 +69,8 @@ export const SquareCard = ({
         <LinearGradient colors={MEDIA_COLORS.scrimBottom} style={styles.gradient}>
           <View style={styles.content}>
             <View style={styles.subtitleRow}>
-              <Icon name={iconName} size={14} color={theme.colors.primary} />
-              <Text style={[styles.subtitle, { color: theme.colors.primary }]}>{subtitle}</Text>
+              <Icon name={iconName} size={14} color={MEDIA_COLORS.accent} />
+              <Text style={[styles.subtitle, { color: MEDIA_COLORS.accent }]}>{subtitle}</Text>
             </View>
             <Text style={styles.title} numberOfLines={1}>
               {title}

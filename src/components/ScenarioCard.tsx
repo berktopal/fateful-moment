@@ -1,5 +1,6 @@
 import React from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Text } from './Text';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from './Button';
@@ -57,8 +58,8 @@ export const ScenarioCard = ({
         colors={MEDIA_COLORS.scrim}
         style={[styles.content, isLarge && styles.contentLarge]}>
         <View style={[styles.header, isLarge && styles.centered]}>
-          {!isLarge && <Icon name={iconName} size={14} color={theme.colors.primary} />}
-          <Text style={[styles.hud, isLarge && styles.hudLarge, { color: theme.colors.primary }]}>
+          {!isLarge && <Icon name={iconName} size={14} color={MEDIA_COLORS.accent} />}
+          <Text style={[styles.hud, isLarge && styles.hudLarge, { color: MEDIA_COLORS.accent }]}>
             {headerText}
           </Text>
         </View>

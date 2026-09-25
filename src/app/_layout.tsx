@@ -3,27 +3,32 @@ import { StatusBar } from 'react-native';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import * as SystemUI from 'expo-system-ui';
+import { useFonts } from 'expo-font';
 import { AppStoreProvider, useAppStore } from '../store/AppStore';
 import { ThemeProvider, useTheme } from '../theme';
+import { FONT_ASSETS } from '../theme/fonts';
 
-// Keep the native splash up until persisted preferences are loaded, so the first frame is
-// already in the user's chosen theme (no dark → light flash).
+// Keep the native splash up until preferences and fonts are loaded, so the first frame is
+// already in the user's theme and in Inter (no theme flash, no font swap).
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function RootNavigator() {
   const { hydrated } = useAppStore();
   const { theme, isDark } = useTheme();
+  const [fontsLoaded, fontError] = useFonts(FONT_ASSETS);
+  // A font failure falls back to the system face rather than blocking the app.
+  const ready = hydrated && (fontsLoaded || !!fontError);
 
   useEffect(() => {
-    if (hydrated) SplashScreen.hideAsync().catch(() => {});
-  }, [hydrated]);
+    if (ready) SplashScreen.hideAsync().catch(() => {});
+  }, [ready]);
 
   // The root window shows behind the system navigation bar and during transitions.
   useEffect(() => {
     SystemUI.setBackgroundColorAsync(theme.colors.background).catch(() => {});
   }, [theme.colors.background]);
 
-  if (!hydrated) return null;
+  if (!ready) return null;
 
   return (
     <>

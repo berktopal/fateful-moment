@@ -1,5 +1,6 @@
 import React, { ReactNode } from 'react';
-import { View, Text, StyleSheet, ViewStyle } from 'react-native';
+import { View, StyleSheet, ViewStyle } from 'react-native';
+import { Text } from './Text';
 import { useTheme, MONO_FONT } from '../theme';
 
 export interface HudCardProps {

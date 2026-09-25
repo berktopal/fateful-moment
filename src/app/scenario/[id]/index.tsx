@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
+import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -71,7 +72,7 @@ export default function ScenarioBriefingScreen() {
       <View style={[styles.hero, { borderRadius: theme.radius.xxl, borderColor: theme.colors.border }]}>
         <Image source={scenario.image} contentFit="cover" transition={250} style={StyleSheet.absoluteFill} />
         <LinearGradient colors={MEDIA_COLORS.scrim} style={styles.heroContent}>
-          <Text style={[styles.hud, { color: theme.colors.primary }]}>SCENARIO BRIEFING</Text>
+          <Text style={[styles.hud, { color: MEDIA_COLORS.accent }]}>SCENARIO BRIEFING</Text>
           <Text style={[theme.typography.displayLarge, styles.heroTitle]} accessibilityRole="header">
             {scenario.title.toUpperCase()}
           </Text>
