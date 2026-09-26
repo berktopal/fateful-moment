@@ -14,14 +14,16 @@ type Gradient = readonly [string, string, ...string[]];
  */
 const PALETTE = {
   cyan400: '#00D3F3', // colors/on-brand/primary/pri-500 [base]
-  cyan600: '#0891B2',
+  // Light theme only (not in Figma): the darkest shades that still read as the brand hue while
+  // passing WCAG AA for small text on white — 5.4:1, 5.0:1 and 5.5:1 (see theme contrast test).
+  cyan700Light: '#0E7490',
+  amber700: '#B45309',
+  emerald700: '#047857',
   cyan700: '#0092B8',
   red500: '#FB2C36', // Accent / Red 500
   red600: '#DC2626',
   amber500: '#F59E0B',
-  amber600: '#D97706',
   emerald500: '#10B981',
-  emerald600: '#059669',
   slate50: '#F8FAFC', // sec-100
   slate100: '#F1F5F9',
   slate200: '#E2E8F0', // sec-200
@@ -227,7 +229,7 @@ export const DARK_TOKENS: ThemeTokens = {
   typography: TYPOGRAPHY,
 };
 
-/** Light theme: same brand, WCAG AA contrast on light surfaces (Cyan 600 instead of 400). */
+/** Light theme: same brand, WCAG AA contrast on light surfaces (Cyan 700 instead of 400). */
 export const LIGHT_TOKENS: ThemeTokens = {
   mode: 'light',
   colors: {
@@ -240,19 +242,19 @@ export const LIGHT_TOKENS: ThemeTokens = {
     textPrimary: PALETTE.slate900,
     textMuted: PALETTE.slate500,
     iconMuted: PALETTE.slateTab,
-    primary: PALETTE.cyan600,
+    primary: PALETTE.cyan700Light,
     onPrimary: PALETTE.white,
     primaryTint: 'rgba(8, 145, 178, 0.12)',
-    primaryStrong: PALETTE.cyan600,
+    primaryStrong: PALETTE.cyan700Light,
     accent: PALETTE.red600,
     danger: PALETTE.red600,
-    warning: PALETTE.amber600,
-    success: PALETTE.emerald600,
+    warning: PALETTE.amber700,
+    success: PALETTE.emerald700,
     onAccent: PALETTE.white,
     inverseSurface: PALETTE.slate900,
     onInverseSurface: PALETTE.white,
     glassFill: 'rgba(8, 145, 178, 0.12)',
-    glassText: PALETTE.cyan600,
+    glassText: PALETTE.cyan700Light,
     ghostFill: 'rgba(15, 23, 43, 0.04)',
     ghostBorder: PALETTE.slate900,
     ghostText: PALETTE.slate900,
@@ -261,7 +263,7 @@ export const LIGHT_TOKENS: ThemeTokens = {
     disabledText: PALETTE.grey500,
     switchThumbOff: PALETTE.slate300,
     shadow: PALETTE.slate700,
-    timerGradient: [PALETTE.cyan600, PALETTE.slate400, PALETTE.red600],
+    timerGradient: [PALETTE.cyan700Light, PALETTE.slate400, PALETTE.red600],
   },
   spacing: SPACING,
   radius: RADIUS,
