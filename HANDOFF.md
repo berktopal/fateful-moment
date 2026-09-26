@@ -43,5 +43,6 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 - **Expo Go:** Sağ üstteki dişli simgesi Expo Go'nun geliştirici menüsü, APK'da yok. Uygulama ikonu da yalnızca APK'da görünür.
 - **Metro:** 8081'de kullanıcının açtığı bir `expo start` olabilir; öldürmeden önce komut satırını kontrol et.
 - **`expo prebuild`:** Doğrulama için çalıştırılırsa `android/` klasörünü sil (gitignore'da) ve `package.json`'daki script değişikliğini geri al.
-- **Figma MCP:** Bu oturumda bağlıydı, bağlantı kesildi. Yeni oturumda gerekirse yeniden bağlanmalı.
+- **Figma MCP:** claude.ai bağlantısı düştü; yerine Figma'nın resmi sunucusu eklendi (`figma`, HTTP, `https://mcp.figma.com/mcp`, User scope). Araçlar yalnızca yeni oturumda yüklenir. İlk iş: Figma araçlarının göründüğünü doğrula, görünmüyorsa `/mcp` → `figma` → Authenticate.
+- **Sıradaki iş (başlanmadı):** Teslim öncesi denetim → `REVIEW.md` (Kritik/Önemli/Küçük, dosya:satır + öneri, case maddelerine göre puan), ardından Kritik/Önemli düzeltmeleri (ayrı commit'ler; Figma'dan sapma ve yeni paket için önce kullanıcıya sor) ve README güncellemesi (kurulum, AI yaklaşımı, APK komutu). Figma'ya erişim yoksa tahminle ilerleme, dur ve söyle.
 - **Push:** Kullanıcı açıkça istemeden push yapılmaz. `feat/design-polish` dalı silindi, tek dal `master`.
