@@ -44,54 +44,54 @@ export const SquareCard = ({
         disabled={!onPress}
         accessibilityRole={onPress ? 'button' : undefined}
         accessibilityLabel={`${title}, ${subtitle}`}
-        style={[
-          styles.container,
-          {
-            borderRadius: radius,
-            shadowColor: theme.colors.shadow,
-          },
-        ]}>
-        {image ? (
-          <Image
-            source={image}
-            contentFit="cover"
-            transition={250}
-            style={StyleSheet.absoluteFill}
-            accessibilityIgnoresInvertColors
-          />
-        ) : (
-          // Figma placeholder: grey → navy fade with an image glyph.
-          <LinearGradient colors={MEDIA_COLORS.placeholder} style={styles.placeholder}>
-            <Icon name="grid" size={32} color={MEDIA_COLORS.placeholderIcon} />
-          </LinearGradient>
-        )}
-        <LinearGradient colors={MEDIA_COLORS.scrimCard} style={styles.gradient}>
-          <View style={styles.content}>
-            <View style={styles.subtitleRow}>
-              <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
-              <Text style={[styles.subtitle, { color: MEDIA_COLORS.accent }]}>{subtitle}</Text>
+        // Outer layer casts the shadow, inner layer clips (iOS drops shadows on clipped views).
+        style={[styles.shadow, { borderRadius: radius, shadowColor: theme.colors.shadow }]}>
+        <View style={[styles.clip, { borderRadius: radius }]}>
+          {image ? (
+            <Image
+              source={image}
+              contentFit="cover"
+              transition={250}
+              style={StyleSheet.absoluteFill}
+              accessibilityIgnoresInvertColors
+            />
+          ) : (
+            // Figma placeholder: grey → navy fade with an image glyph.
+            <LinearGradient colors={MEDIA_COLORS.placeholder} style={styles.placeholder}>
+              <Icon name="grid" size={32} color={MEDIA_COLORS.placeholderIcon} />
+            </LinearGradient>
+          )}
+          <LinearGradient colors={MEDIA_COLORS.scrimCard} style={styles.gradient}>
+            <View style={styles.content}>
+              <View style={styles.subtitleRow}>
+                <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
+                <Text style={[styles.subtitle, { color: MEDIA_COLORS.accent }]}>{subtitle}</Text>
+              </View>
+              <Text style={styles.title} numberOfLines={1}>
+                {title}
+              </Text>
             </View>
-            <Text style={styles.title} numberOfLines={1}>
-              {title}
-            </Text>
-          </View>
-        </LinearGradient>
+          </LinearGradient>
+        </View>
       </Pressable>
     </Animated.View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
+  shadow: {
     aspectRatio: 220 / 176,
-    overflow: 'hidden',
-    borderWidth: 1,
-    borderColor: MEDIA_COLORS.border,
     backgroundColor: MEDIA_COLORS.base,
     elevation: 3,
     shadowOffset: { width: 0, height: 6 },
     shadowOpacity: 0.25,
     shadowRadius: 12,
+  },
+  clip: {
+    flex: 1,
+    overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: MEDIA_COLORS.border,
   },
   placeholder: {
     ...StyleSheet.absoluteFill,

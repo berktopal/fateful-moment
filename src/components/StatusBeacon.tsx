@@ -96,6 +96,7 @@ export const StatusBeacon = ({
             height: size,
             borderRadius: size / 2,
             backgroundColor: color,
+            shadowColor: theme.colors.shadow,
           },
         ]}
       />
@@ -112,7 +113,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   dot: {
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.3,
     shadowRadius: 2,

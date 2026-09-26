@@ -42,90 +42,97 @@ export const ScenarioCard = ({
   const radius = isLarge ? theme.radius.hero : theme.radius.xl;
 
   return (
+    // Two layers: iOS clips a shadow drawn on a view with `overflow: 'hidden'`, so the outer
+    // view casts the shadow and the inner one clips the imagery to the rounded corners.
     <View
       style={[
-        styles.container,
+        styles.shadow,
         isLarge ? styles.hero : styles.list,
         { borderRadius: radius, shadowColor: theme.colors.shadow },
         !isActive && styles.inactive,
         style,
       ]}>
-      <Image
-        source={image}
-        contentFit="cover"
-        transition={250}
-        style={StyleSheet.absoluteFill}
-        accessibilityIgnoresInvertColors
-      />
-      <LinearGradient
-        colors={isLarge ? MEDIA_COLORS.scrimHero : MEDIA_COLORS.scrimList}
-        style={StyleSheet.absoluteFill}
-      />
+      <View style={[styles.clip, { borderRadius: radius }]}>
+        <Image
+          source={image}
+          contentFit="cover"
+          transition={250}
+          style={StyleSheet.absoluteFill}
+          accessibilityIgnoresInvertColors
+        />
+        <LinearGradient
+          colors={isLarge ? MEDIA_COLORS.scrimHero : MEDIA_COLORS.scrimList}
+          style={StyleSheet.absoluteFill}
+        />
 
-      {isLarge ? (
-        <View style={styles.heroContent}>
-          <View style={styles.heroText}>
-            <View style={styles.heroTitleGroup}>
-              <Text style={styles.heroHud}>{header}</Text>
-              <Text style={styles.heroTitle} numberOfLines={2} accessibilityRole="header">
-                {title}
+        {isLarge ? (
+          <View style={styles.heroContent}>
+            <View style={styles.heroText}>
+              <View style={styles.heroTitleGroup}>
+                <Text style={styles.heroHud}>{header}</Text>
+                <Text style={styles.heroTitle} numberOfLines={2} accessibilityRole="header">
+                  {title}
+                </Text>
+              </View>
+              <Text style={styles.heroDescription} numberOfLines={4}>
+                {description}
               </Text>
             </View>
-            <Text style={styles.heroDescription} numberOfLines={4}>
-              {description}
-            </Text>
+            <Button
+              title={ctaLabel ?? t.scenario.startSimulation}
+              onPress={onStart}
+              variant="glass"
+              size="lg"
+              onMedia
+              disabled={!isActive}
+              fadeWhenDisabled={false}
+              accessibilityLabel={t.scenario.startLabel(title)}
+            />
           </View>
-          <Button
-            title={ctaLabel ?? t.scenario.startSimulation}
-            onPress={onStart}
-            variant="glass"
-            size="lg"
-            onMedia
-            disabled={!isActive}
-            fadeWhenDisabled={false}
-            accessibilityLabel={t.scenario.startLabel(title)}
-          />
-        </View>
-      ) : (
-        <View style={styles.listContent}>
-          <View style={styles.listText}>
-            <View style={styles.listHeader}>
-              <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
-              <Text style={styles.listHud}>{header}</Text>
+        ) : (
+          <View style={styles.listContent}>
+            <View style={styles.listText}>
+              <View style={styles.listHeader}>
+                <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
+                <Text style={styles.listHud}>{header}</Text>
+              </View>
+              <Text style={styles.listTitle} numberOfLines={1} accessibilityRole="header">
+                {title}
+              </Text>
+              <Text style={styles.listDescription} numberOfLines={3}>
+                {description}
+              </Text>
             </View>
-            <Text style={styles.listTitle} numberOfLines={1} accessibilityRole="header">
-              {title}
-            </Text>
-            <Text style={styles.listDescription} numberOfLines={3}>
-              {description}
-            </Text>
+            <Button
+              title={ctaLabel ?? (isActive ? t.scenario.start : t.scenario.locked)}
+              onPress={onStart}
+              variant="glass"
+              size="md"
+              onMedia
+              disabled={!isActive}
+              fadeWhenDisabled={false}
+              // Figma Card: Inter Black 16/24 label with the compact 8px vertical padding.
+              textStyle={TYPE_SCALE.body}
+              style={styles.listButton}
+              accessibilityLabel={isActive ? t.scenario.startLabel(title) : t.scenario.lockedLabel(title)}
+            />
           </View>
-          <Button
-            title={ctaLabel ?? (isActive ? t.scenario.start : t.scenario.locked)}
-            onPress={onStart}
-            variant="glass"
-            size="md"
-            onMedia
-            disabled={!isActive}
-            fadeWhenDisabled={false}
-            // Figma Card: Inter Black 16/24 label with the compact 8px vertical padding.
-            textStyle={TYPE_SCALE.body}
-            style={styles.listButton}
-            accessibilityLabel={isActive ? t.scenario.startLabel(title) : t.scenario.lockedLabel(title)}
-          />
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    overflow: 'hidden',
+  shadow: {
     marginBottom: 20,
+    backgroundColor: MEDIA_COLORS.base,
+  },
+  clip: {
+    flex: 1,
+    overflow: 'hidden',
     borderWidth: 1,
     borderColor: MEDIA_COLORS.border,
-    backgroundColor: MEDIA_COLORS.base,
   },
   // Figma Scenario Container shadow: 0 25 50 -12 rgba(0,0,0,0.25).
   hero: {
