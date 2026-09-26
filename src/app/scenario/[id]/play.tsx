@@ -61,6 +61,8 @@ function Simulation({ scenario }: { scenario: Scenario }) {
   const [state, dispatch] = useReducer(simulationReducer, initialSimulationState);
   // Stable id for this run, so the outcome screen records it exactly once.
   const [runId] = useState(() => `${scenario.id}-${Date.now()}`);
+  // The clock stops while the abort confirmation is open: reading a dialog must not cost the decision.
+  const [confirmingAbort, setConfirmingAbort] = useState(false);
 
   const stepCount = scenario.steps.length;
   const step = scenario.steps[state.stepIndex];
@@ -73,7 +75,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
 
   const remainingMs = useCountdown(
     step.timeLimitSec * 1000,
-    state.phase === 'deciding' && appActive,
+    state.phase === 'deciding' && appActive && !confirmingAbort,
     step.id,
     handleExpire,
   );
@@ -98,10 +100,18 @@ function Simulation({ scenario }: { scenario: Scenario }) {
   }, [state.phase, state.choices, scenario.id, runId]);
 
   const confirmAbort = useCallback(() => {
-    Alert.alert(t.play.abortTitle, t.play.abortBody, [
-      { text: t.play.continue, style: 'cancel' },
-      { text: t.play.abort, style: 'destructive', onPress: () => router.back() },
-    ]);
+    setConfirmingAbort(true);
+    const resume = () => setConfirmingAbort(false);
+    Alert.alert(
+      t.play.abortTitle,
+      t.play.abortBody,
+      [
+        { text: t.play.continue, style: 'cancel', onPress: resume },
+        { text: t.play.abort, style: 'destructive', onPress: () => router.back() },
+      ],
+      // Android: back / tapping outside dismisses the dialog without pressing a button.
+      { cancelable: true, onDismiss: resume },
+    );
     return true;
   }, [t]);
 

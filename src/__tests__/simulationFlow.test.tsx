@@ -1,3 +1,4 @@
+import { Alert, AlertButton } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot } from 'expo-router';
 import { act, fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
@@ -8,6 +9,9 @@ import PlayScreen from '../app/scenario/[id]/play';
 import OutcomeScreen from '../app/scenario/[id]/outcome';
 import { DEFAULT_STATE, STORAGE_KEY } from '../store/storage';
 import { PRESS_GUARD_MS } from '../components/Button';
+
+// Jest's AppState mock never reports "active", which would keep every countdown paused.
+jest.mock('../hooks/useAppActive', () => ({ useAppActive: () => true }));
 
 // Real screens for the flow under test; the other tabs and the gallery are stubbed.
 const routes = {
@@ -75,6 +79,26 @@ describe('simulation flow', () => {
     await pause();
     await fireEvent.press(screen.getByRole('button', { name: 'Sonraki Karar' }));
     expect(await screen.findByText('KARAR 02 / 03')).toBeOnTheScreen();
+  });
+
+  it('pauses the decision timer while the abort confirmation is open', async () => {
+    const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    await renderRouter(routes, { initialUrl: '/scenario/operation-midnight/play' });
+    expect(await screen.findByText('T-00:20')).toBeOnTheScreen();
+    await act(() => jest.advanceTimersByTime(1000));
+    expect(screen.getByText('T-00:19')).toBeOnTheScreen();
+
+    await fireEvent.press(screen.getByRole('button', { name: 'Geri' }));
+    expect(alert).toHaveBeenCalledTimes(1);
+    await act(() => jest.advanceTimersByTime(5000));
+    expect(screen.getByText('T-00:19')).toBeOnTheScreen();
+
+    // "Continue" resumes the countdown where it stopped.
+    const buttons = alert.mock.calls[0][2] as AlertButton[];
+    await act(() => buttons.find((b) => b.style === 'cancel')?.onPress?.());
+    await act(() => jest.advanceTimersByTime(2000));
+    expect(screen.getByText('T-00:17')).toBeOnTheScreen();
+    jest.restoreAllMocks();
   });
 
   it('keeps locked scenarios out of the simulator', async () => {
