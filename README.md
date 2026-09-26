@@ -89,7 +89,7 @@ Teslimden önce ayrı bir Claude Code oturumu, projeyi bir değerlendirici göz�
 ### AI önerisinin reddedildiği ya da düzeltildiği yerler
 
 - **"Figma yalnızca bileşen kütüphanesi" varsayımı yanlıştı.** Önceki oturumlar Figma dosyasının yalnızca bir sayfasına bakmıştı. Denetim, case linkinin açtığı Playground sayfasında tam ekranlar olduğunu buldu. Kapsamı ben belirledim (aşağıdaki Notlar'a bakın).
-- **Option Card çerçevesi.** AI, `#F8FAFC` çerçevenin koyu zeminde fazla parlak göründüğünü söyleyip yumuşatmayı önerdi. Değerlendirme Figma'ya göre yapılacağı için Figma değerinde kalmaya karar verdim.
+- **Option Card çerçevesi.** `#F8FAFC` çerçeve koyu zeminde belirgin duruyor. Değerlendirme Figma'ya göre yapılacağı için yumuşatmadım, Figma değeri korundu.
 - **Figma'nın Passive durumu.** Bu durum cyan gradyanı koruduğu için ikinci bir seçim gibi görünüyordu. Seçilmeyen seçenekler için Figma'daki Default görünümü, Passive'in %48 opaklığıyla kullanıldı.
 - **AI'ın kendi test hataları.** Çift dokunma testinin ilk hali takıldı: Expo Router'ın test kütüphanesi sahte zamanlayıcı kullandığı için gerçek bekleme hiç bitmiyordu. Süre dolumu testi de başka bir sorunu ortaya çıkardı: Jest ortamında uygulama "arka planda" göründüğü için simülasyon testlerinde sayaç hiç çalışmıyordu. İkisi de düzeltildi.
 - **Yeni paket yerine basit çözüm.** i18n için `i18next` / `expo-localization` eklenmedi. İki dil için tipli bir sözlük ve context yeterli. Eksik bir çeviri anahtarı derleme hatası verir.
