@@ -147,7 +147,7 @@ export default function SettingsScreen() {
   }));
 
   return (
-    <ScreenContainer header={<NavBar title={t.settings.title} leftIcon="squiggle" />}>
+    <ScreenContainer header={<NavBar title={t.settings.title} left="squiggle" />}>
       <SectionHeader title={t.settings.appearance} />
       <SegmentedCard
         icon={isDark ? 'moon' : 'sun'}
@@ -274,8 +274,10 @@ const styles = StyleSheet.create({
   },
   segment: {
     flex: 1,
+    minHeight: 44,
     paddingVertical: 9,
     alignItems: 'center',
+    justifyContent: 'center',
   },
   segmentText: {
     fontFamily: MONO_FONT,

@@ -29,7 +29,12 @@ export default function ScenarioBriefingScreen() {
     return runs.length ? Math.max(...runs.map((r) => r.score)) : null;
   }, [history, id]);
 
-  const header = <NavBar title={t.briefing.title} leftIcon="arrow-left" onLeftPress={() => router.back()} />;
+  const header = (
+    <NavBar
+      title={t.briefing.title}
+      left={{ icon: 'arrow-left', onPress: () => router.back(), accessibilityLabel: t.common.back }}
+    />
+  );
 
   if (!scenario) {
     return (

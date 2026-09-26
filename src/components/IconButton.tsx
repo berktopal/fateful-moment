@@ -13,7 +13,8 @@ interface IconButtonProps {
   color?: string;
   style?: ViewStyle;
   size?: number;
-  accessibilityLabel?: string;
+  /** Required: an icon alone gives screen readers nothing to announce. */
+  accessibilityLabel: string;
 }
 
 export const IconButton = ({
@@ -42,7 +43,7 @@ export const IconButton = ({
         onPressIn={() => animateTo(0.92)}
         onPressOut={() => animateTo(1)}
         accessibilityRole="button"
-        accessibilityLabel={accessibilityLabel || icon}
+        accessibilityLabel={accessibilityLabel}
         hitSlop={8}
         style={[
           styles.container,

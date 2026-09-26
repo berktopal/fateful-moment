@@ -3,26 +3,48 @@ import { View, StyleSheet } from 'react-native';
 import { Text } from './Text';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { IconButton } from './IconButton';
-import { IconName } from './Icon';
+import { Icon, IconName } from './Icon';
 import { useTheme, TYPE_SCALE } from '../theme';
+
+/** A tappable nav bar icon. The label is required: screen readers announce it. */
+export interface NavBarAction {
+  icon: IconName;
+  onPress: () => void;
+  accessibilityLabel: string;
+}
 
 export interface NavBarProps {
   title: string;
-  leftIcon?: IconName;
-  rightIcon?: IconName;
-  onLeftPress?: () => void;
-  onRightPress?: () => void;
+  /** An icon name renders a decorative glyph (e.g. the Figma brand squiggle); an action renders a button. */
+  left?: IconName | NavBarAction;
+  right?: IconName | NavBarAction;
 }
 
-export const NavBar = ({
-  title,
-  leftIcon,
-  rightIcon,
-  onLeftPress,
-  onRightPress,
-}: NavBarProps) => {
+export const NavBar = ({ title, left, right }: NavBarProps) => {
   const insets = useSafeAreaInsets();
   const { theme } = useTheme();
+
+  const renderSlot = (slot: NavBarProps['left']) => {
+    if (!slot) return <View style={styles.slot} />;
+    if (typeof slot === 'string') {
+      return (
+        <View
+          style={styles.slot}
+          accessibilityElementsHidden
+          importantForAccessibility="no-hide-descendants">
+          <Icon name={slot} size={24} color={theme.colors.textPrimary} />
+        </View>
+      );
+    }
+    return (
+      <IconButton
+        icon={slot.icon}
+        onPress={slot.onPress}
+        accessibilityLabel={slot.accessibilityLabel}
+        color={theme.colors.textPrimary}
+      />
+    );
+  };
 
   return (
     <View
@@ -34,11 +56,7 @@ export const NavBar = ({
           borderBottomColor: theme.colors.divider,
         },
       ]}>
-      {leftIcon ? (
-        <IconButton icon={leftIcon} onPress={onLeftPress} color={theme.colors.textPrimary} />
-      ) : (
-        <View style={styles.iconPlaceholder} />
-      )}
+      {renderSlot(left)}
 
       <Text
         style={[styles.title, { color: theme.colors.textPrimary }]}
@@ -47,11 +65,7 @@ export const NavBar = ({
         {title}
       </Text>
 
-      {rightIcon ? (
-        <IconButton icon={rightIcon} onPress={onRightPress} color={theme.colors.textPrimary} />
-      ) : (
-        <View style={styles.iconPlaceholder} />
-      )}
+      {renderSlot(right)}
     </View>
   );
 };
@@ -74,8 +88,10 @@ const styles = StyleSheet.create({
     fontWeight: '600',
   },
   // Same footprint as an IconButton so the title stays centred and the bar height is stable.
-  iconPlaceholder: {
+  slot: {
     width: 44,
     height: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });

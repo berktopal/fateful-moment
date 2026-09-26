@@ -37,7 +37,10 @@ export default function SimulationRoute() {
     return (
       <ScreenContainer
         header={
-          <NavBar title={t.play.title} leftIcon="arrow-left" onLeftPress={() => router.back()} />
+          <NavBar
+            title={t.play.title}
+            left={{ icon: 'arrow-left', onPress: () => router.back(), accessibilityLabel: t.common.back }}
+          />
         }
         error={t.play.unavailable}
         onRetry={() => router.back()}
@@ -130,7 +133,12 @@ function Simulation({ scenario }: { scenario: Scenario }) {
   return (
     <ScreenContainer
       scrollRef={scrollRef}
-      header={<NavBar title={scenario.title} leftIcon="arrow-left" onLeftPress={confirmAbort} />}
+      header={
+        <NavBar
+          title={scenario.title}
+          left={{ icon: 'arrow-left', onPress: confirmAbort, accessibilityLabel: t.common.back }}
+        />
+      }
       footer={
         <View
           style={[

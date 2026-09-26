@@ -15,7 +15,7 @@ export default function SystemScreen() {
   const { t, language } = useI18n();
 
   return (
-    <ScreenContainer header={<NavBar title={t.system.title} leftIcon="squiggle" rightIcon="grid" />}>
+    <ScreenContainer header={<NavBar title={t.system.title} left="squiggle" right="grid" />}>
       <SectionHeader title={t.system.archives} accessory={<StatusBeacon status="online" size={8} />} />
       <View style={styles.grid}>
         {getArchiveNodes(language).map((node) => (

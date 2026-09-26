@@ -29,9 +29,8 @@ export default function VitalsScreen() {
       header={
         <NavBar
           title={t.vitals.title}
-          leftIcon="squiggle"
-          rightIcon="refresh-cw"
-          onRightPress={refreshTelemetry}
+          left="squiggle"
+          right={{ icon: 'refresh-cw', onPress: refreshTelemetry, accessibilityLabel: t.common.refresh }}
         />
       }>
       <View style={styles.header}>

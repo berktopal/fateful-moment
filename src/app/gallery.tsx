@@ -125,11 +125,11 @@ export default function GalleryScreen() {
       <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
         <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>ICON BUTTONS</Text>
         <View style={styles.row}>
-          <IconButton icon="squiggle" isActive />
-          <IconButton icon="squiggle" />
-          <IconButton icon="compass" bordered />
-          <IconButton icon="history" bordered />
-          <IconButton icon="shield-alert" bordered />
+          <IconButton icon="squiggle" isActive accessibilityLabel="Active icon button" />
+          <IconButton icon="squiggle" accessibilityLabel="Inactive icon button" />
+          <IconButton icon="compass" bordered accessibilityLabel="Compass" />
+          <IconButton icon="history" bordered accessibilityLabel="History" />
+          <IconButton icon="shield-alert" bordered accessibilityLabel="Shield alert" />
         </View>
       </View>
 

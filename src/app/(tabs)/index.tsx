@@ -39,9 +39,12 @@ export default function HomeScreen() {
       header={
         <NavBar
           title={t.home.title}
-          leftIcon="squiggle"
-          rightIcon="bell-dot"
-          onRightPress={() => router.push('/explore')}
+          left="squiggle"
+          right={{
+            icon: 'bell-dot',
+            onPress: () => router.push('/explore'),
+            accessibilityLabel: t.common.openIntel,
+          }}
         />
       }
       loading={loading}

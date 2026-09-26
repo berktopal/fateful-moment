@@ -46,7 +46,7 @@ export default function ProfileScreen() {
   ];
 
   return (
-    <ScreenContainer header={<NavBar title={t.profile.title} leftIcon="squiggle" />} contentStyle={styles.content}>
+    <ScreenContainer header={<NavBar title={t.profile.title} left="squiggle" />} contentStyle={styles.content}>
       <View style={styles.identity}>
         <View style={styles.avatarWrapper}>
           <View style={[styles.avatarRing, { borderColor: theme.colors.primary }]}>

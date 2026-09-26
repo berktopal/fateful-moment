@@ -11,6 +11,9 @@ export const tr: Strings = {
     loading: 'Yükleniyor',
     loadError: 'Veriler yüklenemedi. Bağlantını kontrol edip tekrar dene.',
     cancel: 'Vazgeç',
+    back: 'Geri',
+    refresh: 'Yenile',
+    openIntel: 'İstihbarat akışını aç',
   },
   tabs: {
     index: 'Ana Sayfa',

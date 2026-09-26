@@ -14,6 +14,9 @@ export const en = {
     loading: 'Loading',
     loadError: 'Could not load data. Check your connection and try again.',
     cancel: 'Cancel',
+    back: 'Back',
+    refresh: 'Refresh',
+    openIntel: 'Open intel feed',
   },
   tabs: {
     index: 'Home',

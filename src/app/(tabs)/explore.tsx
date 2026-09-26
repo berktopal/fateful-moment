@@ -31,7 +31,13 @@ export default function ExploreScreen() {
 
   return (
     <ScreenContainer
-      header={<NavBar title={t.explore.title} leftIcon="squiggle" rightIcon="refresh-cw" onRightPress={reload} />}
+      header={
+        <NavBar
+          title={t.explore.title}
+          left="squiggle"
+          right={{ icon: 'refresh-cw', onPress: reload, accessibilityLabel: t.common.refresh }}
+        />
+      }
       loading={loading}
       error={error}
       onRetry={reload}>

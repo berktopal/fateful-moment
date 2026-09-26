@@ -44,7 +44,7 @@ export const InteractiveSelection = ({
               key={index}
               onPress={() => onSelect(index)}
               accessibilityRole="radio"
-              accessibilityState={{ selected: isSelected }}
+              accessibilityState={{ checked: isSelected }}
               style={[
                 styles.option,
                 {
