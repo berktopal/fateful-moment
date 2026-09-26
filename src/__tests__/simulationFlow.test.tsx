@@ -1,12 +1,13 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Slot } from 'expo-router';
-import { fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
+import { act, fireEvent, renderRouter, screen, waitFor } from 'expo-router/testing-library';
 import RootLayout from '../app/_layout';
 import SettingsScreen from '../app/(tabs)/settings';
 import BriefingScreen from '../app/scenario/[id]/index';
 import PlayScreen from '../app/scenario/[id]/play';
 import OutcomeScreen from '../app/scenario/[id]/outcome';
 import { DEFAULT_STATE, STORAGE_KEY } from '../store/storage';
+import { PRESS_GUARD_MS } from '../components/Button';
 
 // Real screens for the flow under test; the other tabs and the gallery are stubbed.
 const routes = {
@@ -22,9 +23,15 @@ const routes = {
 
 const readStored = async () => JSON.parse((await AsyncStorage.getItem(STORAGE_KEY)) ?? '{}');
 
+// The footer button ignores a second tap within PRESS_GUARD_MS. Tests tap far faster than a
+// person, so `pause()` moves renderRouter's fake clock past that window.
+const pause = () => act(() => jest.advanceTimersByTime(PRESS_GUARD_MS));
+
 const choose = async (optionText: string, advanceLabel: string) => {
   await fireEvent.press(await screen.findByRole('radio', { name: optionText }));
+  await pause();
   await fireEvent.press(screen.getByRole('button', { name: 'Kararı Kilitle' }));
+  await pause();
   await fireEvent.press(await screen.findByRole('button', { name: advanceLabel }));
 };
 
@@ -54,6 +61,20 @@ describe('simulation flow', () => {
       score: 73,
       rating: 'DECISIVE',
     });
+  });
+
+  it('does not let a double tap on "Lock In" skip the consequence', async () => {
+    await renderRouter(routes, { initialUrl: '/scenario/operation-midnight/play' });
+
+    await fireEvent.press(await screen.findByRole('radio', { name: 'Dere menfezinden ilerle' }));
+    await fireEvent.press(screen.getByRole('button', { name: 'Kararı Kilitle' }));
+    // The second tap of the double tap lands on the same button, now labelled "Next Decision".
+    await fireEvent.press(await screen.findByRole('button', { name: 'Sonraki Karar' }));
+    expect(screen.getByText('KARAR 01 / 03')).toBeOnTheScreen();
+
+    await pause();
+    await fireEvent.press(screen.getByRole('button', { name: 'Sonraki Karar' }));
+    expect(await screen.findByText('KARAR 02 / 03')).toBeOnTheScreen();
   });
 
   it('keeps locked scenarios out of the simulator', async () => {

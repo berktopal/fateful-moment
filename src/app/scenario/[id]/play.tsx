@@ -141,28 +141,23 @@ function Simulation({ scenario }: { scenario: Scenario }) {
               borderTopColor: theme.colors.border,
             },
           ]}>
-          {isReviewing ? (
-            <Button
-              title={isLastStep ? t.play.viewOutcome : t.play.nextDecision}
-              icon="arrow-right"
-              size="lg"
-              onPress={() => {
+          {/* One Button for both actions, on purpose: its double-tap guard then also stops the
+              second tap of a "Lock In" double tap from skipping straight past the consequence. */}
+          <Button
+            title={isReviewing ? (isLastStep ? t.play.viewOutcome : t.play.nextDecision) : t.play.lockIn}
+            icon={isReviewing ? 'arrow-right' : 'send'}
+            size="lg"
+            disabled={!isReviewing && !state.selectedId}
+            onPress={() => {
+              if (isReviewing) {
                 haptics.selection();
                 dispatch({ type: 'NEXT', stepCount });
-              }}
-            />
-          ) : (
-            <Button
-              title={t.play.lockIn}
-              icon="send"
-              size="lg"
-              disabled={!state.selectedId}
-              onPress={() => {
+              } else {
                 haptics.impact();
                 dispatch({ type: 'CONFIRM' });
-              }}
-            />
-          )}
+              }
+            }}
+          />
         </View>
       }>
       <View style={styles.progressRow}>

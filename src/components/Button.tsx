@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import {
   StyleSheet,
   ViewStyle,
@@ -51,11 +51,24 @@ interface Appearance {
 }
 
 // Figma: 24px horizontal padding at every size; Lg 12px / Md & Sm 8px vertical.
-const SIZES: Record<ButtonSize, { paddingVertical: number; type: TextStyle; icon: number }> = {
-  lg: { paddingVertical: 12, type: TYPE_SCALE.body, icon: 24 },
-  md: { paddingVertical: 8, type: { fontSize: 14, lineHeight: 18 }, icon: 20 },
-  sm: { paddingVertical: 8, type: TYPE_SCALE.caption01, icon: 16 },
+// Md (36pt) and Sm (34pt) stay at their Figma size; `hitSlop` grows the touch target past 44pt.
+const SIZES: Record<
+  ButtonSize,
+  { paddingVertical: number; type: TextStyle; icon: number; hitSlop: number }
+> = {
+  lg: { paddingVertical: 12, type: TYPE_SCALE.body, icon: 24, hitSlop: 0 },
+  md: { paddingVertical: 8, type: { fontSize: 14, lineHeight: 18 }, icon: 20, hitSlop: 6 },
+  sm: { paddingVertical: 8, type: TYPE_SCALE.caption01, icon: 16, hitSlop: 6 },
 };
+
+/** Link buttons are text-height only (≈ 22pt). */
+const LINK_HIT_SLOP = 12;
+
+/**
+ * A second press within this window is ignored. A double tap must not push a screen twice,
+ * nor land on the button that replaced this one (e.g. "Lock In" turning into "Next").
+ */
+export const PRESS_GUARD_MS = 500;
 
 const resolveAppearance = (
   variant: ButtonVariant,
@@ -137,6 +150,7 @@ export const Button = ({
 }: ButtonProps) => {
   const { theme } = useTheme();
   const scaleAnim = useAnimatedValue(1);
+  const lastPressAt = useRef(0);
   const inactive = disabled || loading;
   const spec = SIZES[size];
   const isLink = variant === 'link';
@@ -152,10 +166,18 @@ export const Button = ({
       bounciness: 4,
     }).start();
 
+  const handlePress = () => {
+    const now = Date.now();
+    if (now - lastPressAt.current < PRESS_GUARD_MS) return;
+    lastPressAt.current = now;
+    onPress();
+  };
+
   return (
     <Animated.View style={[{ transform: [{ scale: scaleAnim }] }, style]}>
       <Pressable
-        onPress={onPress}
+        onPress={handlePress}
+        hitSlop={isLink ? LINK_HIT_SLOP : spec.hitSlop}
         onPressIn={() => !inactive && animateTo(0.97)}
         onPressOut={() => animateTo(1)}
         disabled={inactive}

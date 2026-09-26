@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
-import { Button } from '../Button';
+import { Button, PRESS_GUARD_MS } from '../Button';
 
 describe('Button', () => {
   it('renders its title and handles presses', async () => {
@@ -7,6 +7,23 @@ describe('Button', () => {
     await render(<Button title="Start Simulation" onPress={onPress} />);
     await fireEvent.press(screen.getByRole('button', { name: 'Start Simulation' }));
     expect(onPress).toHaveBeenCalledTimes(1);
+  });
+
+  it('ignores a double tap but accepts a later press', async () => {
+    const onPress = jest.fn();
+    const now = jest.spyOn(Date, 'now').mockReturnValue(10_000);
+    await render(<Button title="Start Simulation" onPress={onPress} />);
+    const button = screen.getByRole('button', { name: 'Start Simulation' });
+
+    await fireEvent.press(button);
+    now.mockReturnValue(10_000 + PRESS_GUARD_MS - 1);
+    await fireEvent.press(button);
+    expect(onPress).toHaveBeenCalledTimes(1);
+
+    now.mockReturnValue(10_000 + PRESS_GUARD_MS);
+    await fireEvent.press(button);
+    expect(onPress).toHaveBeenCalledTimes(2);
+    now.mockRestore();
   });
 
   it('does not fire when disabled', async () => {
