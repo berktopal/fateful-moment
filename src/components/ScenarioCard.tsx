@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Button } from './Button';
 import { Icon, IconName } from './Icon';
 import { useTheme, MONO_FONT, MEDIA_COLORS, TYPE_SCALE } from '../theme';
+import { useI18n } from '../i18n';
 import type { MediaSource } from '../types';
 
 export interface ScenarioCardProps {
@@ -32,10 +33,12 @@ export const ScenarioCard = ({
   isLarge = false,
   isActive = true,
   iconName = 'alarm-clock',
-  headerText = 'Scenario Time',
+  headerText,
   ctaLabel,
 }: ScenarioCardProps) => {
   const { theme } = useTheme();
+  const { t } = useI18n();
+  const header = headerText ?? t.scenario.defaultHeader;
   const radius = isLarge ? theme.radius.hero : theme.radius.xl;
 
   return (
@@ -63,7 +66,7 @@ export const ScenarioCard = ({
         <View style={styles.heroContent}>
           <View style={styles.heroText}>
             <View style={styles.heroTitleGroup}>
-              <Text style={styles.heroHud}>{headerText}</Text>
+              <Text style={styles.heroHud}>{header}</Text>
               <Text style={styles.heroTitle} numberOfLines={2} accessibilityRole="header">
                 {title}
               </Text>
@@ -73,14 +76,14 @@ export const ScenarioCard = ({
             </Text>
           </View>
           <Button
-            title={ctaLabel ?? 'Start Simulation'}
+            title={ctaLabel ?? t.scenario.startSimulation}
             onPress={onStart}
             variant="glass"
             size="lg"
             onMedia
             disabled={!isActive}
             fadeWhenDisabled={false}
-            accessibilityLabel={`Start ${title}`}
+            accessibilityLabel={t.scenario.startLabel(title)}
           />
         </View>
       ) : (
@@ -88,7 +91,7 @@ export const ScenarioCard = ({
           <View style={styles.listText}>
             <View style={styles.listHeader}>
               <Icon name={iconName} size={16} color={MEDIA_COLORS.accent} />
-              <Text style={styles.listHud}>{headerText}</Text>
+              <Text style={styles.listHud}>{header}</Text>
             </View>
             <Text style={styles.listTitle} numberOfLines={1} accessibilityRole="header">
               {title}
@@ -98,7 +101,7 @@ export const ScenarioCard = ({
             </Text>
           </View>
           <Button
-            title={ctaLabel ?? (isActive ? 'Start' : 'Locked')}
+            title={ctaLabel ?? (isActive ? t.scenario.start : t.scenario.locked)}
             onPress={onStart}
             variant="glass"
             size="md"
@@ -108,7 +111,7 @@ export const ScenarioCard = ({
             // Figma Card: Inter Black 16/24 label with the compact 8px vertical padding.
             textStyle={TYPE_SCALE.body}
             style={styles.listButton}
-            accessibilityLabel={isActive ? `Start ${title}` : `${title} is locked`}
+            accessibilityLabel={isActive ? t.scenario.startLabel(title) : t.scenario.lockedLabel(title)}
           />
         </View>
       )}

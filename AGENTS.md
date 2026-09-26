@@ -59,6 +59,7 @@ src/hooks/                useAsyncData, useHaptics, useAppActive, useReducedMoti
 src/repositories/         async data access (screens never import src/data directly)
 src/data/mockData.ts      scenarios, steps, bundled images
 src/theme/                tokens.ts, fonts.ts, ThemeContext
+src/i18n/                 languages, strings/{en,tr}.ts, I18nContext (useI18n), toUpper
 ```
 
 ### Design rules
@@ -70,6 +71,7 @@ src/theme/                tokens.ts, fonts.ts, ThemeContext
 - **Buttons** follow Figma's model: `primary` / `secondary` (cyan outline) / `ghost` / `link` with Default·Pressed·Disabled and lg·md·sm; `glass` (Start buttons, pass `onMedia` on imagery), `dark`, `danger`. Radius 16, 24px horizontal padding.
 - **Dual theme:** dark is the Figma baseline; light is derived for AA contrast (cyan 600 on light surfaces). Check both themes for every UI change.
 - **Motion:** use `FadeIn` / `useCountUp`; both respect OS Reduce Motion. Native driver wherever possible.
+- **Language:** Turkish is the default, English the alternative (Settings → Language, persisted as `preferences.language`). No hard-coded copy in screens or components: UI text goes in `src/i18n/strings/en.ts` + `tr.ts` (the type checker enforces matching keys) and is read via `useI18n().t`. Data copy is authored as `{ tr, en }` in `mockData.ts` and resolved by repositories (`findScenario(id, language)` etc.). Upper-case with `upper()` / `toUpper()` — never `.toUpperCase()` — so Turkish gets İ/I right; `Text` already does this for `textTransform: 'uppercase'`. The design-system gallery stays English (it mirrors Figma labels).
 - **Accessibility:** interactive elements need a role and label (`button`, `radio`, `progressbar`, `header`).
 - `aspectRatio` alone can let Yoga derive width from height — pair it with `width: '100%'` on full-width cards.
 

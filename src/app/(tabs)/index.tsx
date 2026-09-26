@@ -9,14 +9,18 @@ import { StatusBeacon } from '../../components/StatusBeacon';
 import { useAsyncData } from '../../hooks/useAsyncData';
 import { useAppStore } from '../../store/AppStore';
 import { getFeaturedScenario, getScenarios } from '../../repositories/scenarioRepository';
+import { useI18n } from '../../i18n';
+import type { Language } from '../../i18n';
 import type { Scenario } from '../../types';
 
-const loadHome = () => Promise.all([getFeaturedScenario(), getScenarios()]);
+const loadHome = (language: Language) =>
+  Promise.all([getFeaturedScenario(language), getScenarios(language)]);
 
 const openBriefing = (scenario: Scenario) => router.push(`/scenario/${scenario.id}`);
 
 export default function HomeScreen() {
-  const { data, loading, error, reload } = useAsyncData(loadHome);
+  const { t, language } = useI18n();
+  const { data, loading, error, reload } = useAsyncData(() => loadHome(language), [language]);
   const { history } = useAppStore();
   const [featured, scenarios] = data ?? [null, []];
 
@@ -34,7 +38,7 @@ export default function HomeScreen() {
     <ScreenContainer
       header={
         <NavBar
-          title="War Room Alpha"
+          title={t.home.title}
           leftIcon="squiggle"
           rightIcon="bell-dot"
           onRightPress={() => router.push('/explore')}
@@ -48,7 +52,7 @@ export default function HomeScreen() {
           title={featured.title}
           description={featured.description}
           image={featured.image}
-          headerText="Scenario Briefing"
+          headerText={t.home.briefingHeader}
           onStart={() => openBriefing(featured)}
           isLarge
         />
@@ -56,12 +60,12 @@ export default function HomeScreen() {
 
       <TimerBar
         progress={progress.total ? progress.completed / progress.total : 0}
-        label="CAMPAIGN PROGRESS"
+        label={t.home.campaignProgress}
         trailingLabel={`${progress.completed}/${progress.total}`}
         style={{ marginBottom: 24 }}
       />
 
-      <SectionHeader title="Scenarios" accessory={<StatusBeacon status="online" size={8} />} />
+      <SectionHeader title={t.home.scenarios} accessory={<StatusBeacon status="online" size={8} />} />
       {scenarios.map((scenario) => (
         <ScenarioCard
           key={scenario.id}
@@ -70,7 +74,7 @@ export default function HomeScreen() {
           image={scenario.image}
           onStart={() => openBriefing(scenario)}
           isActive={scenario.isActive}
-          headerText={scenario.isActive ? scenario.duration : `Locked · ${scenario.duration}`}
+          headerText={scenario.isActive ? scenario.duration : t.home.lockedHeader(scenario.duration)}
         />
       ))}
     </ScreenContainer>

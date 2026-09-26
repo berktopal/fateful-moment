@@ -3,6 +3,7 @@ import { View, ScrollView, StyleSheet, ActivityIndicator, ViewStyle } from 'reac
 import { Text } from './Text';
 import { useTheme } from '../theme';
 import { Button } from './Button';
+import { useI18n } from '../i18n';
 
 interface ScreenContainerProps {
   /** Rendered above the scroll area (usually a NavBar). */
@@ -26,18 +27,19 @@ export const ScreenContainer = ({
   loading = false,
   error,
   onRetry,
-  retryLabel = 'Retry',
+  retryLabel,
   contentStyle,
   footer,
   scrollRef,
 }: ScreenContainerProps) => {
   const { theme } = useTheme();
+  const { t } = useI18n();
 
   const renderBody = () => {
     if (loading) {
       return (
         <View style={styles.state}>
-          <ActivityIndicator color={theme.colors.primary} size="large" accessibilityLabel="Loading" />
+          <ActivityIndicator color={theme.colors.primary} size="large" accessibilityLabel={t.common.loading} />
         </View>
       );
     }
@@ -45,7 +47,7 @@ export const ScreenContainer = ({
       return (
         <View style={styles.state}>
           <Text style={[styles.errorText, { color: theme.colors.textMuted }]}>{error}</Text>
-          {onRetry && <Button title={retryLabel} icon="refresh-cw" variant="glass" onPress={onRetry} />}
+          {onRetry && <Button title={retryLabel ?? t.common.retry} icon="refresh-cw" variant="glass" onPress={onRetry} />}
         </View>
       );
     }

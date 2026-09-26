@@ -6,11 +6,14 @@ import { ScreenContainer } from '../../components/ScreenContainer';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { Icon } from '../../components/Icon';
 import { useHaptics } from '../../hooks/useHaptics';
-import { COMMANDER_VITALS } from '../../data/mockData';
+import { getCommanderVitals, HEART_RATE_VITAL_ID } from '../../repositories/systemRepository';
+import { useI18n } from '../../i18n';
 import { useTheme, MONO_FONT } from '../../theme';
 
 export default function VitalsScreen() {
   const { theme } = useTheme();
+  const { t, language } = useI18n();
+  const vitals = getCommanderVitals(language);
   const haptics = useHaptics();
   const [pulse, setPulse] = useState(84);
 
@@ -25,7 +28,7 @@ export default function VitalsScreen() {
     <ScreenContainer
       header={
         <NavBar
-          title="Vitals"
+          title={t.vitals.title}
           leftIcon="squiggle"
           rightIcon="refresh-cw"
           onRightPress={refreshTelemetry}
@@ -37,9 +40,9 @@ export default function VitalsScreen() {
           <StatusBeacon status="online" size={10} style={styles.beacon} />
         </View>
         <Text style={[theme.typography.heading, styles.title, { color: theme.colors.textPrimary }]}>
-          COMMANDER HEALTH
+          {t.vitals.heading}
         </Text>
-        <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>BIOMETRIC TELEMETRY FEED</Text>
+        <Text style={[styles.subtitle, { color: theme.colors.textMuted }]}>{t.vitals.feed}</Text>
       </View>
 
       <View
@@ -47,18 +50,18 @@ export default function VitalsScreen() {
           styles.card,
           { backgroundColor: theme.colors.surface, borderColor: theme.colors.border, borderRadius: theme.radius.xl },
         ]}>
-        {COMMANDER_VITALS.map((vital, index) => (
+        {vitals.map((vital, index) => (
           <View
-            key={vital.label}
+            key={vital.id}
             accessible
             style={[
               styles.row,
               { borderBottomColor: theme.colors.border },
-              index === COMMANDER_VITALS.length - 1 && styles.lastRow,
+              index === vitals.length - 1 && styles.lastRow,
             ]}>
             <Text style={[styles.label, { color: theme.colors.textMuted }]}>{vital.label}</Text>
             <Text style={[styles.value, { color: vital.danger ? theme.colors.danger : theme.colors.primary }]}>
-              {vital.label === 'Heart Rate' ? `${pulse} BPM` : vital.value}
+              {vital.id === HEART_RATE_VITAL_ID ? `${pulse} BPM` : vital.value}
             </Text>
           </View>
         ))}

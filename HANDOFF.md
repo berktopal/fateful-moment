@@ -23,6 +23,8 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 7. **Android ikonları:** Adaptive icon güvenli alana alındı, monochrome (temalı) ikon logodan üretildi, şablon asset'ler silindi.
 8. **Emülatörde bulunup düzeltilen hatalar:** Tab bar'ın home indicator altında kalması, `userInterfaceStyle: light` yüzünden System temasının çalışmaması, status bar ve root arka plan rengi, eksik `scheme`, `aspectRatio` genişlik hatası, `expo-asset` eksikliği.
 
+9. **Dil desteği (TR varsayılan, EN seçenek):** Ayarlar → Dil. Tüm ekranlar, uyarılar, erişilebilirlik etiketleri ve senaryo içerikleri çevrildi; seçim AsyncStorage'da saklanıyor, eski kayıtlar Türkçe'ye düşüyor. Türkçe büyük harf (i→İ) JS'te yapılıyor. Emülatörde iki dilde de doğrulandı. Test sayısı 49.
+
 ## Önemli kararlar ve nedenleri
 
 - **Figma yalnızca bir bileşen kütüphanesi.** Brifing, simülasyon ve sonuç ekranları Figma bileşenleriyle kuruldu (README'de not düşüldü).
@@ -30,6 +32,8 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 - **Option Card çerçevesi `#F8FAFC`** (Figma'daki değer). Koyu zeminde belirgin duruyor ama **kullanıcı kararı: Figma'ya sadık kalınacak** (değerlendirme Figma referans alınarak yapılacak). Yumuşatılmayacak.
 - **Timer countdown modu:** Süre doluyken Figma'daki görünüm, azaldıkça yalnızca kırmızı uç görünüyor.
 - **Light tema:** Figma'da yok. AA kontrastı için türetildi, fotoğraf üstündeki içerik iki temada da aynı kalıyor.
+- **i18n kütüphanesi yok:** İki dil için tipli sözlük + context yeterli; `i18next`/`expo-localization` eklenmedi. Cihaz diline bakılmıyor, çünkü varsayılan dil bilerek Türkçe.
+- **Galeri İngilizce kaldı:** Figma etiketlerini birebir gösteren geliştirici ekranı; yalnızca başlığı çevrildi.
 - **`.npmrc` `legacy-peer-deps`:** Olmadan temiz kurulum ve EAS build kırılıyor.
 
 ## Dikkat edilecekler

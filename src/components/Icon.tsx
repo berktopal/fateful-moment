@@ -21,6 +21,7 @@ import Dna from 'lucide-react-native/icons/dna';
 import FingerprintPattern from 'lucide-react-native/icons/fingerprint-pattern';
 import Heart from 'lucide-react-native/icons/heart';
 import Info from 'lucide-react-native/icons/info';
+import Languages from 'lucide-react-native/icons/languages';
 import LayoutGrid from 'lucide-react-native/icons/layout-grid';
 import Leaf from 'lucide-react-native/icons/leaf';
 import LineSquiggle from 'lucide-react-native/icons/line-squiggle';
@@ -73,6 +74,7 @@ const ICONS = {
   heart: Heart,
   history: RotateCcwClock,
   info: Info,
+  languages: Languages,
   leaf: Leaf,
   lock: Lock,
   'map-pin': MapPin,

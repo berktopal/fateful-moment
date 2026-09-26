@@ -25,15 +25,27 @@ describe('sanitizeState', () => {
 
   it('keeps valid fields and repairs invalid ones individually', () => {
     const state = sanitizeState({
-      preferences: { theme: 'light', haptics: 'yes', notifications: true },
+      preferences: { theme: 'light', haptics: 'yes', notifications: true, language: 'en' },
       history: [record('a'), { id: 42 }],
     });
-    expect(state.preferences).toEqual({ theme: 'light', haptics: true, notifications: true });
+    expect(state.preferences).toEqual({
+      theme: 'light',
+      haptics: true,
+      notifications: true,
+      language: 'en',
+    });
     expect(state.history.map((r) => r.id)).toEqual(['a']);
   });
 
   it('rejects unknown themes', () => {
     expect(sanitizeState({ preferences: { theme: 'neon' } }).preferences.theme).toBe('dark');
+  });
+
+  it('defaults to Turkish and rejects unknown languages', () => {
+    expect(DEFAULT_STATE.preferences.language).toBe('tr');
+    // State saved before the language setting existed has no language field.
+    expect(sanitizeState({ preferences: { theme: 'light' } }).preferences.language).toBe('tr');
+    expect(sanitizeState({ preferences: { language: 'de' } }).preferences.language).toBe('tr');
   });
 
   it('caps history length', () => {

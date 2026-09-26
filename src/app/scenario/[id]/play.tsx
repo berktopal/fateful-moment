@@ -15,8 +15,6 @@ import { findScenario } from '../../../repositories/scenarioRepository';
 import {
   encodeChoices,
   evaluateRun,
-  formatDelta,
-  TIMEOUT_CONSEQUENCE,
   TIMEOUT_PENALTY,
 } from '../../../features/simulation/engine';
 import {
@@ -27,21 +25,23 @@ import { formatCountdown, useCountdown } from '../../../features/simulation/useC
 import { useHaptics } from '../../../hooks/useHaptics';
 import { useAppActive } from '../../../hooks/useAppActive';
 import { useTheme, MONO_FONT } from '../../../theme';
+import { useI18n } from '../../../i18n';
 import type { Scenario } from '../../../types';
 
 export default function SimulationRoute() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const scenario = findScenario(id);
+  const { t, language } = useI18n();
+  const scenario = findScenario(id, language);
 
   if (!scenario || !scenario.isActive || scenario.steps.length === 0) {
     return (
       <ScreenContainer
         header={
-          <NavBar title="Simulation" leftIcon="arrow-left" onLeftPress={() => router.back()} />
+          <NavBar title={t.play.title} leftIcon="arrow-left" onLeftPress={() => router.back()} />
         }
-        error="This scenario is not available."
+        error={t.play.unavailable}
         onRetry={() => router.back()}
-        retryLabel="Go Back"
+        retryLabel={t.common.goBack}
       />
     );
   }
@@ -51,6 +51,7 @@ export default function SimulationRoute() {
 
 function Simulation({ scenario }: { scenario: Scenario }) {
   const { theme } = useTheme();
+  const { t, upper } = useI18n();
   const insets = useSafeAreaInsets();
   const haptics = useHaptics();
   const appActive = useAppActive();
@@ -94,12 +95,12 @@ function Simulation({ scenario }: { scenario: Scenario }) {
   }, [state.phase, state.choices, scenario.id, runId]);
 
   const confirmAbort = useCallback(() => {
-    Alert.alert('Abort simulation?', 'Progress in this run will be lost.', [
-      { text: 'Continue', style: 'cancel' },
-      { text: 'Abort', style: 'destructive', onPress: () => router.back() },
+    Alert.alert(t.play.abortTitle, t.play.abortBody, [
+      { text: t.play.continue, style: 'cancel' },
+      { text: t.play.abort, style: 'destructive', onPress: () => router.back() },
     ]);
     return true;
-  }, []);
+  }, [t]);
 
   // Android hardware back goes through the same confirmation as the nav bar button.
   useEffect(() => {
@@ -142,7 +143,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
           ]}>
           {isReviewing ? (
             <Button
-              title={isLastStep ? 'View Outcome' : 'Next Decision'}
+              title={isLastStep ? t.play.viewOutcome : t.play.nextDecision}
               icon="arrow-right"
               size="lg"
               onPress={() => {
@@ -152,7 +153,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
             />
           ) : (
             <Button
-              title="Lock In Decision"
+              title={t.play.lockIn}
               icon="send"
               size="lg"
               disabled={!state.selectedId}
@@ -166,7 +167,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
       }>
       <View style={styles.progressRow}>
         <Text style={[styles.hud, { color: theme.colors.primary }]}>
-          {`DECISION ${String(state.stepIndex + 1).padStart(2, '0')} / ${String(stepCount).padStart(2, '0')}`}
+          {t.play.counter(state.stepIndex + 1, stepCount)}
         </Text>
         <View style={styles.stepDots}>
           {scenario.steps.map((s, i) => (
@@ -186,7 +187,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
 
       <TimerBar
         progress={remainingMs / (step.timeLimitSec * 1000)}
-        label={isReviewing ? 'ORDER LOCKED' : 'DECISION WINDOW'}
+        label={isReviewing ? t.play.orderLocked : t.play.decisionWindow}
         trailingLabel={formatCountdown(remainingMs)}
         criticalBelow={0.3}
         animationMs={100}
@@ -198,7 +199,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
       <View key={step.id}>
         <FadeIn>
           <HudCard
-            tag={`SITREP // ${step.id.toUpperCase()}`}
+            tag={t.play.sitrep(upper(step.id))}
             title={step.prompt}
             description={step.context}
           />
@@ -224,18 +225,18 @@ function Simulation({ scenario }: { scenario: Scenario }) {
       {isReviewing && committed && (
         <FadeIn>
           <HudCard
-            tag={committed.option ? 'OUTCOME // ORDER EXECUTED' : 'OUTCOME // TIMEOUT'}
-            title={committed.option ? 'Consequence' : 'No order issued'}
-            description={committed.option?.consequence ?? TIMEOUT_CONSEQUENCE}
+            tag={committed.option ? t.play.executedTag : t.play.timeoutTag}
+            title={committed.option ? t.play.consequence : t.play.noOrder}
+            description={committed.option?.consequence ?? t.play.timeoutConsequence}
             chips={[
-              `STABILITY ${formatDelta(impact.stability)}`,
-              `TRUST ${formatDelta(impact.trust)}`,
+              t.metrics.stabilityDelta(impact.stability),
+              t.metrics.trustDelta(impact.trust),
             ]}
             alert={!committed.option}
             style={styles.consequence}>
             <View style={styles.metrics}>
-              <MetricBar label="STABILITY" value={run.metrics.stability} delta={impact.stability} />
-              <MetricBar label="PUBLIC TRUST" value={run.metrics.trust} delta={impact.trust} />
+              <MetricBar label={t.metrics.stability} value={run.metrics.stability} delta={impact.stability} />
+              <MetricBar label={t.metrics.trust} value={run.metrics.trust} delta={impact.trust} />
             </View>
           </HudCard>
         </FadeIn>

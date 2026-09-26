@@ -13,12 +13,14 @@ import { ratingColor } from '../../features/simulation/presentation';
 import { OPERATIVE_AVATAR } from '../../data/mockData';
 import { useAppStore } from '../../store/AppStore';
 import { useTheme, MONO_FONT } from '../../theme';
+import { useI18n } from '../../i18n';
 
-const formatDate = (timestamp: number) =>
-  new Date(timestamp).toLocaleDateString(undefined, { day: '2-digit', month: 'short' });
+const formatDate = (timestamp: number, locale: string) =>
+  new Date(timestamp).toLocaleDateString(locale, { day: '2-digit', month: 'short' });
 
 export default function ProfileScreen() {
   const { theme } = useTheme();
+  const { t, language, locale } = useI18n();
   const { history, clearHistory } = useAppStore();
 
   const stats = useMemo(() => {
@@ -32,19 +34,19 @@ export default function ProfileScreen() {
   }, [history]);
 
   const confirmReset = () =>
-    Alert.alert('Reset progress?', 'All mission history on this device will be erased.', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Reset', style: 'destructive', onPress: clearHistory },
+    Alert.alert(t.profile.resetTitle, t.profile.resetBody, [
+      { text: t.common.cancel, style: 'cancel' },
+      { text: t.profile.resetConfirm, style: 'destructive', onPress: clearHistory },
     ]);
 
   const statItems = [
-    { label: 'MISSIONS', value: String(stats.missions) },
-    { label: 'AVG SCORE', value: stats.average, highlight: true },
-    { label: 'BEST', value: stats.best },
+    { label: t.profile.missions, value: String(stats.missions) },
+    { label: t.profile.average, value: stats.average, highlight: true },
+    { label: t.profile.best, value: stats.best },
   ];
 
   return (
-    <ScreenContainer header={<NavBar title="Profile" leftIcon="squiggle" />} contentStyle={styles.content}>
+    <ScreenContainer header={<NavBar title={t.profile.title} leftIcon="squiggle" />} contentStyle={styles.content}>
       <View style={styles.identity}>
         <View style={styles.avatarWrapper}>
           <View style={[styles.avatarRing, { borderColor: theme.colors.primary }]}>
@@ -52,13 +54,13 @@ export default function ProfileScreen() {
               source={OPERATIVE_AVATAR}
               contentFit="cover"
               style={styles.avatar}
-              accessibilityLabel="Operative portrait"
+              accessibilityLabel={t.profile.portraitLabel}
             />
           </View>
           <StatusBeacon status="online" size={12} style={styles.beacon} />
         </View>
-        <Text style={[theme.typography.heading, { color: theme.colors.textPrimary }]}>AGENT 47</Text>
-        <Text style={[styles.rank, { color: theme.colors.primary }]}>SENIOR FIELD OPERATIVE</Text>
+        <Text style={[theme.typography.heading, { color: theme.colors.textPrimary }]}>{t.profile.name}</Text>
+        <Text style={[styles.rank, { color: theme.colors.primary }]}>{t.profile.rank}</Text>
       </View>
 
       <View
@@ -83,13 +85,13 @@ export default function ProfileScreen() {
         ))}
       </View>
 
-      <SectionHeader title="Recent Missions" style={styles.section} />
+      <SectionHeader title={t.profile.recent} style={styles.section} />
       {history.length === 0 ? (
         <View style={[styles.empty, { borderColor: theme.colors.border }]}>
           <Text style={[theme.typography.body, { color: theme.colors.textMuted, textAlign: 'center' }]}>
-            No missions completed yet. Your after-action reports will appear here.
+            {t.profile.empty}
           </Text>
-          <Button title="Open War Room" icon="arrow-right" variant="glass" onPress={() => router.navigate('/')} />
+          <Button title={t.profile.openWarRoom} icon="arrow-right" variant="glass" onPress={() => router.navigate('/')} />
         </View>
       ) : (
         history.slice(0, 5).map((record) => (
@@ -101,15 +103,15 @@ export default function ProfileScreen() {
             ]}>
             <View style={styles.missionInfo}>
               <Text style={[styles.missionTitle, { color: theme.colors.textPrimary }]}>
-                {findScenario(record.scenarioId)?.title ?? 'Archived scenario'}
+                {findScenario(record.scenarioId, language)?.title ?? t.profile.archived}
               </Text>
               <Text style={[styles.missionMeta, { color: theme.colors.textMuted }]}>
-                {formatDate(record.completedAt)}
+                {formatDate(record.completedAt, locale)}
               </Text>
             </View>
             <View style={styles.missionResult}>
               <Text style={[styles.missionRating, { color: ratingColor(theme, record.rating) }]}>
-                {record.rating}
+                {t.rating[record.rating]}
               </Text>
               <Text style={[styles.missionScore, { color: theme.colors.textPrimary }]}>{record.score}</Text>
             </View>
@@ -119,7 +121,7 @@ export default function ProfileScreen() {
 
       {history.length > 0 && (
         <Button
-          title="Reset Progress"
+          title={t.profile.reset}
           variant="danger"
           onPress={confirmReset}
           style={styles.reset}

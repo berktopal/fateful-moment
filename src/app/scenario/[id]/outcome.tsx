@@ -14,9 +14,7 @@ import { findScenario } from '../../../repositories/scenarioRepository';
 import {
   decodeChoices,
   evaluateRun,
-  formatDelta,
   INITIAL_METRICS,
-  RATING_COPY,
   TIMEOUT_PENALTY,
 } from '../../../features/simulation/engine';
 import { ratingColor } from '../../../features/simulation/presentation';
@@ -25,6 +23,7 @@ import { useHaptics } from '../../../hooks/useHaptics';
 import { useCountUp } from '../../../hooks/useCountUp';
 import { FadeIn } from '../../../components/FadeIn';
 import { useTheme, MONO_FONT } from '../../../theme';
+import { useI18n } from '../../../i18n';
 
 const returnHome = () => {
   if (router.canDismiss()) router.dismissAll();
@@ -41,7 +40,8 @@ export default function OutcomeScreen() {
   const insets = useSafeAreaInsets();
   const haptics = useHaptics();
   const { recordMission } = useAppStore();
-  const scenario = findScenario(id);
+  const { t, language, upper } = useI18n();
+  const scenario = findScenario(id, language);
 
   const run = useMemo(() => {
     const decoded = decodeChoices(choices);
@@ -66,15 +66,15 @@ export default function OutcomeScreen() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [runId]);
 
-  const header = <NavBar title="After Action Report" />;
+  const header = <NavBar title={t.outcome.title} />;
 
   if (!scenario || !run) {
     return (
       <ScreenContainer
         header={header}
-        error="This result could not be loaded."
+        error={t.outcome.loadError}
         onRetry={returnHome}
-        retryLabel="Return to War Room"
+        retryLabel={t.outcome.returnHome}
       />
     );
   }
@@ -95,7 +95,7 @@ export default function OutcomeScreen() {
             },
           ]}>
           <Button
-            title="Retry"
+            title={t.outcome.retry}
             icon="history"
             variant="secondary"
             size="lg"
@@ -103,7 +103,7 @@ export default function OutcomeScreen() {
             onPress={() => router.replace(`/scenario/${scenario.id}/play`)}
           />
           <Button
-            title="War Room"
+            title={t.outcome.warRoom}
             icon="arrow-right"
             size="lg"
             style={styles.footerButton}
@@ -123,48 +123,48 @@ export default function OutcomeScreen() {
           ]}>
           <ScanlineOverlay />
           <Text style={[styles.hud, { color: theme.colors.primary }]}>
-            {`MISSION OUTCOME // ${scenario.title.toUpperCase()}`}
+            {t.outcome.hud(upper(scenario.title))}
           </Text>
           <Text
             style={[theme.typography.displayLarge, styles.rating, { color: accent }]}
             accessibilityRole="header">
-            {run.rating}
+            {t.rating[run.rating]}
           </Text>
           <View style={styles.scoreRow}>
             <Text
               style={[styles.score, { color: theme.colors.textPrimary }]}
-              accessibilityLabel={`Score ${run.score} out of 100`}>
+              accessibilityLabel={t.outcome.scoreLabel(run.score)}>
               {displayedScore}
             </Text>
             <Text style={[styles.scoreMax, { color: theme.colors.textMuted }]}>/ 100</Text>
           </View>
           <Text style={[theme.typography.body, styles.copy, { color: theme.colors.textMuted }]}>
-            {RATING_COPY[run.rating]}
+            {t.ratingCopy[run.rating]}
           </Text>
         </View>
       </FadeIn>
 
       <FadeIn delay={120}>
-        <SectionHeader title="Final Metrics" />
+        <SectionHeader title={t.outcome.finalMetrics} />
         <MetricBar
-          label="STABILITY"
+          label={t.metrics.stability}
           value={run.metrics.stability}
           delta={run.metrics.stability - INITIAL_METRICS.stability}
         />
         <MetricBar
-          label="PUBLIC TRUST"
+          label={t.metrics.trust}
           value={run.metrics.trust}
           delta={run.metrics.trust - INITIAL_METRICS.trust}
         />
       </FadeIn>
 
       <SectionHeader
-        title="Decision Timeline"
+        title={t.outcome.timeline}
         style={styles.timelineHeader}
         accessory={
           run.timeouts > 0 ? (
             <Text style={[styles.timeouts, { color: theme.colors.danger }]}>
-              {`${run.timeouts} TIMEOUT${run.timeouts > 1 ? 'S' : ''}`}
+              {t.outcome.timeouts(run.timeouts)}
             </Text>
           ) : undefined
         }
@@ -198,11 +198,11 @@ export default function OutcomeScreen() {
                       styles.timelineChoiceText,
                       { color: option ? theme.colors.textMuted : theme.colors.danger },
                     ]}>
-                    {option?.text ?? 'Timed out — no order issued'}
+                    {option?.text ?? t.outcome.timedOut}
                   </Text>
                 </View>
                 <Text style={[styles.timelineDelta, { color: theme.colors.textMuted }]}>
-                  {`STB ${formatDelta(impact.stability)}  ·  TRS ${formatDelta(impact.trust)}`}
+                  {t.metrics.compactDelta(impact.stability, impact.trust)}
                 </Text>
               </View>
             </View>

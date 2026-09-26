@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { MissionRecord } from '../types';
+import { DEFAULT_LANGUAGE, isLanguage, Language } from '../i18n/languages';
 
 export type ThemePreference = 'system' | 'dark' | 'light';
 
@@ -7,6 +8,7 @@ export interface Preferences {
   theme: ThemePreference;
   haptics: boolean;
   notifications: boolean;
+  language: Language;
 }
 
 export interface PersistedState {
@@ -18,7 +20,7 @@ export const STORAGE_KEY = 'fateful-moment/state/v1';
 export const MAX_HISTORY = 50;
 
 export const DEFAULT_STATE: PersistedState = {
-  preferences: { theme: 'dark', haptics: true, notifications: false },
+  preferences: { theme: 'dark', haptics: true, notifications: false, language: DEFAULT_LANGUAGE },
   history: [],
 };
 
@@ -53,6 +55,7 @@ export const sanitizeState = (raw: unknown): PersistedState => {
       haptics: typeof prefs.haptics === 'boolean' ? prefs.haptics : defaults.haptics,
       notifications:
         typeof prefs.notifications === 'boolean' ? prefs.notifications : defaults.notifications,
+      language: isLanguage(prefs.language) ? prefs.language : defaults.language,
     },
     history: Array.isArray(raw.history)
       ? raw.history.filter(isMissionRecord).slice(0, MAX_HISTORY)

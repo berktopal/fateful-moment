@@ -4,18 +4,20 @@ import { router } from 'expo-router';
 import { Button } from '../components/Button';
 import { Icon } from '../components/Icon';
 import { useTheme, MONO_FONT } from '../theme';
+import { useI18n } from '../i18n';
 
 export default function NotFoundScreen() {
   const { theme } = useTheme();
+  const { t } = useI18n();
 
   return (
     <View style={[styles.container, { backgroundColor: theme.colors.background }]}>
       <Icon name="shield-alert" size={48} color={theme.colors.danger} />
-      <Text style={[styles.code, { color: theme.colors.primary }]}>ERROR 404 // SIGNAL LOST</Text>
+      <Text style={[styles.code, { color: theme.colors.primary }]}>{t.notFound.code}</Text>
       <Text style={[theme.typography.heading, { color: theme.colors.textPrimary }]}>
-        This screen doesn&apos;t exist.
+        {t.notFound.message}
       </Text>
-      <Button title="Return to War Room" icon="arrow-right" onPress={() => router.replace('/')} />
+      <Button title={t.notFound.back} icon="arrow-right" onPress={() => router.replace('/')} />
     </View>
   );
 }

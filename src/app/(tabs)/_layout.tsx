@@ -3,21 +3,23 @@ import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Icon, IconName } from '../../components/Icon';
 import { useTheme } from '../../theme';
+import { useI18n } from '../../i18n';
 
 // Order and glyphs follow the Figma "Menu - Tabbar" board.
-const TABS: { name: string; icon: IconName; title: string }[] = [
-  { name: 'index', icon: 'squiggle', title: 'Home' },
-  { name: 'explore', icon: 'compass', title: 'Explore' },
-  { name: 'vitals', icon: 'activity', title: 'Vitals' },
-  { name: 'profile', icon: 'user', title: 'Profile' },
-  { name: 'system', icon: 'cpu', title: 'System' },
-  { name: 'settings', icon: 'settings', title: 'Settings' },
-];
+const TABS = [
+  { name: 'index', icon: 'squiggle' },
+  { name: 'explore', icon: 'compass' },
+  { name: 'vitals', icon: 'activity' },
+  { name: 'profile', icon: 'user' },
+  { name: 'system', icon: 'cpu' },
+  { name: 'settings', icon: 'settings' },
+] as const satisfies readonly { name: string; icon: IconName }[];
 
 const BAR_HEIGHT = 60;
 
 export default function TabLayout() {
   const { theme } = useTheme();
+  const { t } = useI18n();
   const insets = useSafeAreaInsets();
 
   return (
@@ -42,8 +44,8 @@ export default function TabLayout() {
           key={tab.name}
           name={tab.name}
           options={{
-            title: tab.title,
-            tabBarAccessibilityLabel: tab.title,
+            title: t.tabs[tab.name],
+            tabBarAccessibilityLabel: t.tabs[tab.name],
             tabBarIcon: ({ color, focused }) => (
               <View
                 style={[

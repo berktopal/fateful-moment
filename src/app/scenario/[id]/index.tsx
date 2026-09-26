@@ -14,10 +14,12 @@ import { findScenario } from '../../../repositories/scenarioRepository';
 import { threatColor } from '../../../features/simulation/presentation';
 import { useAppStore } from '../../../store/AppStore';
 import { useTheme, MEDIA_COLORS, MONO_FONT } from '../../../theme';
+import { useI18n } from '../../../i18n';
 
 export default function ScenarioBriefingScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
-  const scenario = findScenario(id);
+  const { t, language, upper } = useI18n();
+  const scenario = findScenario(id, language);
   const { theme } = useTheme();
   const { history } = useAppStore();
   const insets = useSafeAreaInsets();
@@ -27,24 +29,28 @@ export default function ScenarioBriefingScreen() {
     return runs.length ? Math.max(...runs.map((r) => r.score)) : null;
   }, [history, id]);
 
-  const header = <NavBar title="Briefing" leftIcon="arrow-left" onLeftPress={() => router.back()} />;
+  const header = <NavBar title={t.briefing.title} leftIcon="arrow-left" onLeftPress={() => router.back()} />;
 
   if (!scenario) {
     return (
       <ScreenContainer
         header={header}
-        error="This scenario could not be found."
+        error={t.briefing.notFound}
         onRetry={() => router.back()}
-        retryLabel="Go Back"
+        retryLabel={t.common.goBack}
       />
     );
   }
 
   const playable = scenario.isActive && scenario.steps.length > 0;
   const facts: { icon: IconName; label: string; color?: string }[] = [
-    { icon: 'shield-alert', label: scenario.threatLevel, color: threatColor(theme, scenario.threatLevel) },
+    {
+      icon: 'shield-alert',
+      label: t.scenario.threat[scenario.threatLevel],
+      color: threatColor(theme, scenario.threatLevel),
+    },
     { icon: 'alarm-clock', label: scenario.duration },
-    { icon: 'squiggle', label: `${scenario.steps.length} decisions` },
+    { icon: 'squiggle', label: t.briefing.decisions(scenario.steps.length) },
   ];
 
   return (
@@ -61,7 +67,7 @@ export default function ScenarioBriefingScreen() {
             },
           ]}>
           <Button
-            title={playable ? 'Start Simulation' : 'Locked'}
+            title={playable ? t.scenario.startSimulation : t.scenario.locked}
             icon={playable ? 'play' : 'lock'}
             size="lg"
             disabled={!playable}
@@ -72,9 +78,9 @@ export default function ScenarioBriefingScreen() {
       <View style={[styles.hero, { borderRadius: theme.radius.hero, borderColor: MEDIA_COLORS.border }]}>
         <Image source={scenario.image} contentFit="cover" transition={250} style={StyleSheet.absoluteFill} />
         <LinearGradient colors={MEDIA_COLORS.scrimHero} style={styles.heroContent}>
-          <Text style={[styles.hud, { color: MEDIA_COLORS.accent }]}>SCENARIO BRIEFING</Text>
+          <Text style={[styles.hud, { color: MEDIA_COLORS.accent }]}>{t.briefing.hud}</Text>
           <Text style={[theme.typography.displayLarge, styles.heroTitle]} accessibilityRole="header">
-            {scenario.title.toUpperCase()}
+            {upper(scenario.title)}
           </Text>
         </LinearGradient>
       </View>
@@ -97,10 +103,10 @@ export default function ScenarioBriefingScreen() {
       </Text>
 
       <HudCard
-        tag="PROTOCOL // RULES OF ENGAGEMENT"
-        title="How it works"
-        description="Each decision runs on a timer. Lock in an order before it expires — if time runs out, the highlighted option is committed, or none at all. Every choice shifts national stability and public trust."
-        chips={bestScore !== null ? [`BEST SCORE: ${bestScore}`] : ['FIRST DEPLOYMENT']}
+        tag={t.briefing.rulesTag}
+        title={t.briefing.rulesTitle}
+        description={t.briefing.rulesBody}
+        chips={bestScore !== null ? [t.briefing.bestScore(bestScore)] : [t.briefing.firstDeployment]}
       />
     </ScreenContainer>
   );

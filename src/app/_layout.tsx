@@ -6,6 +6,7 @@ import * as SystemUI from 'expo-system-ui';
 import { useFonts } from 'expo-font';
 import { AppStoreProvider, useAppStore } from '../store/AppStore';
 import { ThemeProvider, useTheme } from '../theme';
+import { I18nProvider, useI18n } from '../i18n';
 import { FONT_ASSETS } from '../theme/fonts';
 
 // Keep the native splash up until preferences and fonts are loaded, so the first frame is
@@ -15,6 +16,7 @@ SplashScreen.preventAutoHideAsync().catch(() => {});
 function RootNavigator() {
   const { hydrated } = useAppStore();
   const { theme, isDark } = useTheme();
+  const { t } = useI18n();
   const [fontsLoaded, fontError] = useFonts(FONT_ASSETS);
   // A font failure falls back to the system face rather than blocking the app.
   const ready = hydrated && (fontsLoaded || !!fontError);
@@ -56,7 +58,7 @@ function RootNavigator() {
         />
         <Stack.Screen
           name="gallery"
-          options={{ headerShown: true, title: 'Design System Gallery' }}
+          options={{ headerShown: true, title: t.settings.gallery }}
         />
       </Stack>
     </>
@@ -66,9 +68,11 @@ function RootNavigator() {
 export default function RootLayout() {
   return (
     <AppStoreProvider>
-      <ThemeProvider>
-        <RootNavigator />
-      </ThemeProvider>
+      <I18nProvider>
+        <ThemeProvider>
+          <RootNavigator />
+        </ThemeProvider>
+      </I18nProvider>
     </AppStoreProvider>
   );
 }

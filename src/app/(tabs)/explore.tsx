@@ -15,24 +15,28 @@ import { useHaptics } from '../../hooks/useHaptics';
 import { getIntelData, getProtocolOptions } from '../../repositories/intelRepository';
 import { TERRAIN_MAP_IMAGE } from '../../data/mockData';
 import { useTheme, MONO_FONT, MEDIA_COLORS } from '../../theme';
+import { useI18n } from '../../i18n';
+import type { Language } from '../../i18n';
 
-const loadIntel = () => Promise.all([getIntelData(), getProtocolOptions()]);
+const loadIntel = (language: Language) =>
+  Promise.all([getIntelData(language), getProtocolOptions(language)]);
 
 export default function ExploreScreen() {
   const { theme } = useTheme();
   const haptics = useHaptics();
-  const { data, loading, error, reload } = useAsyncData(loadIntel);
+  const { t, language } = useI18n();
+  const { data, loading, error, reload } = useAsyncData(() => loadIntel(language), [language]);
   const [activeProtocolId, setActiveProtocolId] = useState('2');
   const [intel, protocols] = data ?? [[], []];
 
   return (
     <ScreenContainer
-      header={<NavBar title="Intel" leftIcon="squiggle" rightIcon="refresh-cw" onRightPress={reload} />}
+      header={<NavBar title={t.explore.title} leftIcon="squiggle" rightIcon="refresh-cw" onRightPress={reload} />}
       loading={loading}
       error={error}
       onRetry={reload}>
       <SectionHeader
-        title="Standing Protocol"
+        title={t.explore.protocol}
         accessory={<StatusBeacon status="online" size={8} />}
       />
       <View accessibilityRole="radiogroup">
@@ -49,7 +53,7 @@ export default function ExploreScreen() {
         ))}
       </View>
 
-      <SectionHeader title="Terrain Topology" style={styles.spaced} />
+      <SectionHeader title={t.explore.terrain} style={styles.spaced} />
       <View
         style={[
           styles.map,
@@ -59,21 +63,21 @@ export default function ExploreScreen() {
         <ScanlineOverlay opacity={0.12} />
         <View style={[styles.mapOverlay, { backgroundColor: MEDIA_COLORS.glass }]}>
           <Icon name="crosshair" size={44} color={theme.colors.primary} />
-          <Text style={[styles.mapText, { color: theme.colors.primary }]}>SCANNING ACTIVE SECTORS…</Text>
+          <Text style={[styles.mapText, { color: theme.colors.primary }]}>{t.explore.scanning}</Text>
         </View>
       </View>
 
       <SectionHeader
-        title="Latest Intelligence"
+        title={t.explore.latest}
         style={styles.spaced}
         accessory={<StatusBeacon status="warning" size={8} />}
       />
       {intel.map((item) => (
         <HudCard
           key={item.id}
-          tag={`INTEL_${item.id.padStart(2, '0')} // ${item.location}`}
+          tag={t.explore.tag(item.id, item.location)}
           title={item.title}
-          chips={[`THREAT: ${item.threat}`]}
+          chips={[t.explore.threat(t.explore.levels[item.threat])]}
           alert={item.threat === 'High'}
         />
       ))}

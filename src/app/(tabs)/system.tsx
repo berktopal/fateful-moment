@@ -6,21 +6,23 @@ import { SectionHeader } from '../../components/SectionHeader';
 import { SquareCard } from '../../components/SquareCard';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { Icon } from '../../components/Icon';
-import { ARCHIVE_NODES, SYSTEM_MODULES } from '../../data/mockData';
+import { getArchiveNodes, getSystemModules } from '../../repositories/systemRepository';
+import { useI18n } from '../../i18n';
 import { useTheme, MONO_FONT } from '../../theme';
 
 export default function SystemScreen() {
   const { theme } = useTheme();
+  const { t, language } = useI18n();
 
   return (
-    <ScreenContainer header={<NavBar title="System" leftIcon="squiggle" rightIcon="grid" />}>
-      <SectionHeader title="Archives" accessory={<StatusBeacon status="online" size={8} />} />
+    <ScreenContainer header={<NavBar title={t.system.title} leftIcon="squiggle" rightIcon="grid" />}>
+      <SectionHeader title={t.system.archives} accessory={<StatusBeacon status="online" size={8} />} />
       <View style={styles.grid}>
-        {ARCHIVE_NODES.map((node) => (
+        {getArchiveNodes(language).map((node) => (
           <SquareCard
             key={node.id}
             title={node.title}
-            subtitle={`${node.scenarioCount} Scenario${node.scenarioCount === 1 ? '' : 's'}`}
+            subtitle={t.system.scenarioCount(node.scenarioCount)}
             image={node.image}
             style={styles.gridItem}
           />
@@ -28,11 +30,11 @@ export default function SystemScreen() {
       </View>
 
       <SectionHeader
-        title="Module Diagnostics"
+        title={t.system.diagnostics}
         style={styles.spaced}
         accessory={<StatusBeacon status="warning" size={8} />}
       />
-      {SYSTEM_MODULES.map((mod) => {
+      {getSystemModules(language).map((mod) => {
         const statusColor = mod.isWarning ? theme.colors.danger : theme.colors.primary;
         return (
           <View

@@ -21,7 +21,6 @@ export const INITIAL_METRICS: Metrics = { stability: 50, trust: 50 };
 
 /** Indecision is itself a decision: a timed-out step costs both dials. */
 export const TIMEOUT_PENALTY: Metrics = { stability: -10, trust: -10 };
-export const TIMEOUT_CONSEQUENCE = 'No order was issued in time. Command paralysis costs ground.';
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value));
 
@@ -38,13 +37,6 @@ export const ratingFor = (score: number): Rating => {
   if (score >= 50) return 'CONTAINED';
   if (score >= 30) return 'COMPROMISED';
   return 'CATASTROPHIC';
-};
-
-export const RATING_COPY: Record<Rating, string> = {
-  DECISIVE: 'Your command held the line. History will remember this night as a turning point.',
-  CONTAINED: 'The crisis is contained, though not without cost. Order has been restored.',
-  COMPROMISED: 'You survived the night, but trust and stability are badly shaken.',
-  CATASTROPHIC: 'The situation spiralled beyond control. The consequences will echo for years.',
 };
 
 /**

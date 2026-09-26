@@ -1,5 +1,6 @@
 import type { ImageProps } from 'expo-image';
 import type { IconName } from '../components/Icon';
+import type { LocalizedText } from '../i18n/languages';
 
 /** Anything `expo-image` can render: bundled `require()` assets or remote URIs. */
 export type MediaSource = ImageProps['source'];
@@ -73,6 +74,7 @@ export interface ArchiveNode {
 }
 
 export interface CommanderVital {
+  id: string;
   label: string;
   value: string;
   highlight?: boolean;
@@ -84,3 +86,29 @@ export interface ProtocolOption {
   id: string;
   text: string;
 }
+
+/*
+ * Source records as authored in the data layer: every piece of copy exists in all supported
+ * languages. Repositories resolve them into the single-language shapes above.
+ */
+
+export type Localize<T, K extends keyof T> = Omit<T, K> & { [P in K]: LocalizedText };
+
+export type ChoiceOptionSource = Localize<ChoiceOption, 'text' | 'consequence'>;
+
+export interface DecisionStepSource
+  extends Omit<Localize<DecisionStep, 'prompt' | 'context'>, 'options'> {
+  options: ChoiceOptionSource[];
+}
+
+export interface ScenarioSource
+  extends Omit<Localize<Scenario, 'title' | 'description'>, 'duration' | 'steps'> {
+  durationMin: number;
+  steps: DecisionStepSource[];
+}
+
+export type IntelItemSource = Localize<IntelItem, 'title' | 'location'>;
+export type SystemModuleSource = Localize<SystemModule, 'name' | 'status'>;
+export type ArchiveNodeSource = Localize<ArchiveNode, 'title'>;
+export type CommanderVitalSource = Localize<CommanderVital, 'label' | 'value'>;
+export type ProtocolOptionSource = Localize<ProtocolOption, 'text'>;
