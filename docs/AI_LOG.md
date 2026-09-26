@@ -76,7 +76,7 @@ This log documents the iterative engineering decisions, design-fidelity correcti
 ### Phase 8: Figma Fidelity Pass via Figma MCP (Claude Code)
 * **Trigger:** A Figma MCP connection became available, replacing screenshot-based estimates with the file's real values.
 * **Findings (screenshot guesses that were wrong):**
-  - The file is a component library only (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon) — no full screens.
+  - The file is a component library only (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon) — no full screens. **Wrong — corrected in Phase 9:** only the Local Components page had been read; the Playground page has full screens.
   - **Option Card** fills are translucent (`rgba(15,23,43,0.63)`, selected gradient to `rgba(0,211,243,0.63)`, `#F8FAFC` border 1/2px); "Passive" is the selected look at 48% opacity. It only looked grey/pale on Figma's light canvas.
   - **Buttons:** the grey/dark/light-cyan columns are Primary *Disabled / Pressed / Glass* states, not colour variants. Real set: Primary · Secondary (cyan outline) · Ghost · Link, radius 16, 24px horizontal padding, 24/20/16 icons.
   - **Inactive cards** are 35% opacity (not a white wash). **Start buttons** are `rgba(0,184,219,0.14)`, borderless, Inter Black.
@@ -84,3 +84,20 @@ This log documents the iterative engineering decisions, design-fidelity correcti
 * **Changes:** tokens now mirror the Figma variables (with names in comments), `TYPE_SCALE` from the `typhography/*` styles; `Button` rebuilt on Figma's hierarchy × state × size model; `OptionCard`, `ScenarioCard`, `SquareCard`, `NavBar`, `IconButton` and the tab bar updated to the exact values; removed a leftover hard-coded tab tint.
 * **Kept deliberately:** the "dimmed" state for unchosen options (Figma Default at the Passive 48% opacity), since Figma's Passive keeps the cyan gradient and would read as a second selection.
 * **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21; visual check on the Android emulator (Home, list and locked cards, simulation, Gallery button matrix, System grid). Found and fixed on-device: list card width with `aspectRatio`, Secondary button invisible on Slate 900 surfaces.
+
+---
+
+### Phase 9: Separate Pre-Submission Audit (Claude Code)
+* **User Request:** Act as senior RN dev, UI/UX, QA and the reviewing team lead: audit first without touching code (`REVIEW.md`), then fix Critical/Important items in separate commits, ask before any Figma deviation or new package, and rewrite the README.
+* **Findings:**
+  - The case link opens the **🛝Playground** page, which has full screens (landscape Flow v01, decision DNA, auth flows). Earlier sessions only read 🧩Local Components, so the docs claimed "component library only". The Figma MCP then hit its Starter-plan limit; the component library was compared against 20 images the user exported.
+  - A double tap on Start pushed two simulations; the hidden one kept its timer and back handler, and back on the outcome screen offered to abort a finished mission. A double tap on "Lock In" skipped the consequence.
+  - The countdown kept running behind the abort dialog.
+  - The light theme was documented as WCAG AA but measured 3.2–3.8:1 for cyan / amber / emerald text.
+  - Nav bar icons were announced by their Lucide names; decorative glyphs were exposed as buttons; several targets were below 44pt.
+  - iOS dropped card shadows (`overflow: 'hidden'` on the shadow view); outcome buttons didn't fit on 360dp.
+* **Decisions:** the owner kept the Playground screens out of scope (documented as a deviation). No new packages.
+* **Fixes (one commit each, each with a test that fails without the fix where testable):** Button double-tap guard + hitSlop; labelled NavBar actions with a type-enforced label; timer pause during the abort dialog; darker light-theme tokens + a contrast test; two-layer cards; shared stacked `ScreenFooter`.
+* **Corrected along the way:** a real-time wait in the flow test hung because `renderRouter` installs fake timers; switched to `jest.advanceTimersByTime`. The timer-pause test exposed that every simulation test ran with a paused countdown (Jest's `AppState` mock is never "active"); the suite now mocks `useAppActive`.
+* **Verification:** lint, tsc, 56/56 tests, expo-doctor 21/21; Android emulator pass (home cards, simulation and outcome footers, settings, light theme).
+

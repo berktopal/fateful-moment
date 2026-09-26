@@ -43,7 +43,10 @@ Docs: https://docs.expo.dev/eas/index.md
 ## Project: Fateful Moment
 
 Case study app (Jr. Frontend case): Figma-faithful, runs on iOS + Android, dummy data only, no backend.
-Figma file: `eUdNecur3gJN2n8mCp6H2K` — a **component library only** (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon). There are no full-screen designs; screens are composed from these components.
+Figma file: `eUdNecur3gJN2n8mCp6H2K`, two pages:
+- **🧩Local Components** (`62:662`) — the component library this app implements (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon).
+- **🛝Playground** (`0:1`, the page the case link opens) — full screens: a landscape (812×375) "Flow v01" with a side rail, Scenarios list, briefing hero, video pages, 2×2+1 decision grid and a "Karar DNAsı" result, plus portrait auth flows. **Out of scope by the owner's decision (2026-09-26)**; the README lists it as a deviation. Don't start implementing it without asking.
+- The Figma MCP runs on a Starter plan and hits its call limit quickly: batch calls and cache results.
 
 ### Structure
 

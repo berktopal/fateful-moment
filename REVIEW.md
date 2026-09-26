@@ -118,3 +118,31 @@ _Tarih: 2026-09-26 · Dal: `master` (`5c7cce7`) · Denetleyen: Claude Code (ayr�
 | Kod kalitesi (değerlendiricinin ayrıca bakacağı) | ✅ İyi | Saf oyun motoru, reducer, sanitize edilen kalıcılık, i18n, 49 test, temiz lint ve tsc. Eksikler: K2, Ö1, Ö2. | 8 |
 
 **Genel puan (denetim anı): 6 / 10.** Kod kalitesi güçlü. Puanı düşüren başlıca etkenler eksik teslimler (APK, kayıtlar), iOS'un hiç test edilmemiş olması, Playground ekranlarının yokluğu ve README'deki AI anlatımı.
+
+---
+
+## Düzeltme durumu (2026-09-27)
+
+| Madde | Durum | Commit |
+|---|---|---|
+| K1 Playground ekranları | Kapsam dışı (kullanıcı kararı). Dokümanlardaki yanlış ifade düzeltildi; README'de sapma olarak yazıldı. | docs commit'i |
+| K2 Çift dokunma ile çift navigasyon | ✅ `Button`'da 500 ms kilit. Test, kilit olmadan düştüğü doğrulanarak eklendi. | `85e2d29` |
+| K3 iOS'ta hiç çalıştırılmadı | ⏳ Kullanıcı: Expo Go ile iPhone'da oynatıp kaydını al. | — |
+| K4 README | ✅ Yeniden yazıldı. | docs commit'i |
+| Ö1 "Kilitle" çift dokunma sonucu atlıyor | ✅ Footer tek bir `Button`; akış testi eklendi. | `85e2d29` |
+| Ö2 İptal diyaloğunda timer | ✅ Diyalog açıkken duruyor. Test eklendi, düzeltme olmadan düştüğü doğrulandı. | `8f9c680` |
+| Ö3 Light tema kontrastı | ✅ `#0E7490` / `#B45309` / `#047857`. Kontrast testi eklendi. | `a55326a` |
+| Ö4 NavBar erişilebilirliği | ✅ Aksiyonlarda etiket tipte zorunlu; dekoratif ikonlar gizli. | `d7e1b12` |
+| Ö5 44pt dokunma alanları | ✅ Butonlara `hitSlop`, segmentlere `minHeight: 44`. | `85e2d29`, `d7e1b12` |
+| Ö6 iOS kart gölgeleri | ✅ İki katmanlı kart yapısı (iOS cihazda görsel doğrulama K3 ile birlikte). | `48392da` |
+| Ö7 Sonuç ekranı footer'ı | ✅ Butonlar alt alta; ortak `ScreenFooter` bileşeni (k2). | `791ea43` |
+| k6, k7 | ✅ | `48392da`, `d7e1b12` |
+| k1, k3, k4, k5, k8–k12 | Açık. Küçük maddeler; teslim öncesi görsel risk ya da MCP erişimi gerektiriyor. k8'deki zil ikonu artık erişilebilirlik etiketiyle açıklanıyor. | — |
+
+**Son kontroller:** lint ✅ · tsc ✅ · 56/56 test ✅ · expo-doctor 21/21 ✅ · Android emülatörde doğrulandı (ana ekran kartları, simülasyon ve sonuç footer'ları, ayarlar, light tema).
+
+**Güncel puan: 7 / 10.**
+- Kod, QA ve erişilebilirlik tarafındaki açıklar kapandı; README artık AI sürecini somut örneklerle anlatıyor.
+- Kalan düşüşün sebepleri: Playground ekranlarının yokluğu, iOS'un henüz çalıştırılmamış olması ve eksik teslimler (APK, ekran kayıtları).
+- APK ve iki platformun ekran kaydı eklendiğinde beklenen puan **8 / 10**.
+
