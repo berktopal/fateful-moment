@@ -2,9 +2,9 @@ import { useEffect, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavBar } from '../../../components/NavBar';
 import { ScreenContainer } from '../../../components/ScreenContainer';
+import { ScreenFooter } from '../../../components/ScreenFooter';
 import { SectionHeader } from '../../../components/SectionHeader';
 import { MetricBar } from '../../../components/MetricBar';
 import { Button } from '../../../components/Button';
@@ -37,7 +37,6 @@ export default function OutcomeScreen() {
     runId?: string;
   }>();
   const { theme } = useTheme();
-  const insets = useSafeAreaInsets();
   const haptics = useHaptics();
   const { recordMission } = useAppStore();
   const { t, language, upper } = useI18n();
@@ -85,31 +84,16 @@ export default function OutcomeScreen() {
     <ScreenContainer
       header={header}
       footer={
-        <View
-          style={[
-            styles.footer,
-            {
-              paddingBottom: insets.bottom + 12,
-              backgroundColor: theme.colors.background,
-              borderTopColor: theme.colors.border,
-            },
-          ]}>
+        <ScreenFooter>
+          <Button title={t.outcome.warRoom} icon="arrow-right" size="lg" onPress={returnHome} />
           <Button
             title={t.outcome.retry}
             icon="history"
             variant="secondary"
             size="lg"
-            style={styles.footerButton}
             onPress={() => router.replace(`/scenario/${scenario.id}/play`)}
           />
-          <Button
-            title={t.outcome.warRoom}
-            icon="arrow-right"
-            size="lg"
-            style={styles.footerButton}
-            onPress={returnHome}
-          />
-        </View>
+        </ScreenFooter>
       }>
       <FadeIn>
         <View
@@ -298,15 +282,5 @@ const styles = StyleSheet.create({
     fontFamily: MONO_FONT,
     fontSize: 10,
     letterSpacing: 1,
-  },
-  footer: {
-    flexDirection: 'row',
-    gap: 12,
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
-  },
-  footerButton: {
-    flex: 1,
   },
 });

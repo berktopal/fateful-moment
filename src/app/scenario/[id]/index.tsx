@@ -4,9 +4,9 @@ import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
 import { Image } from 'expo-image';
 import { LinearGradient } from 'expo-linear-gradient';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavBar } from '../../../components/NavBar';
 import { ScreenContainer } from '../../../components/ScreenContainer';
+import { ScreenFooter } from '../../../components/ScreenFooter';
 import { HudCard } from '../../../components/HudCard';
 import { Button } from '../../../components/Button';
 import { Icon, IconName } from '../../../components/Icon';
@@ -22,7 +22,6 @@ export default function ScenarioBriefingScreen() {
   const scenario = findScenario(id, language);
   const { theme } = useTheme();
   const { history } = useAppStore();
-  const insets = useSafeAreaInsets();
 
   const bestScore = useMemo(() => {
     const runs = history.filter((r) => r.scenarioId === id);
@@ -62,15 +61,7 @@ export default function ScenarioBriefingScreen() {
     <ScreenContainer
       header={header}
       footer={
-        <View
-          style={[
-            styles.footer,
-            {
-              paddingBottom: insets.bottom + 12,
-              backgroundColor: theme.colors.background,
-              borderTopColor: theme.colors.border,
-            },
-          ]}>
+        <ScreenFooter>
           <Button
             title={playable ? t.scenario.startSimulation : t.scenario.locked}
             icon={playable ? 'play' : 'lock'}
@@ -78,7 +69,7 @@ export default function ScenarioBriefingScreen() {
             disabled={!playable}
             onPress={() => router.push(`/scenario/${scenario.id}/play`)}
           />
-        </View>
+        </ScreenFooter>
       }>
       <View style={[styles.hero, { borderRadius: theme.radius.hero, borderColor: MEDIA_COLORS.border }]}>
         <Image source={scenario.image} contentFit="cover" transition={250} style={StyleSheet.absoluteFill} />
@@ -163,10 +154,5 @@ const styles = StyleSheet.create({
   },
   description: {
     marginBottom: 20,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });

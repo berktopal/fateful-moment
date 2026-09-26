@@ -2,9 +2,9 @@ import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'r
 import { View, StyleSheet, Alert, BackHandler, ScrollView } from 'react-native';
 import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { NavBar } from '../../../components/NavBar';
 import { ScreenContainer } from '../../../components/ScreenContainer';
+import { ScreenFooter } from '../../../components/ScreenFooter';
 import { TimerBar } from '../../../components/TimerBar';
 import { OptionCard, OptionCardState } from '../../../components/OptionCard';
 import { FadeIn } from '../../../components/FadeIn';
@@ -55,7 +55,6 @@ export default function SimulationRoute() {
 function Simulation({ scenario }: { scenario: Scenario }) {
   const { theme } = useTheme();
   const { t, upper } = useI18n();
-  const insets = useSafeAreaInsets();
   const haptics = useHaptics();
   const appActive = useAppActive();
   const [state, dispatch] = useReducer(simulationReducer, initialSimulationState);
@@ -150,15 +149,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
         />
       }
       footer={
-        <View
-          style={[
-            styles.footer,
-            {
-              paddingBottom: insets.bottom + 12,
-              backgroundColor: theme.colors.background,
-              borderTopColor: theme.colors.border,
-            },
-          ]}>
+        <ScreenFooter>
           {/* One Button for both actions, on purpose: its double-tap guard then also stops the
               second tap of a "Lock In" double tap from skipping straight past the consequence. */}
           <Button
@@ -176,7 +167,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
               }
             }}
           />
-        </View>
+        </ScreenFooter>
       }>
       <View style={styles.progressRow}>
         <Text style={[styles.hud, { color: theme.colors.primary }]}>
@@ -286,10 +277,5 @@ const styles = StyleSheet.create({
   },
   metrics: {
     marginTop: 20,
-  },
-  footer: {
-    paddingHorizontal: 16,
-    paddingTop: 12,
-    borderTopWidth: StyleSheet.hairlineWidth,
   },
 });
