@@ -78,7 +78,7 @@ MCP, Figma'nın Starter planında olduğu için çağrı limitine takıldı. Son
 
 ### Ayrı denetim oturumu
 
-Teslimden önce ayrı bir Claude Code oturumu, projeyi bir değerlendirici gözüyle denetledi ve [`REVIEW.md`](REVIEW.md) dosyasını yazdı. Denetim, kod değiştirmeden yapıldı. Bulgular Kritik / Önemli / Küçük olarak dosya:satır ve öneriyle listelendi, case maddelerine göre puanlandı. Ardından Kritik ve Önemli maddeler ayrı commit'lerle düzeltildi. Test edilebilen her düzeltme için bir test eklendi ve bu testin düzeltme olmadan düştüğü doğrulandı. Bulunan hatalardan bazıları:
+Teslimden önce ayrı bir Claude Code oturumu, projeyi bir değerlendirici gözüyle denetledi. Denetim kod değiştirmeden yapıldı; bulgular dosya:satır ve öneriyle listelendi, sonra ayrı commit'lerle düzeltildi. Sonuç: [`REVIEW.md`](REVIEW.md). Test edilebilen düzeltmelere test eklendi; çift dokunma, timer ve kontrast testlerinin düzeltme olmadan düştüğü ayrıca doğrulandı. Bulunan hatalardan bazıları:
 
 - Brifingde "Başlat"a çift dokunulunca iki simülasyon açılıyordu. Görünmeyen ekranın sayacı ve Android geri tuşu dinleyicisi çalışmaya devam ediyordu.
 - "Kararı Kilitle"ye çift dokunmak, kararın sonucunu göstermeden bir sonraki adıma geçiriyordu.

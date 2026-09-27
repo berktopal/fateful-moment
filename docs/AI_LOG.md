@@ -66,7 +66,7 @@ How the app was built with AI assistance: what each phase set out to do, what wa
 - **Wrong conclusion, corrected in phase 6:** "the file is a component library only". Only the 🧩Local Components page had been read; the 🛝Playground page, which the case link opens, has full screens.
 
 ### 6. Separate pre-submission audit (Claude Code)
-- **Setup:** a fresh session reviewed the app as the evaluating team lead, without touching code, and wrote [`REVIEW.md`](../REVIEW.md): findings graded Critical / Important / Minor with file:line and a fix, and a score per case requirement. Fixes followed in separate commits. Rules for the session: stop if Figma is unreachable, and ask before any deviation or new package.
+- **Setup:** a fresh session reviewed the app as the evaluating team lead, without touching code, listing each finding with file:line and a proposed fix. Fixes followed in separate commits; the outcome is summarised in [`REVIEW.md`](../REVIEW.md). Rules for the session: stop if Figma is unreachable, and ask before any deviation or new package.
 - **Findings:**
   - Playground screens (landscape flow, decision DNA, auth) not implemented. **The owner kept them out of scope;** the README lists them as a deviation.
   - A double tap on Start pushed two simulations. The hidden one kept its timer and back handler, so on the outcome screen the back button offered to abort a finished mission.

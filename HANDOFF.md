@@ -24,11 +24,11 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 8. **Emülatörde bulunup düzeltilen hatalar:** Tab bar'ın home indicator altında kalması, `userInterfaceStyle: light` yüzünden System temasının çalışmaması, status bar ve root arka plan rengi, eksik `scheme`, `aspectRatio` genişlik hatası, `expo-asset` eksikliği.
 
 9. **Dil desteği (TR varsayılan, EN seçenek):** Ayarlar → Dil. Tüm ekranlar, uyarılar, erişilebilirlik etiketleri ve senaryo içerikleri çevrildi; seçim AsyncStorage'da saklanıyor, eski kayıtlar Türkçe'ye düşüyor. Türkçe büyük harf (i→İ) JS'te yapılıyor. Emülatörde iki dilde de doğrulandı. Test sayısı 49.
-10. **Teslim öncesi denetim (ayrı oturum):** `REVIEW.md` yazıldı. Kritik ve Önemli maddeler ayrı commit'lerle düzeltildi: çift dokunma kilidi, iptal diyaloğunda timer'ın durması, light tema AA, NavBar erişilebilirlik etiketleri ve 44pt dokunma alanları, iOS kart gölgeleri, sonuç ekranı footer'ı. 56 test, emülatörde doğrulandı. README yeniden yazıldı.
+10. **Teslim öncesi denetim (ayrı oturum):** Bulgular ayrı commit'lerle düzeltildi, sonuç `REVIEW.md`'de: çift dokunma kilidi, iptal diyaloğunda timer'ın durması, light tema AA, NavBar erişilebilirlik etiketleri ve 44pt dokunma alanları, iOS kart gölgeleri, sonuç ekranı footer'ı. Sonrasında Option Card renkleri, galeri dili ve performans iyileştirmeleri. 62 test, emülatörde doğrulandı. README yeniden yazıldı.
 
 ## Önemli kararlar ve nedenleri
 
-- **Uygulanan Figma sayfası: 🧩Local Components.** Case linkinin açtığı 🛝Playground sayfasında tam ekranlar da var (yatay Flow v01, Karar DNAsı, auth). Önceki oturumlar bu sayfayı görmemişti. Kullanıcı kararıyla kapsam dışında kaldı, README'de sapma olarak yazıldı (bkz. `REVIEW.md` K1).
+- **Uygulanan Figma sayfası: 🧩Local Components.** Case linkinin açtığı 🛝Playground sayfasında tam ekranlar da var (yatay Flow v01, Karar DNAsı, auth). Önceki oturumlar bu sayfayı görmemişti. Kullanıcı kararıyla kapsam dışında kaldı, README'de sapma olarak yazıldı (bkz. `REVIEW.md` → Bilinçli kararlar).
 - **"Dimmed" option durumu:** Figma'da yok. Figma'nın Passive durumu cyan gradient'i koruduğu için ikinci bir seçim gibi okunuyordu. Seçilmeyen seçenekler bu yüzden Default görünümde %48 opaklıkla gösteriliyor.
 - **Option Card çerçevesi `#F8FAFC`** (Figma'daki değer). Koyu zeminde belirgin duruyor ama **kullanıcı kararı: Figma'ya sadık kalınacak** (değerlendirme Figma referans alınarak yapılacak). Yumuşatılmayacak.
 - **Timer countdown modu:** Süre doluyken Figma'daki görünüm, azaldıkça yalnızca kırmızı uç görünüyor.
@@ -45,5 +45,5 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 - **Metro:** 8081'de kullanıcının açtığı bir `expo start` olabilir; öldürmeden önce komut satırını kontrol et.
 - **`expo prebuild`:** Doğrulama için çalıştırılırsa `android/` klasörünü sil (gitignore'da) ve `package.json`'daki script değişikliğini geri al.
 - **Figma MCP:** claude.ai bağlantısı düştü; yerine Figma'nın resmi sunucusu eklendi (`figma`, HTTP, `https://mcp.figma.com/mcp`, User scope). Araçlar yalnızca yeni oturumda yüklenir. İlk iş: Figma araçlarının göründüğünü doğrula, görünmüyorsa `/mcp` → `figma` → Authenticate.
-- **Sıradaki iş:** Kullanıcı tarafında APK build'i, iOS (Expo Go) ve Android ekran kayıtları ve push. Açık kalan Küçük maddeler `REVIEW.md`'de listelendi. Figma MCP Starter plan limitinde; tekrar kullanmadan önce kullanıcıya sor.
+- **Sıradaki iş:** Kullanıcı tarafında APK build'i, iOS (Expo Go) ve Android ekran kayıtları. Bilinen küçük iyileştirmeler `REVIEW.md` → Sonraki adımlar'da. Figma MCP Starter plan limitinde; tekrar kullanmadan önce kullanıcıya sor.
 - **Push:** Kullanıcı açıkça istemeden push yapılmaz. `feat/design-polish` dalı silindi, tek dal `master`.
