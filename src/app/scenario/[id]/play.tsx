@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { View, StyleSheet, Alert, BackHandler, ScrollView } from 'react-native';
 import { Text } from '../../../components/Text';
 import { router, useLocalSearchParams } from 'expo-router';
@@ -71,13 +71,6 @@ function Simulation({ scenario }: { scenario: Scenario }) {
     haptics.warning();
     dispatch({ type: 'TIMEOUT' });
   }, [haptics]);
-
-  const remainingMs = useCountdown(
-    step.timeLimitSec * 1000,
-    state.phase === 'deciding' && appActive && !confirmingAbort,
-    step.id,
-    handleExpire,
-  );
 
   // Running totals, replayed from the committed choices.
   const run = useMemo(
@@ -189,14 +182,12 @@ function Simulation({ scenario }: { scenario: Scenario }) {
         </View>
       </View>
 
-      <TimerBar
-        progress={remainingMs / (step.timeLimitSec * 1000)}
+      <DecisionTimer
+        totalMs={step.timeLimitSec * 1000}
+        running={state.phase === 'deciding' && appActive && !confirmingAbort}
+        resetKey={step.id}
+        onExpire={handleExpire}
         label={isReviewing ? t.play.orderLocked : t.play.decisionWindow}
-        trailingLabel={formatCountdown(remainingMs)}
-        criticalBelow={0.3}
-        animationMs={100}
-        countdown
-        style={styles.timer}
       />
 
       {/* Keyed by step so each new decision animates in. */}
@@ -248,6 +239,40 @@ function Simulation({ scenario }: { scenario: Scenario }) {
     </ScreenContainer>
   );
 }
+
+interface DecisionTimerProps {
+  totalMs: number;
+  running: boolean;
+  resetKey: string;
+  onExpire: () => void;
+  label: string;
+}
+
+/**
+ * Owns the ticking countdown. It updates 10× a second; kept in the screen, that state re-rendered
+ * every card and option on each tick. Memoised, so the screen's own re-renders don't reach it
+ * either unless its props change.
+ */
+const DecisionTimer = memo(function DecisionTimer({
+  totalMs,
+  running,
+  resetKey,
+  onExpire,
+  label,
+}: DecisionTimerProps) {
+  const remainingMs = useCountdown(totalMs, running, resetKey, onExpire);
+  return (
+    <TimerBar
+      progress={remainingMs / totalMs}
+      label={label}
+      trailingLabel={formatCountdown(remainingMs)}
+      criticalBelow={0.3}
+      animationMs={100}
+      countdown
+      style={styles.timer}
+    />
+  );
+});
 
 const styles = StyleSheet.create({
   progressRow: {

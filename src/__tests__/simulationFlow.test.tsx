@@ -9,6 +9,7 @@ import PlayScreen from '../app/scenario/[id]/play';
 import OutcomeScreen from '../app/scenario/[id]/outcome';
 import { DEFAULT_STATE, STORAGE_KEY } from '../store/storage';
 import { PRESS_GUARD_MS } from '../components/Button';
+import * as HudCardModule from '../components/HudCard';
 
 // Jest's AppState mock never reports "active", which would keep every countdown paused.
 jest.mock('../hooks/useAppActive', () => ({ useAppActive: () => true }));
@@ -98,6 +99,19 @@ describe('simulation flow', () => {
     await act(() => buttons.find((b) => b.style === 'cancel')?.onPress?.());
     await act(() => jest.advanceTimersByTime(2000));
     expect(screen.getByText('T-00:17')).toBeOnTheScreen();
+    jest.restoreAllMocks();
+  });
+
+  it('re-renders only the timer while the countdown ticks', async () => {
+    const hudCard = jest.spyOn(HudCardModule, 'HudCard');
+    await renderRouter(routes, { initialUrl: '/scenario/operation-midnight/play' });
+    expect(await screen.findByText('T-00:20')).toBeOnTheScreen();
+    const rendersBefore = hudCard.mock.calls.length;
+
+    // One act per 100 ms tick, as on a device (a single act would batch all 20 into one render).
+    for (let tick = 0; tick < 20; tick++) await act(() => jest.advanceTimersByTime(100));
+    expect(screen.getByText('T-00:18')).toBeOnTheScreen();
+    expect(hudCard.mock.calls.length).toBe(rendersBefore);
     jest.restoreAllMocks();
   });
 
