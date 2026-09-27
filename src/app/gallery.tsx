@@ -14,6 +14,7 @@ import { ScanlineOverlay } from '../components/ScanlineOverlay';
 import { ScenarioCard } from '../components/ScenarioCard';
 import type { ButtonSize, ButtonVariant } from '../components/Button';
 import { SCENARIOS } from '../data/mockData';
+import { I18nOverride } from '../i18n';
 
 const BUTTON_HIERARCHY: ButtonVariant[] = ['primary', 'secondary', 'ghost', 'link'];
 const BUTTON_SIZES: ButtonSize[] = ['lg', 'md', 'sm'];
@@ -24,172 +25,175 @@ export default function GalleryScreen() {
   const [activeOption, setActiveOption] = useState<'default' | 'active' | 'passive'>('active');
 
   return (
-    <ScrollView
-      style={[styles.container, { backgroundColor: theme.colors.background }]}
-      contentContainerStyle={styles.content}>
+    // The gallery mirrors the English Figma labels, so it renders in English in either app language.
+    <I18nOverride language="en">
+      <ScrollView
+        style={[styles.container, { backgroundColor: theme.colors.background }]}
+        contentContainerStyle={styles.content}>
       
-      {/* Theme Control */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>THEME CONTROLLER</Text>
-        <Text style={[styles.label, { color: theme.colors.textMuted }]}>
-          Current: {preference.toUpperCase()} ({isDark ? 'Dark Mode' : 'Light Mode'})
-        </Text>
-        <View style={styles.row}>
-          <Button
-            title="DARK"
-            size="sm"
-            variant={preference === 'dark' ? 'primary' : 'secondary'}
-            onPress={() => setPreference('dark')}
-          />
-          <Button
-            title="LIGHT"
-            size="sm"
-            variant={preference === 'light' ? 'primary' : 'secondary'}
-            onPress={() => setPreference('light')}
-          />
-          <Button
-            title="SYSTEM"
-            size="sm"
-            variant={preference === 'system' ? 'primary' : 'secondary'}
-            onPress={() => setPreference('system')}
-          />
-        </View>
-      </View>
-
-      {/* Status Beacons */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>STATUS BEACONS (STYLE GUIDE)</Text>
-        <View style={styles.beaconRow}>
-          <View style={styles.beaconItem}>
-            <StatusBeacon status="online" />
-            <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>ONLINE</Text>
-          </View>
-          <View style={styles.beaconItem}>
-            <StatusBeacon status="warning" />
-            <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>WARNING</Text>
-          </View>
-          <View style={styles.beaconItem}>
-            <StatusBeacon status="critical" />
-            <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>CRITICAL</Text>
-          </View>
-          <View style={styles.beaconItem}>
-            <StatusBeacon status="standby" />
-            <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>STANDBY</Text>
+        {/* Theme Control */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>THEME CONTROLLER</Text>
+          <Text style={[styles.label, { color: theme.colors.textMuted }]}>
+            Current: {preference.toUpperCase()} ({isDark ? 'Dark Mode' : 'Light Mode'})
+          </Text>
+          <View style={styles.row}>
+            <Button
+              title="DARK"
+              size="sm"
+              variant={preference === 'dark' ? 'primary' : 'secondary'}
+              onPress={() => setPreference('dark')}
+            />
+            <Button
+              title="LIGHT"
+              size="sm"
+              variant={preference === 'light' ? 'primary' : 'secondary'}
+              onPress={() => setPreference('light')}
+            />
+            <Button
+              title="SYSTEM"
+              size="sm"
+              variant={preference === 'system' ? 'primary' : 'secondary'}
+              onPress={() => setPreference('system')}
+            />
           </View>
         </View>
-      </View>
 
-      {/* Timer Bar */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>TIMER BAR (CYAN → RED GRADIENT)</Text>
-        <TimerBar progress={0.85} label="OBJECTIVE DEADLINE" />
-        <TimerBar progress={0.35} label="SECURITY OVERRIDE" />
-      </View>
+        {/* Status Beacons */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>STATUS BEACONS (STYLE GUIDE)</Text>
+          <View style={styles.beaconRow}>
+            <View style={styles.beaconItem}>
+              <StatusBeacon status="online" />
+              <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>ONLINE</Text>
+            </View>
+            <View style={styles.beaconItem}>
+              <StatusBeacon status="warning" />
+              <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>WARNING</Text>
+            </View>
+            <View style={styles.beaconItem}>
+              <StatusBeacon status="critical" />
+              <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>CRITICAL</Text>
+            </View>
+            <View style={styles.beaconItem}>
+              <StatusBeacon status="standby" />
+              <Text style={[styles.sublabel, { color: theme.colors.textMuted }]}>STANDBY</Text>
+            </View>
+          </View>
+        </View>
 
-      {/* Button Matrix (Figma "Buttons" board) */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>BUTTON MATRIX</Text>
-        <Text style={[styles.label, { color: theme.colors.textMuted }]}>
-          Hierarchy × size (press to see the Pressed state)
-        </Text>
-        {BUTTON_HIERARCHY.map((variant) => (
-          <View key={variant} style={styles.buttonRow}>
-            {BUTTON_SIZES.map((size) => (
-              <Button
-                key={size}
-                title="Button"
-                icon="arrow-right"
-                size={size}
-                variant={variant}
-                onPress={() => {}}
-              />
+        {/* Timer Bar */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>TIMER BAR (CYAN → RED GRADIENT)</Text>
+          <TimerBar progress={0.85} label="OBJECTIVE DEADLINE" />
+          <TimerBar progress={0.35} label="SECURITY OVERRIDE" />
+        </View>
+
+        {/* Button Matrix (Figma "Buttons" board) */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>BUTTON MATRIX</Text>
+          <Text style={[styles.label, { color: theme.colors.textMuted }]}>
+            Hierarchy × size (press to see the Pressed state)
+          </Text>
+          {BUTTON_HIERARCHY.map((variant) => (
+            <View key={variant} style={styles.buttonRow}>
+              {BUTTON_SIZES.map((size) => (
+                <Button
+                  key={size}
+                  title="Button"
+                  icon="arrow-right"
+                  size={size}
+                  variant={variant}
+                  onPress={() => {}}
+                />
+              ))}
+            </View>
+          ))}
+          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Disabled</Text>
+          <View style={styles.buttonRow}>
+            {BUTTON_HIERARCHY.map((variant) => (
+              <Button key={variant} title="Button" icon="arrow-right" size="sm" variant={variant} disabled onPress={() => {}} />
             ))}
           </View>
-        ))}
-        <Text style={[styles.label, { color: theme.colors.textMuted }]}>Disabled</Text>
-        <View style={styles.buttonRow}>
-          {BUTTON_HIERARCHY.map((variant) => (
-            <Button key={variant} title="Button" icon="arrow-right" size="sm" variant={variant} disabled onPress={() => {}} />
-          ))}
+          <Text style={[styles.label, { color: theme.colors.textMuted }]}>Style guide</Text>
+          <View style={styles.buttonRow}>
+            <Button title="Primary Button" variant="glass" size="md" onPress={() => {}} />
+            <Button title="Secondary Button" variant="dark" size="md" onPress={() => {}} />
+            <Button title="Danger Action" variant="danger" size="md" onPress={() => {}} />
+            <Button title="Loading" loading onPress={() => {}} />
+          </View>
         </View>
-        <Text style={[styles.label, { color: theme.colors.textMuted }]}>Style guide</Text>
-        <View style={styles.buttonRow}>
-          <Button title="Primary Button" variant="glass" size="md" onPress={() => {}} />
-          <Button title="Secondary Button" variant="dark" size="md" onPress={() => {}} />
-          <Button title="Danger Action" variant="danger" size="md" onPress={() => {}} />
-          <Button title="Loading" loading onPress={() => {}} />
+
+        {/* Icon Buttons */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>ICON BUTTONS</Text>
+          <View style={styles.row}>
+            <IconButton icon="squiggle" isActive accessibilityLabel="Active icon button" />
+            <IconButton icon="squiggle" accessibilityLabel="Inactive icon button" />
+            <IconButton icon="compass" bordered accessibilityLabel="Compass" />
+            <IconButton icon="history" bordered accessibilityLabel="History" />
+            <IconButton icon="shield-alert" bordered accessibilityLabel="Shield alert" />
+          </View>
         </View>
-      </View>
 
-      {/* Icon Buttons */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>ICON BUTTONS</Text>
-        <View style={styles.row}>
-          <IconButton icon="squiggle" isActive accessibilityLabel="Active icon button" />
-          <IconButton icon="squiggle" accessibilityLabel="Inactive icon button" />
-          <IconButton icon="compass" bordered accessibilityLabel="Compass" />
-          <IconButton icon="history" bordered accessibilityLabel="History" />
-          <IconButton icon="shield-alert" bordered accessibilityLabel="Shield alert" />
-        </View>
-      </View>
-
-      {/* HUD Surfaces */}
-      <HudCard
-        tag="SURFACE_A // ENCRYPTED"
-        title="Standard Card Layout"
-        description="Example of a cinematic container with HUD accents and specific typography alignment."
-        chips={['STATUS: GREEN', 'LOAD: STABLE']}
-        alert
-      />
-      <View style={[styles.scanlineDemo, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <ScanlineOverlay />
-      </View>
-
-      {/* Scenario Cards */}
-      <ScenarioCard
-        title="Title"
-        description="Default Scenario Text Is Here. Default Scenario Text Is Here."
-        image={SCENARIOS[0].image}
-        headerText="0:00 min"
-        onStart={() => {}}
-      />
-      <ScenarioCard
-        title="Title"
-        description="Default Scenario Text Is Here. Default Scenario Text Is Here."
-        image={SCENARIOS[0].image}
-        headerText="0:00 min"
-        isActive={false}
-        onStart={() => {}}
-      />
-
-      {/* Option Cards */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>OPTION CARDS (IS_SELECTED STATES)</Text>
-        <OptionCard
-          text="State: Active / Selected (Tap to toggle)"
-          state={activeOption}
-          onPress={() => setActiveOption((prev) => (prev === 'active' ? 'default' : 'active'))}
+        {/* HUD Surfaces */}
+        <HudCard
+          tag="SURFACE_A // ENCRYPTED"
+          title="Standard Card Layout"
+          description="Example of a cinematic container with HUD accents and specific typography alignment."
+          chips={['STATUS: GREEN', 'LOAD: STABLE']}
+          alert
         />
-        <OptionCard text="State: Default (Tap to activate)" state="default" onPress={() => {}} />
-        <OptionCard text="State: Passive / Disabled" state="passive" onPress={() => {}} />
-      </View>
-
-      {/* Interactive Selection */}
-      <InteractiveSelection
-        options={['Autonomous Defense Grid', 'Orbital Relays', 'Deep Cyber Defense']}
-        selectedIndex={selectedRadio}
-        onSelect={setSelectedRadio}
-      />
-
-      {/* Square Card */}
-      <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>1:1 SQUARE CARD (ASPECT RATIO FIX)</Text>
-        <View style={styles.cardPreview}>
-          <SquareCard title="Description" subtitle="12 Scenarios" />
+        <View style={[styles.scanlineDemo, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <ScanlineOverlay />
         </View>
-      </View>
 
-    </ScrollView>
+        {/* Scenario Cards */}
+        <ScenarioCard
+          title="Title"
+          description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+          image={SCENARIOS[0].image}
+          headerText="0:00 min"
+          onStart={() => {}}
+        />
+        <ScenarioCard
+          title="Title"
+          description="Default Scenario Text Is Here. Default Scenario Text Is Here."
+          image={SCENARIOS[0].image}
+          headerText="0:00 min"
+          isActive={false}
+          onStart={() => {}}
+        />
+
+        {/* Option Cards */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>OPTION CARDS (IS_SELECTED STATES)</Text>
+          <OptionCard
+            text="State: Active / Selected (Tap to toggle)"
+            state={activeOption}
+            onPress={() => setActiveOption((prev) => (prev === 'active' ? 'default' : 'active'))}
+          />
+          <OptionCard text="State: Default (Tap to activate)" state="default" onPress={() => {}} />
+          <OptionCard text="State: Passive / Disabled" state="passive" onPress={() => {}} />
+        </View>
+
+        {/* Interactive Selection */}
+        <InteractiveSelection
+          options={['Autonomous Defense Grid', 'Orbital Relays', 'Deep Cyber Defense']}
+          selectedIndex={selectedRadio}
+          onSelect={setSelectedRadio}
+        />
+
+        {/* Square Card */}
+        <View style={[styles.section, { backgroundColor: theme.colors.surface, borderColor: theme.colors.border }]}>
+          <Text style={[styles.sectionTitle, { color: theme.colors.primary }]}>1:1 SQUARE CARD (ASPECT RATIO FIX)</Text>
+          <View style={styles.cardPreview}>
+            <SquareCard title="Description" subtitle="12 Scenarios" />
+          </View>
+        </View>
+
+      </ScrollView>
+    </I18nOverride>
   );
 }
 

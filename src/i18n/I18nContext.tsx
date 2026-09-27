@@ -44,6 +44,17 @@ export const I18nProvider = ({ children }: { children: ReactNode }) => {
   return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
 };
 
+/**
+ * Renders a subtree in a fixed language, whatever the app language is: its copy and its
+ * upper-casing (no Turkish "İ" in English words). Used by the design-system gallery, which
+ * mirrors the English Figma labels.
+ */
+export const I18nOverride = ({ language, children }: { language: Language; children: ReactNode }) => {
+  const { setLanguage } = useI18n();
+  const value = useMemo(() => createValue(language, setLanguage), [language, setLanguage]);
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>;
+};
+
 const FALLBACK = createValue(DEFAULT_LANGUAGE, () => {});
 
 /** Falls back to the default language so components render in isolation, e.g. tests. */
