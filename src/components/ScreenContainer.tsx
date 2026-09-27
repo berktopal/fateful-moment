@@ -1,7 +1,7 @@
 import React, { ReactNode, Ref } from 'react';
 import { View, ScrollView, StyleSheet, ActivityIndicator, ViewStyle } from 'react-native';
 import { Text } from './Text';
-import { useTheme } from '../theme';
+import { useTheme, MAX_CONTENT_WIDTH } from '../theme';
 import { Button } from './Button';
 import { useI18n } from '../i18n';
 
@@ -75,6 +75,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   content: {
+    width: '100%',
+    maxWidth: MAX_CONTENT_WIDTH,
+    alignSelf: 'center',
     padding: 16,
     paddingBottom: 48,
   },

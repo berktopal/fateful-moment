@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useTheme } from '../theme';
+import { useTheme, MAX_CONTENT_WIDTH } from '../theme';
 
 /**
  * Sticky action area below a ScreenContainer's scroll view, clear of the home indicator /
@@ -22,16 +22,21 @@ export const ScreenFooter = ({ children }: { children: ReactNode }) => {
           borderTopColor: theme.colors.border,
         },
       ]}>
-      {children}
+      <View style={styles.actions}>{children}</View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   footer: {
-    gap: 12,
     paddingHorizontal: 16,
     paddingTop: 12,
     borderTopWidth: StyleSheet.hairlineWidth,
+  },
+  actions: {
+    width: '100%',
+    maxWidth: MAX_CONTENT_WIDTH,
+    alignSelf: 'center',
+    gap: 12,
   },
 });

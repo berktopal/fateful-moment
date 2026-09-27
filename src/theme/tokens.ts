@@ -193,6 +193,12 @@ const TYPOGRAPHY: ThemeTokens['typography'] = {
 
 export { TYPE_SCALE };
 
+/**
+ * The screens are designed for phones. On wider displays (iPad, landscape tablets) content and
+ * footer actions stop growing at this width and centre, instead of stretching edge to edge.
+ */
+export const MAX_CONTENT_WIDTH = 640;
+
 export const DARK_TOKENS: ThemeTokens = {
   mode: 'dark',
   colors: {
