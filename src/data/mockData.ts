@@ -488,7 +488,11 @@ export const ARCHIVE_NODES: ArchiveNodeSource[] = [
 
 export const PROTOCOL_OPTIONS: ProtocolOptionSource[] = [
   { id: '1', text: { tr: 'Taktik pozisyonu koru ve gözlemle', en: 'Hold tactical position & observe' } },
-  { id: '2', text: { tr: 'Uydu tarama protokolünü başlat', en: 'Initiate satellite scanning protocol' } },
+  {
+    id: '2',
+    text: { tr: 'Uydu tarama protokolünü başlat', en: 'Initiate satellite scanning protocol' },
+    isDefault: true,
+  },
   { id: '3', text: { tr: 'Doğrudan müdahaleye yetki ver', en: 'Authorize direct engagement' } },
 ];
 

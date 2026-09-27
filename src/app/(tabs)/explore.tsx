@@ -26,8 +26,11 @@ export default function ExploreScreen() {
   const haptics = useHaptics();
   const { t, language } = useI18n();
   const { data, loading, error, reload } = useAsyncData(() => loadIntel(language), [language]);
-  const [activeProtocolId, setActiveProtocolId] = useState('2');
+  const [chosenProtocolId, setChosenProtocolId] = useState<string | null>(null);
   const [intel, protocols] = data ?? [[], []];
+  // Until the player picks one, the data's default protocol (or the first) is active.
+  const activeProtocolId =
+    chosenProtocolId ?? protocols.find((p) => p.isDefault)?.id ?? protocols[0]?.id;
 
   return (
     <ScreenContainer
@@ -53,7 +56,7 @@ export default function ExploreScreen() {
             state={activeProtocolId === option.id ? 'active' : 'default'}
             onPress={() => {
               haptics.selection();
-              setActiveProtocolId(option.id);
+              setChosenProtocolId(option.id);
             }}
           />
         ))}

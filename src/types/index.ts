@@ -85,6 +85,8 @@ export interface CommanderVital {
 export interface ProtocolOption {
   id: string;
   text: string;
+  /** The protocol shown as active until the player picks another. */
+  isDefault?: boolean;
 }
 
 /*
