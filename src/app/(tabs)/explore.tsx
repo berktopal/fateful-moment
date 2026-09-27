@@ -8,6 +8,7 @@ import { SectionHeader } from '../../components/SectionHeader';
 import { OptionCard } from '../../components/OptionCard';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { HudCard } from '../../components/HudCard';
+import { EmptyState } from '../../components/EmptyState';
 import { Icon } from '../../components/Icon';
 import { ScanlineOverlay } from '../../components/ScanlineOverlay';
 import { useAsyncData } from '../../hooks/useAsyncData';
@@ -48,6 +49,7 @@ export default function ExploreScreen() {
         title={t.explore.protocol}
         accessory={<StatusBeacon status="online" size={8} />}
       />
+      {protocols.length === 0 && <EmptyState message={t.explore.emptyProtocols} />}
       <View accessibilityRole="radiogroup">
         {protocols.map((option) => (
           <OptionCard
@@ -81,6 +83,7 @@ export default function ExploreScreen() {
         style={styles.spaced}
         accessory={<StatusBeacon status="warning" size={8} />}
       />
+      {intel.length === 0 && <EmptyState message={t.explore.emptyIntel} />}
       {intel.map((item) => (
         <HudCard
           key={item.id}

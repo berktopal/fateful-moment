@@ -67,6 +67,7 @@ export const en = {
     campaignProgress: 'CAMPAIGN PROGRESS',
     scenarios: 'Scenarios',
     lockedHeader: (duration: string) => `Locked · ${duration}`,
+    empty: 'No scenarios available right now.',
   },
   briefing: {
     title: 'Briefing',
@@ -168,6 +169,8 @@ export const en = {
     tag: (id: string, location: string) => `INTEL_${id.padStart(2, '0')} // ${location}`,
     threat: (level: string) => `THREAT: ${level}`,
     levels: { Low: 'Low', Medium: 'Medium', High: 'High' },
+    emptyProtocols: 'No protocols defined.',
+    emptyIntel: 'No new intelligence.',
   },
   vitals: {
     title: 'Vitals',

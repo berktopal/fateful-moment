@@ -7,6 +7,7 @@ import { NavBar } from '../../components/NavBar';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { SectionHeader } from '../../components/SectionHeader';
 import { Button } from '../../components/Button';
+import { EmptyState } from '../../components/EmptyState';
 import { StatusBeacon } from '../../components/StatusBeacon';
 import { findScenario } from '../../repositories/scenarioRepository';
 import { ratingColor } from '../../features/simulation/presentation';
@@ -87,12 +88,9 @@ export default function ProfileScreen() {
 
       <SectionHeader title={t.profile.recent} style={styles.section} />
       {history.length === 0 ? (
-        <View style={[styles.empty, { borderColor: theme.colors.border }]}>
-          <Text style={[theme.typography.body, { color: theme.colors.textMuted, textAlign: 'center' }]}>
-            {t.profile.empty}
-          </Text>
+        <EmptyState message={t.profile.empty}>
           <Button title={t.profile.openWarRoom} icon="arrow-right" variant="glass" onPress={() => router.navigate('/')} />
-        </View>
+        </EmptyState>
       ) : (
         history.slice(0, 5).map((record) => (
           <View
@@ -197,14 +195,6 @@ const styles = StyleSheet.create({
   },
   section: {
     marginTop: 28,
-  },
-  empty: {
-    borderWidth: 1,
-    borderStyle: 'dashed',
-    borderRadius: 16,
-    padding: 20,
-    gap: 16,
-    alignItems: 'center',
   },
   mission: {
     flexDirection: 'row',

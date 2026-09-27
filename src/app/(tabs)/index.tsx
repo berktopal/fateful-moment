@@ -6,6 +6,7 @@ import { TimerBar } from '../../components/TimerBar';
 import { SectionHeader } from '../../components/SectionHeader';
 import { ScreenContainer } from '../../components/ScreenContainer';
 import { StatusBeacon } from '../../components/StatusBeacon';
+import { EmptyState } from '../../components/EmptyState';
 import { useAsyncData } from '../../hooks/useAsyncData';
 import { useAppStore } from '../../store/AppStore';
 import { getFeaturedScenario, getScenarios } from '../../repositories/scenarioRepository';
@@ -69,6 +70,7 @@ export default function HomeScreen() {
       />
 
       <SectionHeader title={t.home.scenarios} accessory={<StatusBeacon status="online" size={8} />} />
+      {scenarios.length === 0 && <EmptyState message={t.home.empty} />}
       {scenarios.map((scenario) => (
         <ScenarioCard
           key={scenario.id}

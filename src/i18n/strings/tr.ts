@@ -58,6 +58,7 @@ export const tr: Strings = {
     campaignProgress: 'KAMPANYA İLERLEMESİ',
     scenarios: 'Senaryolar',
     lockedHeader: (duration) => `Kilitli · ${duration}`,
+    empty: 'Şu anda oynanabilecek senaryo yok.',
   },
   briefing: {
     title: 'Brifing',
@@ -159,6 +160,8 @@ export const tr: Strings = {
     tag: (id, location) => `İSTİHBARAT_${id.padStart(2, '0')} // ${location}`,
     threat: (level) => `TEHDİT: ${level}`,
     levels: { Low: 'Düşük', Medium: 'Orta', High: 'Yüksek' },
+    emptyProtocols: 'Tanımlı protokol yok.',
+    emptyIntel: 'Yeni istihbarat yok.',
   },
   vitals: {
     title: 'Hayati Veriler',
