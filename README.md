@@ -92,6 +92,7 @@ Teslimden önce ayrı bir Claude Code oturumu, projeyi bir değerlendirici göz�
 - **Option Card çerçevesi.** `#F8FAFC` çerçeve koyu zeminde belirgin duruyor. Değerlendirme Figma'ya göre yapılacağı için yumuşatmadım, Figma değeri korundu.
 - **Figma'nın Passive durumu.** Bu durum cyan gradyanı koruduğu için ikinci bir seçim gibi görünüyordu. Seçilmeyen seçenekler için Figma'daki Default görünümü, Passive'in %48 opaklığıyla kullanıldı.
 - **AI'ın kendi test hataları.** Çift dokunma testinin ilk hali takıldı: Expo Router'ın test kütüphanesi sahte zamanlayıcı kullandığı için gerçek bekleme hiç bitmiyordu. Süre dolumu testi de başka bir sorunu ortaya çıkardı: Jest ortamında uygulama "arka planda" göründüğü için simülasyon testlerinde sayaç hiç çalışmıyordu. İkisi de düzeltildi.
+- **Geri alınan bir performans denemesi.** AI, timer çubuğunun animasyonunu native thread'e taşıdı; testler geçti. Emülatörde ise çubuğun sayaçtan geri kaldığı görüldü: her 100 ms'de yeniden başlatılan native animasyon eski bir değerden başlıyordu. Değişiklik geri alındı.
 - **Yeni paket yerine basit çözüm.** i18n için `i18next` / `expo-localization` eklenmedi. İki dil için tipli bir sözlük ve context yeterli. Eksik bir çeviri anahtarı derleme hatası verir.
 
 ## Mimari
@@ -109,7 +110,7 @@ src/
 
 - **Oyun mantığı UI'dan ayrı.** Sonuç ekranı skoru URL'deki seçimlerden yeniden hesaplar; bu yüzden sonuçlar tekrar üretilebilir ve test edilebilir.
 - **Akış bir reducer ile yönetiliyor** (`deciding → reviewing → complete`). O andaki duruma uymayan aksiyonlar yok sayılır.
-- **Timer gerçek geçen süreyi ölçer**, tik saymaz. Uygulama arka plana alınınca ve iptal onayı açıkken durur.
+- **Timer gerçek geçen süreyi ölçer**, tik saymaz. Uygulama arka plana alınınca ve iptal onayı açıkken durur. Geri sayım ayrı bir bileşende tutulur; saniyede 10 güncelleme ekranın tamamını değil, sadece timer'ı yeniden çizer (bir testle ölçülüyor).
 - **Butonlar çift dokunmaya karşı korumalı.** Figma boyutundaki küçük butonların dokunma alanı `hitSlop` ile 44pt'ye tamamlanır.
 
 ## Notlar ve bilinen sınırlamalar

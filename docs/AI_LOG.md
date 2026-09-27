@@ -101,3 +101,15 @@ This log documents the iterative engineering decisions, design-fidelity correcti
 * **Corrected along the way:** a real-time wait in the flow test hung because `renderRouter` installs fake timers; switched to `jest.advanceTimersByTime`. The timer-pause test exposed that every simulation test ran with a paused countdown (Jest's `AppState` mock is never "active"); the suite now mocks `useAppActive`.
 * **Verification:** lint, tsc, 56/56 tests, expo-doctor 21/21; Android emulator pass (home cards, simulation and outcome footers, settings, light theme).
 
+---
+
+### Phase 10: Option Card Colours, Gallery Language, Performance (Claude Code)
+* **Option Card:** the owner compared both themes with the Figma component. The translucent Figma fills turned dark on the dark background (Selected and Passive looked alike). They are now Figma's values composited onto the Figma canvas (`#F5F5F5`), checked against pixels sampled from the owner's export (±3) and re-derived in a test. The diagonal highlight streaks in Figma were left out by the owner's decision.
+* **Gallery:** rendered through `I18nOverride` in English, so English labels no longer get a Turkish dotted İ.
+* **Performance:**
+  - A render-count test showed the simulation screen re-rendering on every 100 ms countdown tick (20 renders in 2 s); the countdown moved into a memoised `DecisionTimer`, and the test now expects zero.
+  - ScanlineOverlay draws only the lines its measured area needs instead of 160 views.
+  - The simulated 250 ms repository latency only applies in development.
+* **Rejected after device check:** moving the countdown bar to a native-driven transform passed the tests, but on the emulator the bar lagged the readout (restarting a native animation every 100 ms starts it from a stale JS value). Reverted; a single continuous native animation would be the proper fix.
+* **Not changed:** bundled Inter cuts (usage can't be proven statically; a wrong removal silently falls back to the system font), images (all under 140 KB).
+
