@@ -10,7 +10,7 @@ import { OptionCard, OptionCardState } from '../../../components/OptionCard';
 import { FadeIn } from '../../../components/FadeIn';
 import { HudCard } from '../../../components/HudCard';
 import { MetricBar } from '../../../components/MetricBar';
-import { Button } from '../../../components/Button';
+import { Button, PRESS_GUARD_MS } from '../../../components/Button';
 import { findScenario } from '../../../repositories/scenarioRepository';
 import {
   encodeChoices,
@@ -67,7 +67,12 @@ function Simulation({ scenario }: { scenario: Scenario }) {
   const step = scenario.steps[state.stepIndex];
   const isReviewing = state.phase === 'reviewing';
 
+  // When the timer runs out, the footer button turns from "Lock In" into "Next" under the
+  // player's finger. A tap arriving in that moment was meant for the old button, so it is ignored.
+  const expiredAt = useRef(0);
+
   const handleExpire = useCallback(() => {
+    expiredAt.current = Date.now();
     haptics.warning();
     dispatch({ type: 'TIMEOUT' });
   }, [haptics]);
@@ -152,6 +157,7 @@ function Simulation({ scenario }: { scenario: Scenario }) {
             disabled={!isReviewing && !state.selectedId}
             onPress={() => {
               if (isReviewing) {
+                if (Date.now() - expiredAt.current < PRESS_GUARD_MS) return;
                 haptics.selection();
                 dispatch({ type: 'NEXT', stepCount });
               } else {

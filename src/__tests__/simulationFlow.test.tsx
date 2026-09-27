@@ -82,6 +82,20 @@ describe('simulation flow', () => {
     expect(await screen.findByText('KARAR 02 / 03')).toBeOnTheScreen();
   });
 
+  it('ignores a tap that lands just as the timer runs out', async () => {
+    await renderRouter(routes, { initialUrl: '/scenario/operation-midnight/play' });
+    expect(await screen.findByText('T-00:20')).toBeOnTheScreen();
+    await act(() => jest.advanceTimersByTime(20_000));
+
+    // The player was reaching for "Lock In"; the same button now reads "Next Decision".
+    await fireEvent.press(await screen.findByRole('button', { name: 'Sonraki Karar' }));
+    expect(screen.getByText('KARAR 01 / 03')).toBeOnTheScreen();
+
+    await pause();
+    await fireEvent.press(screen.getByRole('button', { name: 'Sonraki Karar' }));
+    expect(await screen.findByText('KARAR 02 / 03')).toBeOnTheScreen();
+  });
+
   it('pauses the decision timer while the abort confirmation is open', async () => {
     const alert = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
     await renderRouter(routes, { initialUrl: '/scenario/operation-midnight/play' });
