@@ -120,6 +120,7 @@ src/
 
   Brifing, simülasyon ve sonuç ekranları bileşen kütüphanesiyle, dikey olarak kuruldu.
 - **Style Guide ile Buttons panosu çelişiyor.** Style Guide'daki butonlar büyük harfli ve primary rengi cyan 700. Uygulama, bileşen tanımı olan Buttons panosunu izliyor: cyan 400 ve normal yazım.
+- **Option Card renkleri iki temada da aynı.** Figma'daki yarı saydam değerler Figma tuvaliyle (`#F5F5F5`) karıştırılıp opak renge çevrildi; türetme bir testle belgeleniyor. Böylece kartlar koyu temada da Figma bileşeni gibi görünüyor.
 - **Açık tema Figma'da yok.** WCAG AA'ya göre türetildi ve bir testle korunuyor. Fotoğraf üstündeki içerik iki temada da aynı kalıyor.
 - **Test edilen cihazlar.** Android akışı emülatörde (Pixel, Android 14) uçtan uca test edildi. iOS'ta Expo Go ile çalışır; kullanılan tüm native modüller Expo Go'da mevcut.
 - **Android'de font.** Menlo Android'de bulunmadığı için HUD metinleri sistemin monospace fontuyla gösterilir.

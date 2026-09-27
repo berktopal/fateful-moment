@@ -114,19 +114,23 @@ export const MEDIA_COLORS = {
 } as const;
 
 /**
- * Figma "Option Card". The fills are translucent, so the same values read correctly on both
- * the dark and the light background (Figma's own canvas is light).
+ * Figma "Option Card". Figma defines translucent fills — `rgba(15,23,43,0.63)`, a selected
+ * gradient peaking at `rgba(0,211,243,0.63)`, Passive = Selected at 48% — and shows the component
+ * on its `#F5F5F5` canvas. Those values composited onto that canvas are used here as opaque
+ * colours (derivation checked in `optionCard.test.ts`), so the cards look like the Figma component
+ * in both themes. Kept translucent, they turned dark on the dark background and Selected and
+ * Passive became hard to tell apart.
  */
 export const OPTION_CARD = {
-  fill: 'rgba(15, 23, 43, 0.63)',
-  selectedGradient: [
-    'rgba(15, 23, 43, 0.63)',
-    'rgba(0, 211, 243, 0.63)',
-    'rgba(15, 23, 43, 0.63)',
-  ] as Gradient,
+  fill: '#646976',
+  selectedGradient: ['#646976', '#5BE0F4', '#646976'] as Gradient,
+  passiveGradient: ['#AFB2B8', '#ABEBF4', '#AFB2B8'] as Gradient,
   border: PALETTE.slate50, // sec-100
-  /** Passive = the selected treatment at 48% opacity. */
-  passiveOpacity: 0.48,
+  /** Passive fades its border and label with the rest of the card (48%). */
+  passiveBorder: 'rgba(248, 250, 252, 0.48)',
+  passiveTextOpacity: 0.48,
+  /** App-only state for options not chosen once a decision is locked: the Default card, faded back. */
+  dimmedOpacity: 0.48,
   text: PALETTE.white,
 } as const;
 
