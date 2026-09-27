@@ -9,8 +9,8 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 |---|---|
 | Repo linki — https://github.com/berktopal/fateful-moment (public) | ✅ |
 | README (kurulum, AI araçları/yaklaşım, notlar) | ✅ (denetim sonrası yeniden yazıldı) |
-| Android APK | ❌ Kullanıcı yapacak: `npx eas-cli@latest login` → `npx eas-cli@latest build -p android --profile preview` |
-| iOS + Android ekran kaydı | ❌ Kullanıcı yapacak |
+| Android APK | EAS preview build (`npx eas-cli@latest build -p android --profile preview`); repo dışında, teslimle birlikte gönderilir |
+| iOS + Android ekran kaydı | Repo dışında, teslimle birlikte gönderilir |
 
 ## Yapılanlar (özet)
 
@@ -45,5 +45,5 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 - **Metro:** 8081'de kullanıcının açtığı bir `expo start` olabilir; öldürmeden önce komut satırını kontrol et.
 - **`expo prebuild`:** Doğrulama için çalıştırılırsa `android/` klasörünü sil (gitignore'da) ve `package.json`'daki script değişikliğini geri al.
 - **Figma MCP:** claude.ai bağlantısı düştü; yerine Figma'nın resmi sunucusu eklendi (`figma`, HTTP, `https://mcp.figma.com/mcp`, User scope). Araçlar yalnızca yeni oturumda yüklenir. İlk iş: Figma araçlarının göründüğünü doğrula, görünmüyorsa `/mcp` → `figma` → Authenticate.
-- **Sıradaki iş:** Kullanıcı tarafında APK build'i, iOS (Expo Go) ve Android ekran kayıtları. Bilinen küçük iyileştirmeler `REVIEW.md` → Sonraki adımlar'da. Figma MCP Starter plan limitinde; tekrar kullanmadan önce kullanıcıya sor.
+- **Teslim paketi:** APK ve iOS / Android ekran kayıtları repo dışında gönderilir. Bilinen küçük iyileştirmeler `REVIEW.md` → Sonraki adımlar'da. Figma MCP Starter plan limitinde; tekrar kullanmadan önce kullanıcıya sor.
 - **Push:** Kullanıcı açıkça istemeden push yapılmaz. `feat/design-polish` dalı silindi, tek dal `master`.
