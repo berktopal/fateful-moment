@@ -1,115 +1,104 @@
-# AI Decision & Engineering Log - Fateful Moment
+# AI Development Log — Fateful Moment
 
-## Overview
-This log documents the iterative engineering decisions, design-fidelity corrections, and architectural upgrades made during the refinement of the **Fateful Moment** React Native application.
+How the app was built with AI assistance: what each phase set out to do, what was found, what was decided, and how it was verified. Mistakes made by the AI (or by earlier phases) are kept and marked where they were corrected. They show how the process was controlled.
 
----
-
-### Phase 0: Audit & Baseline Analysis
-* **User Request:** Initial review of project against Figma exports, asking for senior-level polish and critique.
-* **Findings:**
-  - Token inconsistencies (e.g. `accent: #F82C38` vs Figma `#FB2C36`, `border: #10293D` vs Figma `#1D293D`).
-  - Missing design components: Cyan→Red Timer Bar, Status Beacons (pulsing indicators), Scanline CRT overlay.
-  - Direct import of static dummy arrays rather than asynchronous repository services.
-  - Absence of a semantic, dual-theme architecture (Dark as primary/pixel-perfect, Light as derived AA-compliant).
-* **Decisions:**
-  - Strict adherence to conventional commits on `feat/design-polish`.
-  - Maintain 100% Expo Go native compatibility by leveraging React Native's high-performance native-driven `Animated` API and `expo-linear-gradient`.
+**Tools:** Antigravity (Gemini) for phase 1, Claude Code for phases 2–7, and the official Figma MCP server for reading design values. Scope, priorities and every deviation from Figma were the owner's decisions.
 
 ---
 
-### Phase 1: Theming Foundation & Semantic Tokens
-* **Objective:** Establish `ThemeContext`, dual semantic palettes (Dark & Light), and upgrade design tokens.
-* **Dark Palette:** Grounded strictly in Style Guide tokens (`#00D3F3`, `#0F172A`, `#FB2C36`, `#020617`, `#1D293D`, `#F1F5F9`).
-* **Light Palette:** Carefully derived with WCAG AA compliance (using dark cyan `#0891B2` for readable text/icons on light surfaces, `#F8FAFC` background, and clean slate borders). Cinematic hero cards retain tactical dark contrast.
+### 1. Baseline audit and theme foundation (Antigravity / Gemini)
+- **Findings:** token drift from the Style Guide (e.g. accent `#F82C38` vs `#FB2C36`, border `#10293D` vs `#1D293D`); missing Style Guide pieces (cyan→red timer, status beacons, scanlines); screens importing dummy arrays directly; no theme architecture.
+- **Decisions:** `ThemeContext` with a dark palette from the Style Guide and a derived light palette.
+- **Later correction:** the light palette was described as WCAG AA compliant. Measured in phase 6, its cyan / amber / emerald text was only 3.2–3.8:1.
 
+### 2. Figma gap audit from exported frames (Claude Code)
+- **Findings:**
+  - The icon set is Lucide, which Feather couldn't render.
+  - Buttons were italic / uppercase with 4 variants; Figma has bold labels, solid / outline / link and a trailing arrow.
+  - Scenario cards used solid CTAs; Figma uses mono HUD headers, italic titles and translucent "glass" Start buttons.
+  - Bugs:
+    - the fixed tab bar height hid the icons under the iPhone home indicator;
+    - `userInterfaceStyle: "light"` stopped the System theme from ever turning dark;
+    - 34 `react-hooks/refs` lint errors.
+- **Decisions:**
+  - Lucide behind a typed `Icon` wrapper with per-icon imports (Metro does not tree-shake).
+  - `Button` rebuilt as variant × appearance × size.
+  - `HudCard` added; the other components restyled.
+  - `useAnimatedValue` instead of `useRef(new Animated.Value())`.
+- **Verification:** tsc, lint, expo-doctor 21/21, Android bundle. Colours at this point were matched from screenshots, which phase 5 found partly wrong.
 
----
-### Phase 5: Figma Gap Audit & Fixes (Claude Code)
-* **User Request:** Compare every component against the Figma exports (Buttons board, Scenario cards, Card, Nav Bar, Tabbar, Icons, Style Guide) and fix the gaps.
-* **Findings:**
-  - Figma's icon set is Lucide (`alarm-clock`, `dna`, `fingerprint`, `shield-alert`, `atom`, the brand squiggle); Feather couldn't render most of it.
-  - Buttons were italic/uppercase and only had 4 variants; Figma uses non-italic bold labels, solid/outline/link appearances and a trailing arrow.
-  - Scenario cards used solid CTAs and uppercase titles; Figma uses mono HUD headers, Title Case italic titles, translucent "glass" Start buttons and a frosted passive state.
-  - Style-guide pieces drifted: filled cyan selection, thin borderless timer, real scanlines, missing "Standard Card Layout".
-  - Bugs: fixed tab bar `height` dropped the bottom safe-area inset (icons under the iPhone home indicator); `userInterfaceStyle: "light"` pinned `useColorScheme()` so the System theme never went dark; 34 `react-hooks/refs` lint errors; non-square icon assets and an unused `@expo/vector-icons` failing `expo-doctor`.
-* **Decisions:**
-  - Added `lucide-react-native` + `react-native-svg` behind a typed `Icon` wrapper using per-icon deep imports (Metro does not tree-shake).
-  - Rebuilt `Button` as variant × appearance × size; added `HudCard`; restyled `ScenarioCard`, `SquareCard`, `OptionCard`, `NavBar`, `InteractiveSelection`, `TimerBar`, `ScanlineOverlay`.
-  - Added `MONO_FONT` and tighter display/heading tracking to tokens.
-  - Replaced `useRef(new Animated.Value()).current` with React Native's `useAnimatedValue`.
-  - Configured `expo-splash-screen` (dark background + app icon), cropped icons to 1024×1024, set adaptive icon background to `#020617`.
-* **Verification:** `npx tsc --noEmit`, `npx expo lint`, `npx expo-doctor` (21/21) and an Android `expo export` bundle all pass. Colours were matched from screenshots, not Figma inspect values.
+### 3. Playable app, persistence and tests (Claude Code)
+- **Gaps:**
+  - "Start" only opened an alert.
+  - Nothing was persisted, and images depended on remote URLs.
+  - Hard-coded colours remained in components.
+  - There were no tests.
+  - A clean `npm install` / EAS build failed on a peer-dependency conflict.
+  - The README claimed "pixel-perfect".
+- **Decisions:**
+  - Pure simulation engine plus a phase reducer. The outcome screen recomputes the result from URL params, so results are reproducible; each run is recorded once through a stable `runId`.
+  - Wall-clock countdown that pauses during review and in the background.
+  - `AppStore` persisting preferences and history to AsyncStorage, sanitised field by field on load.
+  - Bundled images through `expo-image`.
+  - `.npmrc` with `legacy-peer-deps`.
+  - A candidate photo of a real public figure was dropped.
+- **Verification:** 41 tests, including an Expo Router test that plays a scenario end to end. On the Android emulator, found and fixed:
+  - missing deep-link `scheme`;
+  - white strip under the tab bar;
+  - unreadable light-mode status bar;
+  - briefing hero not full width.
 
----
+### 4. UI/UX polish within the Figma spec (Claude Code)
+- **Changes:**
+  - Inter bundled per weight, with a `Text` wrapper that maps weight and style to the right file (Android ignores weights on custom fonts); ESLint blocks React Native's `Text`.
+  - Auto-scroll to the consequence after locking a decision.
+  - The countdown bar keeps the full Figma gradient and turns red as time runs out.
+  - Staggered fade-ins and a score count-up, both respecting the OS "Reduce motion" setting.
+- **Decision:** unchosen options fade back ("dimmed") instead of using Figma's Passive look, which kept the cyan gradient and read as a second selection.
 
-### Phase 6: Senior-Level Completion (Claude Code)
-* **User Request:** Take the project to a finished, senior-quality state.
-* **Gaps found:** "Start" only opened an `Alert` (no actual simulation), theme preference was not persisted, imagery depended on remote Unsplash URLs, components still contained hard-coded `isDark ? '#…' : '#…'` colours, a duplicate `src/constants/` layer, no tests, a fresh `npm install` / EAS build would fail on a peer-dependency conflict, and the README over-claimed ("pixel-perfect").
-* **Decisions:**
-  - **Simulation flow** (`scenario/[id]` → `play` → `outcome`): a pure engine (`evaluateRun`, `ratingFor`, clamped metrics, timeout penalty) plus a phase reducer; the outcome screen recomputes from URL params so results are reproducible. Runs are recorded once via a stable `runId`.
-  - **Timer:** wall-clock `useCountdown` that pauses on review and when the app is backgrounded; a highlighted option is committed on timeout.
-  - **State:** `AppStoreProvider` persisting preferences + mission history to AsyncStorage with field-level sanitising; splash screen held until hydrated.
-  - **Tokens:** semantic palette (`primaryTint`, `surfaceHud`, `inverseSurface`, `MEDIA_COLORS`, `OPTION_GRADIENTS`, …); removed all hex literals from components and deleted `src/constants/`.
-  - **Assets:** bundled local images rendered with `expo-image` (offline, cached, fade-in); dropped a candidate photo of a real public figure.
-  - **Shared UI:** `ScreenContainer` (loading / error / retry), `SectionHeader`, `MetricBar`, `useAsyncData`, `useHaptics`, `useAppActive`.
-  - **Tooling:** `.npmrc` with `legacy-peer-deps`, Jest (`jest-expo`) with a CJS mapping for Lucide, `"types": ["jest"]` for TypeScript 6.
-* **Tests:** 41 tests — engine, reducer, countdown (fake timers), storage sanitising/round-trip, `Button`, `ScenarioCard`, and an Expo Router integration test that plays Operation Midnight end-to-end and asserts the persisted history.
-* **Device verification:** Ran the app on an Android 14 emulator via Expo Go and inspected screenshots. Bugs found only this way and fixed: missing deep-link `scheme` warning, white window strip under the tab bar (`expo-system-ui`), unreadable status bar icons in light mode, briefing hero not full width, NavBar title offset when no icons, low-contrast map label.
-* **Verification:** `tsc --noEmit`, `expo lint`, `jest` (41/41), `expo-doctor` (21/21), iOS + Android `expo export`.
+### 5. Figma fidelity via Figma MCP (Claude Code)
+- **Findings — screenshot guesses that were wrong:**
+  - Option Card fills are translucent (`rgba(15,23,43,0.63)`, peaking at `rgba(0,211,243,0.63)`); they only looked grey on Figma's light canvas.
+  - Locked cards are 35% opacity, not a white wash.
+  - The grey / dark / light-cyan button columns are Disabled / Pressed / Glass states, not colour variants.
+  - Card sizes, radii, the nav bar divider and the tab colours also differed.
+- **Changes:** tokens mirror the Figma variables (names in comments); `Button`, cards, `OptionCard`, `NavBar`, `IconButton` and the tab bar updated to the exact values.
+- **Wrong conclusion, corrected in phase 6:** "the file is a component library only". Only the 🧩Local Components page had been read; the 🛝Playground page, which the case link opens, has full screens.
 
----
-
-### Phase 7: UI/UX Polish within the Figma Spec (Claude Code)
-* **User Request:** Keep to Figma, apply only the proposed UX improvements.
-* **Changes:**
-  - **Inter** (Figma face) bundled per weight via `expo-font`; a `Text` wrapper maps `fontWeight`/`fontStyle` to the right Inter file (Android ignores weights on custom fonts). An ESLint rule blocks importing React Native's `Text` directly. Splash stays up until fonts load. Found and added the missing `expo-asset` peer while doing this.
-  - **Decision review:** unchosen options now fade back (`dimmed`) instead of using Figma's pale passive gradient, which read brighter than the chosen card on dark surfaces.
-  - **Auto-scroll** to the consequence card after locking in; each new step starts at the top.
-  - **Countdown timer:** gradient pinned to the full track and anchored to the fill's right edge — identical to the Figma timer when full, turning red as time runs out.
-  - **Motion:** staggered `FadeIn` per step and on the outcome screen, score count-up; both respect the OS "Reduce motion" setting.
-  - **Light theme fix:** content on imagery (HUD labels, glass buttons) always uses Figma cyan; the darker light-theme cyan was low-contrast on photos.
-* **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21, and on-device review on the Android emulator.
-
----
-
-### Phase 8: Figma Fidelity Pass via Figma MCP (Claude Code)
-* **Trigger:** A Figma MCP connection became available, replacing screenshot-based estimates with the file's real values.
-* **Findings (screenshot guesses that were wrong):**
-  - The file is a component library only (Style Guide, Buttons, Cards, Option Card, Scenario Card/Container, Nav Bar, Tabbar, Icons, App Icon) — no full screens. **Wrong — corrected in Phase 9:** only the Local Components page had been read; the Playground page has full screens.
-  - **Option Card** fills are translucent (`rgba(15,23,43,0.63)`, selected gradient to `rgba(0,211,243,0.63)`, `#F8FAFC` border 1/2px); "Passive" is the selected look at 48% opacity. It only looked grey/pale on Figma's light canvas.
-  - **Buttons:** the grey/dark/light-cyan columns are Primary *Disabled / Pressed / Glass* states, not colour variants. Real set: Primary · Secondary (cyan outline) · Ghost · Link, radius 16, 24px horizontal padding, 24/20/16 icons.
-  - **Inactive cards** are 35% opacity (not a white wash). **Start buttons** are `rgba(0,184,219,0.14)`, borderless, Inter Black.
-  - **Scenario Container** radius 24 with a bottom-up scrim; **Card** is 220×176 (5:4), not 1:1; **Nav Bar** has a `#314158` divider; inactive tab icons `#62748E`; active tile `rgba(0,184,219,0.1)` radius 12.
-* **Changes:** tokens now mirror the Figma variables (with names in comments), `TYPE_SCALE` from the `typhography/*` styles; `Button` rebuilt on Figma's hierarchy × state × size model; `OptionCard`, `ScenarioCard`, `SquareCard`, `NavBar`, `IconButton` and the tab bar updated to the exact values; removed a leftover hard-coded tab tint.
-* **Kept deliberately:** the "dimmed" state for unchosen options (Figma Default at the Passive 48% opacity), since Figma's Passive keeps the cyan gradient and would read as a second selection.
-* **Verification:** tsc, lint, 41/41 tests, expo-doctor 21/21; visual check on the Android emulator (Home, list and locked cards, simulation, Gallery button matrix, System grid). Found and fixed on-device: list card width with `aspectRatio`, Secondary button invisible on Slate 900 surfaces.
-
----
-
-### Phase 9: Separate Pre-Submission Audit (Claude Code)
-* **User Request:** Act as senior RN dev, UI/UX, QA and the reviewing team lead: audit first without touching code (`REVIEW.md`), then fix Critical/Important items in separate commits, ask before any Figma deviation or new package, and rewrite the README.
-* **Findings:**
-  - The case link opens the **🛝Playground** page, which has full screens (landscape Flow v01, decision DNA, auth flows). Earlier sessions only read 🧩Local Components, so the docs claimed "component library only". The Figma MCP then hit its Starter-plan limit; the component library was compared against 20 images the user exported.
-  - A double tap on Start pushed two simulations; the hidden one kept its timer and back handler, and back on the outcome screen offered to abort a finished mission. A double tap on "Lock In" skipped the consequence.
+### 6. Separate pre-submission audit (Claude Code)
+- **Setup:** a fresh session reviewed the app as the evaluating team lead, without touching code, and wrote [`REVIEW.md`](../REVIEW.md): findings graded Critical / Important / Minor with file:line and a fix, and a score per case requirement. Fixes followed in separate commits. Rules for the session: stop if Figma is unreachable, and ask before any deviation or new package.
+- **Findings:**
+  - Playground screens (landscape flow, decision DNA, auth) not implemented. **The owner kept them out of scope;** the README lists them as a deviation.
+  - A double tap on Start pushed two simulations. The hidden one kept its timer and back handler, so on the outcome screen the back button offered to abort a finished mission.
+  - A double tap on "Lock In" skipped the consequence.
   - The countdown kept running behind the abort dialog.
-  - The light theme was documented as WCAG AA but measured 3.2–3.8:1 for cyan / amber / emerald text.
-  - Nav bar icons were announced by their Lucide names; decorative glyphs were exposed as buttons; several targets were below 44pt.
-  - iOS dropped card shadows (`overflow: 'hidden'` on the shadow view); outcome buttons didn't fit on 360dp.
-* **Decisions:** the owner kept the Playground screens out of scope (documented as a deviation). No new packages.
-* **Fixes (one commit each, each with a test that fails without the fix where testable):** Button double-tap guard + hitSlop; labelled NavBar actions with a type-enforced label; timer pause during the abort dialog; darker light-theme tokens + a contrast test; two-layer cards; shared stacked `ScreenFooter`.
-* **Corrected along the way:** a real-time wait in the flow test hung because `renderRouter` installs fake timers; switched to `jest.advanceTimersByTime`. The timer-pause test exposed that every simulation test ran with a paused countdown (Jest's `AppState` mock is never "active"); the suite now mocks `useAppActive`.
-* **Verification:** lint, tsc, 56/56 tests, expo-doctor 21/21; Android emulator pass (home cards, simulation and outcome footers, settings, light theme).
+  - The light theme failed AA (see phase 1).
+  - Nav bar icons were announced by their icon names; several touch targets were under 44pt.
+  - iOS clipped the card shadows; the outcome buttons didn't fit on 360dp screens.
+- **Fixes:** each with a test where testable. The double-tap, timer-pause and contrast tests were confirmed to fail without their fix.
+  - Button double-tap guard and `hitSlop`.
+  - Type-enforced nav bar labels.
+  - Timer pause during the abort dialog.
+  - Darker light-theme tokens plus a contrast test.
+  - Two-layer cards; stacked footer buttons.
+- **AI mistakes caught in this phase:**
+  - A test waiting in real time hung, because Expo Router's test renderer installs fake timers.
+  - The new timer test revealed that every earlier simulation test ran with a paused countdown: Jest's `AppState` mock is never "active".
+- **Limit hit:** the Figma MCP ran out of calls on the Starter plan. Components were compared against 20 frames the owner exported.
+
+### 7. Option Card colours, gallery language, performance (Claude Code)
+- **Option Card:** the owner found the dark theme didn't look like the Figma component; Selected and Passive looked alike. The Figma values are now composited onto the Figma canvas (`#F5F5F5`) and used as opaque colours. They were checked against pixels sampled from the owner's export (±3) and are re-derived in a test. The owner decided to leave out Figma's diagonal highlight streaks.
+- **Gallery:** rendered in English through `I18nOverride`, so English labels no longer get Turkish "İ".
+- **Performance:**
+  - A render-count test showed the simulation screen re-rendering on every 100 ms tick (20 renders in 2 s). The countdown moved into a memoised `DecisionTimer`; the test now expects zero.
+  - Scanlines draw only the lines that fit instead of 160 views.
+  - The simulated 250 ms repository latency applies only in development.
+- **Rejected after a device check:** a native-driven countdown bar passed the tests but lagged the readout on the emulator. Restarting a native animation every 100 ms starts it from a stale value. Reverted.
 
 ---
 
-### Phase 10: Option Card Colours, Gallery Language, Performance (Claude Code)
-* **Option Card:** the owner compared both themes with the Figma component. The translucent Figma fills turned dark on the dark background (Selected and Passive looked alike). They are now Figma's values composited onto the Figma canvas (`#F5F5F5`), checked against pixels sampled from the owner's export (±3) and re-derived in a test. The diagonal highlight streaks in Figma were left out by the owner's decision.
-* **Gallery:** rendered through `I18nOverride` in English, so English labels no longer get a Turkish dotted İ.
-* **Performance:**
-  - A render-count test showed the simulation screen re-rendering on every 100 ms countdown tick (20 renders in 2 s); the countdown moved into a memoised `DecisionTimer`, and the test now expects zero.
-  - ScanlineOverlay draws only the lines its measured area needs instead of 160 views.
-  - The simulated 250 ms repository latency only applies in development.
-* **Rejected after device check:** moving the countdown bar to a native-driven transform passed the tests, but on the emulator the bar lagged the readout (restarting a native animation every 100 ms starts it from a stale JS value). Reverted; a single continuous native animation would be the proper fix.
-* **Not changed:** bundled Inter cuts (usage can't be proven statically; a wrong removal silently falls back to the system font), images (all under 140 KB).
-
+### Lessons that shaped the process
+- **Screenshots mislead:** translucent fills and opacity look different on Figma's light canvas. Values come from Figma itself, or are derived from its variables when the MCP is unavailable.
+- **Static checks are not enough:** safe-area, shadow, layout and animation bugs were found only on a device or emulator.
+- **Tests can pass on a false premise:** the paused countdown in Jest. New tests are checked to fail without their fix.
+- **The AI proposes, the owner decides:** scope (Playground screens), Figma fidelity (the Option Card border) and new dependencies were decided explicitly, and recorded in the README.

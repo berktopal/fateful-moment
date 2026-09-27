@@ -4,7 +4,7 @@ _Tarih: 2026-09-26 · Dal: `master` (`5c7cce7`) · Denetleyen: Claude Code (ayr�
 
 **Kapsam:** Figma uyumu, iOS/Android farkları, UI/UX, QA (akışlar ve uç durumlar), erişilebilirlik, kod kalitesi, statik kontroller ve case maddelerine göre puanlama.
 
-**Yöntem:** Kodun tamamı okundu. Figma MCP ile Playground sayfasının yapısı ve iki ekranı alındı, ardından MCP Starter plan limitine takıldı. Bileşen kütüphanesi, kullanıcının Figma'dan aldığı 20 görselle karşılaştırıldı. Değerler daha önceki bir oturumda Figma MCP ile okunmuştu (`docs/AI_LOG.md` Phase 8).
+**Yöntem:** Kodun tamamı okundu. Figma MCP ile Playground sayfasının yapısı ve iki ekranı alındı, ardından MCP Starter plan limitine takıldı. Bileşen kütüphanesi, kullanıcının Figma'dan aldığı 20 görselle karşılaştırıldı. Değerler daha önceki bir oturumda Figma MCP ile okunmuştu (`docs/AI_LOG.md` faz 5).
 
 ## Statik kontroller (denetim anı)
 

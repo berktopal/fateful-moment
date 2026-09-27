@@ -29,7 +29,7 @@ npx expo start
 ### Kalite kontrolleri
 
 ```bash
-npm test              # Jest + React Native Testing Library, 56 test
+npm test              # Jest + React Native Testing Library, 62 test
 npm run typecheck     # tsc --noEmit (strict)
 npm run lint          # expo lint
 npx expo-doctor       # 21/21
@@ -70,7 +70,7 @@ AI'ı kod yazan bir araçtan çok, her adımı doğrulanan bir eşli programlama
 ### Figma MCP kullanımı
 
 Figma değişkenleri, tipografi, radius, padding, gölge ve bileşen durumları MCP ile doğrudan dosyadan okundu. Böylece ekran görüntülerinden yapılan ilk tahminlerin bir kısmının yanlış olduğu ortaya çıktı:
-- Option Card gri değil, yarı saydam (`rgba(15,23,43,0.63)`).
+- Option Card'ın dolguları yarı saydam (`rgba(15,23,43,0.63)`); Figma'nın açık tuvalinde gri göründükleri için gri sanılmıştı.
 - Kilitli kart beyaz bir perde değil, %35 opaklık.
 - Buton panosundaki gri ve koyu sütunlar ayrı renk varyantları değil, Disabled ve Pressed durumları.
 

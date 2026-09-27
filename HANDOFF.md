@@ -14,7 +14,7 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 
 ## Yapılanlar (özet)
 
-1. **Figma hizalama:** Lucide ikon seti, Inter fontu, tasarım token'ları, tüm bileşenler. Son adımda **Figma MCP ile gerçek değerler** okunup ekran görüntüsü tahminleri düzeltildi (bkz. `docs/AI_LOG.md` Phase 8).
+1. **Figma hizalama:** Lucide ikon seti, Inter fontu, tasarım token'ları, tüm bileşenler. Son adımda **Figma MCP ile gerçek değerler** okunup ekran görüntüsü tahminleri düzeltildi (bkz. `docs/AI_LOG.md` faz 5).
 2. **Oynanabilir akış:** Brifing → zamanlı 3 karar → After Action Report. Skor 0–100, derece (Decisive / Contained / Compromised / Catastrophic). 3 oynanabilir senaryo, 1 kilitli.
 3. **Kalıcılık:** Tema, haptik, bildirim tercihi ve görev geçmişi AsyncStorage'da. Splash, tercihler ve fontlar yüklenene kadar açık kalır.
 4. **Çevrimdışı görseller:** `assets/images/` (Unsplash), `expo-image` ile gösteriliyor.
