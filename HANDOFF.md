@@ -1,6 +1,6 @@
 # Handoff — Fateful Moment
 
-_Son güncelleme: 2026-09-27 · Dal: `master` (push edilmedi; origin'in önünde)_
+_Son güncelleme: 2026-09-27 · Dal: `master` (origin ile senkron)_
 Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu dosya yalnızca **durum** anlatır.
 
 ## Case teslim durumu
