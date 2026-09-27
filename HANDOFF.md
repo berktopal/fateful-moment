@@ -24,7 +24,7 @@ Kalıcı kurallar (tasarım, yapı, mühendislik) → [AGENTS.md](AGENTS.md). Bu
 8. **Emülatörde bulunup düzeltilen hatalar:** Tab bar'ın home indicator altında kalması, `userInterfaceStyle: light` yüzünden System temasının çalışmaması, status bar ve root arka plan rengi, eksik `scheme`, `aspectRatio` genişlik hatası, `expo-asset` eksikliği.
 
 9. **Dil desteği (TR varsayılan, EN seçenek):** Ayarlar → Dil. Tüm ekranlar, uyarılar, erişilebilirlik etiketleri ve senaryo içerikleri çevrildi; seçim AsyncStorage'da saklanıyor, eski kayıtlar Türkçe'ye düşüyor. Türkçe büyük harf (i→İ) JS'te yapılıyor. Emülatörde iki dilde de doğrulandı. Test sayısı 49.
-10. **Teslim öncesi denetim (ayrı oturum):** Bulgular ayrı commit'lerle düzeltildi, sonuç `REVIEW.md`'de: çift dokunma kilidi, iptal diyaloğunda timer'ın durması, light tema AA, NavBar erişilebilirlik etiketleri ve 44pt dokunma alanları, iOS kart gölgeleri, sonuç ekranı footer'ı. Sonrasında Option Card renkleri, galeri dili ve performans iyileştirmeleri. 62 test, emülatörde doğrulandı. README yeniden yazıldı.
+10. **Teslim öncesi denetim (ayrı oturum):** Bulgular ayrı commit'lerle düzeltildi, sonuç `REVIEW.md`'de: çift dokunma kilidi, iptal diyaloğunda timer'ın durması, light tema AA, NavBar erişilebilirlik etiketleri ve 44pt dokunma alanları, iOS kart gölgeleri, sonuç ekranı footer'ı. Sonrasında Option Card renkleri, galeri dili ve performans iyileştirmeleri. Ardından süre dolumu dokunuşu, boş liste durumları, tablet genişlik sınırı ve Keşfet varsayılan protokolü. 66 test, emülatörde doğrulandı. README yeniden yazıldı.
 
 ## Önemli kararlar ve nedenleri
 

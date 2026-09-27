@@ -93,6 +93,7 @@ How the app was built with AI assistance: what each phase set out to do, what wa
   - A render-count test showed the simulation screen re-rendering on every 100 ms tick (20 renders in 2 s). The countdown moved into a memoised `DecisionTimer`; the test now expects zero.
   - Scanlines draw only the lines that fit instead of 160 views.
   - The simulated 250 ms repository latency applies only in development.
+- **Small follow-ups:** a tap landing just as the timer expires no longer hits the "Next" button that replaced "Lock In" (test confirmed failing first); empty lists show a shared `EmptyState`; content is capped at 640pt on tablets (checked at a tablet-sized density); the Intel default protocol comes from the data.
 - **Rejected after a device check:** a native-driven countdown bar passed the tests but lagged the readout on the emulator. Restarting a native animation every 100 ms starts it from a stale value. Reverted.
 
 ---

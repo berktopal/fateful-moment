@@ -29,7 +29,7 @@ npx expo start
 ### Kalite kontrolleri
 
 ```bash
-npm test              # Jest + React Native Testing Library, 62 test
+npm test              # Jest + React Native Testing Library, 66 test
 npm run typecheck     # tsc --noEmit (strict)
 npm run lint          # expo lint
 npx expo-doctor       # 21/21

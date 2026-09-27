@@ -27,11 +27,11 @@ Teslimden önce, uygulamayı geliştiren oturumlardan bağımsız bir Claude Cod
 | Alan | Durum |
 |---|---|
 | Figma bileşen kütüphanesi (token'lar, butonlar, kartlar, Option Card, nav/tab bar, ikonlar) | ✅ Figma değerleriyle |
-| Akışlar ve uç durumlar | ✅ Çift dokunma ve iptal diyaloğu senaryoları kapatıldı |
+| Akışlar ve uç durumlar | ✅ Çift dokunma, süre dolumu ve iptal diyaloğu senaryoları kapatıldı; boş listeler ele alındı |
 | Erişilebilirlik | ✅ Ekran okuyucu etiketleri, 44pt dokunma alanları, AA kontrastı (testle korunuyor) |
 | iOS / Android farkları | ✅ Gölge ve dar ekran sorunları giderildi |
 | Performans | ✅ Simülasyon ekranında gereksiz yeniden çizim kaldırıldı |
-| Statik kontroller | ✅ `expo lint` temiz · `tsc` temiz · 62 test · `expo-doctor` 21/21 |
+| Statik kontroller | ✅ `expo lint` temiz · `tsc` temiz · 66 test · `expo-doctor` 21/21 |
 
 ## Bulgular ve çözümler
 
@@ -48,6 +48,10 @@ Teslimden önce, uygulamayı geliştiren oturumlardan bağımsız bir Claude Cod
 | 9 | Simülasyon ekranı, geri sayımın her 100 ms'lik güncellemesinde baştan çiziliyordu. | Geri sayım ayrı bir bileşene taşındı; artık sadece timer güncelleniyor | Yeniden çizimleri sayan test | `2d483f1` |
 | 10 | Option Card'lar koyu temada Figma bileşeninden farklı görünüyordu. | Figma'nın yarı saydam değerlerinden, Figma tuvaline göre hesaplanan renkler | Türetmeyi doğrulayan test, emülatör | `cabd533` |
 | 11 | Dil Türkçeyken tasarım galerisindeki İngilizce başlıklarda "İ" çıkıyordu. | Galeri İngilizce dil bağlamında gösteriliyor | Test | `4e2f6cb` |
+| 12 | Süre dolduğu anda "Kilitle"ye basan oyuncunun dokunuşu, yerine gelen "Sonraki Karar" butonuna gidebiliyordu. | Süre dolduktan hemen sonraki dokunuş yok sayılıyor | Akış testi (düzeltme olmadan düştüğü doğrulandı) | `ad14cc2` |
+| 13 | Keşfet'te varsayılan protokol koda gömülüydü. | Varsayılan protokol verideki işaretten türetiliyor | Ekran testi | `cc10fcd` |
+| 14 | Ana sayfa ve Keşfet'teki listeler boş geldiğinde ekranda hiçbir şey görünmüyordu. | Ortak `EmptyState` bileşeniyle bilgilendirme mesajı | Ekran testleri | `c8f6c9c` |
+| 15 | Tablette kartlar ve butonlar kenardan kenara yayılıyordu. | İçerik en fazla 640pt genişlikte ve ortalı | Emülatörde tablet genişliğinde | `fa9d30e` |
 
 ## Bilinçli kararlar
 
@@ -61,6 +65,4 @@ Teslimi etkilemeyen, bilinen küçük iyileştirmeler:
 - Figma'da karşılığı olmayan ekranlardaki bazı yazı boyutlarını tipografi ölçeğine bağlamak.
 - Scenario Card'ın Figma'daki iki boyutunu (220×176 ve 326×261) ayrı varyantlar olarak sunmak.
 - HUD metinlerinin harf aralığını Figma'dan doğrulamak.
-- Tablette içeriğe en fazla genişlik sınırı koymak.
-- Boş liste durumları için metin eklemek (dummy veride tetiklenmiyor).
 - Timer çubuğunu tek ve kesintisiz bir native animasyona taşımak.
