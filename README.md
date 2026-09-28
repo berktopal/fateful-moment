@@ -124,6 +124,7 @@ src/
 - **Option Card renkleri iki temada da aynı.** Figma'daki yarı saydam değerler Figma tuvaliyle (`#F5F5F5`) karıştırılıp opak renge çevrildi; türetme bir testle belgeleniyor. Böylece kartlar koyu temada da Figma bileşeni gibi görünüyor.
 - **Açık tema Figma'da yok.** WCAG AA'ya göre türetildi ve bir testle korunuyor. Fotoğraf üstündeki içerik iki temada da aynı kalıyor.
 - **Test edilen cihazlar.** Android akışı emülatörde (Pixel, Android 14) uçtan uca test edildi. iOS'ta Expo Go ile çalışır; kullanılan tüm native modüller Expo Go'da mevcut.
+- **Tablet.** Ekranlar telefon için tasarlandı ve dikey yönde çalışır. Tablette içerik ve alt butonlar en fazla 640 pt genişliğe kadar büyür ve ortalanır; kartlar kenardan kenara yayılmaz.
 - **Android'de font.** Menlo Android'de bulunmadığı için HUD metinleri sistemin monospace fontuyla gösterilir.
 - **Görev Uyarıları** ayarı yalnızca tercihi kaydeder; bu demoda bildirim servisi yok.
 - **Expo Go dişlisi.** Expo Go'da ekranda görünen dişli simgesi Expo'nun geliştirici menüsüdür, APK'da yer almaz.
