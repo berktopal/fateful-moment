@@ -2,6 +2,14 @@
 
 Kriz anlarında süreye karşı karar verdiğiniz taktiksel bir simülasyon. React Native + Expo (SDK 57) ile iOS ve Android için geliştirildi. Backend yok, tüm veriler dummy.
 
+<p align="center">
+  <img src="docs/screenshots/01-war-room.jpg" width="200" alt="Savaş Odası: öne çıkan senaryo, kampanya ilerlemesi ve senaryo kartları" />
+  <img src="docs/screenshots/02-decision.jpg" width="200" alt="Karar ekranı: seçilen seçenek ve kararın sonucu" />
+  <img src="docs/screenshots/03-report.jpg" width="200" alt="Harekât Sonrası Rapor: derece, skor ve karar zaman çizelgesi" />
+  <img src="docs/screenshots/04-light-theme.jpg" width="200" alt="Açık tema ve Türkçe arayüzde karar ekranı" />
+</p>
+<p align="center"><sub>Savaş Odası · Karar ve sonucu · Harekât Sonrası Rapor · Açık tema (Türkçe) — Android APK'dan</sub></p>
+
 **Akış:** Savaş Odası → Brifing → zamanlı 3 karar → Harekât Sonrası Rapor
 
 **Kurallar:**
