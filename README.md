@@ -1,5 +1,7 @@
 # Fateful Moment
 
+[![CI](https://github.com/berktopal/fateful-moment/actions/workflows/ci.yml/badge.svg)](https://github.com/berktopal/fateful-moment/actions/workflows/ci.yml)
+
 Kriz anlarında süreye karşı karar verdiğiniz taktiksel bir simülasyon. React Native + Expo (SDK 57) ile iOS ve Android için geliştirildi. Backend yok, tüm veriler dummy.
 
 <p align="center">
@@ -42,6 +44,8 @@ npm run typecheck     # tsc --noEmit (strict)
 npm run lint          # expo lint
 npx expo-doctor       # 21/21
 ```
+
+İlk üç kontrol, `master`'a her push'ta ve her pull request'te GitHub Actions'ta da çalışır (`.github/workflows/ci.yml`).
 
 ### Android APK
 
